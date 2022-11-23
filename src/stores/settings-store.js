@@ -1,0 +1,56 @@
+import { defineStore } from "pinia";
+import LoginService from "src/services/LoginService";
+
+export const useLoginStore = defineStore("login", {
+  state: () => ({
+    selectedBar: 0,
+    bars: [20, 15, 10],
+    selectedPlate: 0,
+    plates: "",
+    selectedIncrement: "Bearer ",
+    jwt: "",
+    logged: false
+  }),
+  getters: {
+    getUserId: function (state) {
+      return state.userId
+    },
+    getLogedUserName: function (state) {
+      return state.userName
+    },
+    getAuthHeader: function (state) {
+      return state.jwt && state.jwtType ? `${state.jwtType} ${state.jwt}` : ''
+    },
+    getIsLogged: function (state) {
+      return state.logged
+    }
+  },
+  actions: {
+    async login(userName, password) {
+      try {
+        const user = await LoginService.login(userName, password)
+        this.userId = user.id;
+        this.userName = user.username;
+        this.jwt = user.token;
+        this.logged = true;
+        return true;
+      } catch (error) {
+        console.error("Error al intentar realizar el login. Userdata: " + userName + ". Error:" + error)
+        return false;
+      }
+    },
+    async logout() {
+      try {
+        await LoginService.logout()
+        this.userId = 0;
+        this.userName = "";
+        this.jwt = "";
+        this.logged = false
+        return true;
+      } catch (error) {
+        console.error("Error al intentar realizar el logout. Error:" + error)
+        return false;
+      }
+    }
+  },
+});
