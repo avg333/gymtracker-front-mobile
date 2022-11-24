@@ -8,8 +8,9 @@ import { useLoginStore } from "stores/login-store";
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-
-const api = axios.create({ baseURL: "http://192.168.1.90:8081/api" });
+//http://192.168.1.90:8081/api
+//http://gymtracker-backend.herokuapp.com/api/
+const api = axios.create({ baseURL: "http://gymtracker-backend.herokuapp.com/api/" });
 
 api.interceptors.request.use((request) => {
   const useStore = useLoginStore()
