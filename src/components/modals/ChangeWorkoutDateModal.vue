@@ -59,8 +59,6 @@ export default {
 
     async function changeDate() {
       workout.date = moment(date.value).format("YYYY-MM-DD");
-      console.log("YE");
-      console.log(workout.date);
       await WorkoutService.update(workout.id, workout);
       emit("closeModal");
     }

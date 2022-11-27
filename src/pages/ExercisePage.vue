@@ -22,8 +22,10 @@
         </div>
       </q-toolbar>
     </div>
-    <p>Group:</p>
-    <p>Subgroup:</p>
+    <p>SupGroup: {{ exercise.muscleSupGroups }}</p>
+    <p>Group: {{ exercise.muscleGroups }}</p>
+    <p>Subgroup: {{ exercise.muscleSubGroups }}</p>
+    <p>{{ exercise.unilateral ? "Unilateral" : "Bilateral" }}</p>
     <p>WEIGHT & REPS</p>
     <p>
       {{ exercise.loadType }}

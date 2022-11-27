@@ -46,12 +46,13 @@
       </span>
       <q-space />
       <q-btn-group flat>
-        <q-btn flat dense round icon="timer" />
+        <q-btn flat dense round icon="timer" v-if="false" />
         <q-btn
           flat
           dense
           round
           icon="today"
+          :disabled="today == date"
           @click="date = moment().format('YYYY/MM/DD')"
         />
         <q-btn
@@ -116,8 +117,9 @@
     </div>
     <div class="row text-center" v-if="workout.id">
       <div class="col-12">
-        <strong v-for="muscle in summary.muscles" :key="muscle">
-          {{ muscle.toUpperCase() }}&nbsp;
+        <strong v-for="(muscle, index) in summary.muscles" :key="muscle">
+          {{ muscle.toUpperCase() }}
+          {{ index + 1 !== summary.muscles.length ? " - " : "" }}
         </strong>
       </div>
     </div>
