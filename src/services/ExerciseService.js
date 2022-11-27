@@ -4,10 +4,10 @@ const API = "exercises/"
 
 class ExerciseService {
 
-  async getAll() {
+  async getAll({ name = null, description = null, unilateral = null, loadType = null, muscleSupGroupIds = null, muscleGroupIds = null, muscleSubGroupIds = null } = {}) {
     //Implementar sistema de filtros
     try {
-      const res = await api.get(API)
+      const res = await api.get(API, { params: { name, description, unilateral, loadType, muscleSupGroupIds, muscleGroupIds, muscleSubGroupIds } })
       return res.data
     } catch (error) {
       return []

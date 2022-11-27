@@ -1,13 +1,13 @@
 <template>
-  <q-toolbar class="bg-black text-white">
-    <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-    <q-toolbar-title> Programs </q-toolbar-title>
-    <q-space />
-    <q-btn-group flat>
-      <q-btn flat dense round icon="add" />
-    </q-btn-group>
-  </q-toolbar>
   <q-page>
+    <q-toolbar class="bg-black text-white">
+      <q-btn flat dense round icon="arrow_back" @click="$router.back" />
+      <q-toolbar-title> Programs </q-toolbar-title>
+      <q-space />
+      <q-btn-group flat>
+        <q-btn flat dense round icon="add" />
+      </q-btn-group>
+    </q-toolbar>
     <ProgramCard
       v-for="program in programs"
       :key="program.id"

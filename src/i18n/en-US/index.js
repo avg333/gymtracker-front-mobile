@@ -4,4 +4,9 @@
 export default {
   failed: "Action failed",
   success: "Action was successful",
+
+  // Toolbar
+  exercises: "Exercises",
+  addExerciseToWorkout: "Add to {date} workout",
+  replaceExerciseInWorkout: "Replace {exerciseName}",
 };

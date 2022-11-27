@@ -1,24 +1,24 @@
 <template>
-  <div class="bg-black text-white">
-    <q-toolbar>
-      <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-      <q-toolbar-title> Calculator </q-toolbar-title>
-      <q-space />
-    </q-toolbar>
-    <q-toolbar>
-      <div class="row opciones">
-        <q-tabs
-          v-model="slide"
-          class="opciones text-white bg-black"
-          inline-label
-        >
-          <q-tab name="rm" label="WORKING WEIGHT" />
-          <q-tab name="plate" label="PLATE CALCULATOR" />
-        </q-tabs>
-      </div>
-    </q-toolbar>
-  </div>
   <q-page>
+    <div class="bg-black text-white">
+      <q-toolbar>
+        <q-btn flat dense round icon="arrow_back" @click="$router.back" />
+        <q-toolbar-title> Calculator </q-toolbar-title>
+        <q-space />
+      </q-toolbar>
+      <q-toolbar>
+        <div class="row opciones">
+          <q-tabs
+            v-model="slide"
+            class="opciones text-white bg-black"
+            inline-label
+          >
+            <q-tab name="rm" label="WORKING WEIGHT" />
+            <q-tab name="plate" label="PLATE CALCULATOR" />
+          </q-tabs>
+        </div>
+      </q-toolbar>
+    </div>
     <q-carousel
       v-model="slide"
       transition-prev="slide-right"

@@ -1,13 +1,13 @@
 <template>
-  <q-toolbar class="bg-black text-white">
-    <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-    <q-toolbar-title> {{ program.name }} </q-toolbar-title>
-    <q-btn-group flat>
-      <q-btn flat dense round icon="info" />
-      <q-btn flat dense round icon="add" />
-    </q-btn-group>
-  </q-toolbar>
   <q-page>
+    <q-toolbar class="bg-black text-white">
+      <q-btn flat dense round icon="arrow_back" @click="$router.back" />
+      <q-toolbar-title> {{ program.name }} </q-toolbar-title>
+      <q-btn-group flat>
+        <q-btn flat dense round icon="info" />
+        <q-btn flat dense round icon="add" />
+      </q-btn-group>
+    </q-toolbar>
     <SessionCard
       v-for="session in sessions"
       :key="session.id"

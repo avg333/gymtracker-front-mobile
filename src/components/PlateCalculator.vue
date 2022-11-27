@@ -80,13 +80,15 @@
 
   <q-separator />
 
-  <div class="row g-0 items-center full-space text-center">
+  <div class="row g-0 items-center full-space text-center" v-if="weight">
     <div class="col-12">
       <div class="row">
-        <div class="col-12">Barra {{ selectedBar }} kg</div>
+        <div class="col-12 text-h6">Barra {{ selectedBar }} kg</div>
       </div>
       <div class="row">
-        <div class="col-12">Con las siguientes parejas de discos:</div>
+        <div class="col-12 text-subtitle1">
+          Con las siguientes parejas de discos:
+        </div>
       </div>
       <div class="row">
         <div class="col-12">
@@ -104,7 +106,7 @@
   </div>
 
   <div
-    class="row g-0 items-center full-space"
+    class="row g-0 items-center full-space text-center text-overline"
     v-if="weight && weight != estimatedWeight"
   >
     <div class="col-12">
@@ -115,7 +117,7 @@
         <div class="col-12">
           No se pueden añadir
           <q-chip color="red" square :label="weight - estimatedWeight" />
-          kgs porque faltan discos:
+          kgs porque faltan discos
         </div>
       </div>
     </div>

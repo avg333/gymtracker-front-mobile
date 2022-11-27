@@ -1,27 +1,27 @@
 <template>
-  <div class="bg-black text-white">
-    <q-toolbar class="bg-black text-white">
-      <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-      <q-toolbar-title> {{ exercise.name }} </q-toolbar-title>
-      <q-btn-group flat>
-        <q-btn flat dense round icon="fitness_center" />
-      </q-btn-group>
-    </q-toolbar>
-    <q-toolbar inset>
-      <div class="row justify-center opciones">
-        <q-tabs
-          v-model="slide"
-          class="opciones text-white bg-black"
-          inline-label
-        >
-          <q-tab name="rm" label="INFORMATION" />
-          <q-tab name="plate" label="STATISTICS" />
-          <q-tab name="layers" label="HISTORY" />
-        </q-tabs>
-      </div>
-    </q-toolbar>
-  </div>
-  <q-page class="flex flex-center">
+  <q-page>
+    <div class="bg-black text-white">
+      <q-toolbar>
+        <q-btn flat dense round icon="arrow_back" @click="$router.back" />
+        <q-toolbar-title> {{ exercise.name }} </q-toolbar-title>
+        <q-btn-group flat>
+          <q-btn flat dense round icon="fitness_center" />
+        </q-btn-group>
+      </q-toolbar>
+      <q-toolbar>
+        <div class="row justify-center opciones">
+          <q-tabs
+            v-model="slide"
+            class="opciones text-white bg-black"
+            inline-label
+          >
+            <q-tab name="rm" label="INFORMATION" />
+            <q-tab name="plate" label="STATISTICS" />
+            <q-tab name="layers" label="HISTORY" />
+          </q-tabs>
+        </div>
+      </q-toolbar>
+    </div>
     <p>Group:</p>
     <p>Subgroup:</p>
     <p>WEIGHT & REPS</p>

@@ -21,7 +21,7 @@
           "
         />
       </div>
-      <div class="text-subtitle1">{{ exercise.name }}</div>
+      <div class="span">{{ exercise.name }}</div>
       <div class="text-subtitle3 text-grey" v-if="setId">
         {{ moment(set.lastModifiedAt).format("DD MMM HH:mm") }}
       </div>

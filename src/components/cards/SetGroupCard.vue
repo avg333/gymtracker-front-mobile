@@ -13,14 +13,22 @@
     <div class="col">
       <div class="row items-center">
         <div class="col-11">
-          <strong>{{ setGroup?.exerciseDto?.name }}</strong>
+          <strong>{{ setGroup?.exerciseDto?.name.toUpperCase() }}</strong>
         </div>
         <div class="col-1">
-          <q-btn-dropdown flat dense round icon="more_vert">
+          <q-btn-dropdown flat dense round icon="more_vert" dropdown-icon=" ">
             <q-list>
               <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label>Replace exercise</q-item-label>
+                  <q-item-label
+                    @click="
+                      $router.push({
+                        path: '/muscleSupGroups/',
+                        query: { setGroupId: setGroup.id },
+                      })
+                    "
+                    >Replace exercise</q-item-label
+                  >
                 </q-item-section>
               </q-item>
 
@@ -42,9 +50,9 @@
           {{ setGroup.description }}
         </div>
       </div>
-      <div class="row items-center">
+      <div class="row items-center text-center">
         <div
-          class="col-2"
+          class="col-2 bg-grey-4 scndary"
           :class="Math.round(set.rir) > 3 && 'text-grey'"
           v-for="set in setGroup.setDtoList"
           :key="set.listOrder"
@@ -57,11 +65,17 @@
             })
           "
         >
-          <div class="row">{{ Math.round(set.weight) }} KG</div>
-          <div class="row">{{ Math.round(set.reps) }} REP</div>
-          <div class="row">{{ Math.round(set.rir) }} RIR</div>
+          <div class="row">
+            <div class="col-12">{{ Math.round(set.weight) }} KG</div>
+          </div>
+          <div class="row">
+            <div class="col-12">{{ Math.round(set.reps) }} REP</div>
+          </div>
+          <div class="row">
+            <div class="col-12">{{ Math.round(set.rir) }} RIR</div>
+          </div>
         </div>
-        <div class="col-2">
+        <div class="col-1">
           <q-btn
             class="text-grey"
             flat
@@ -100,5 +114,11 @@ export default {
 .ppal {
   border-radius: 7px !important;
   margin: 7px;
+}
+
+.scndary {
+  border-radius: 3px !important;
+  margin: 2px;
+  padding: 0;
 }
 </style>

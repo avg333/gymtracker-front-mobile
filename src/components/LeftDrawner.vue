@@ -45,7 +45,7 @@ export default defineComponent({
       {
         title: "Exercises",
         icon: "fitness_center",
-        link: "https://quasar.dev",
+        to: "/muscleSupGroups",
       },
       {
         title: "Programs",
