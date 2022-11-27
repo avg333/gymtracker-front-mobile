@@ -63,28 +63,27 @@
           icon="date_range"
           @click="showCalendar = !showCalendar"
         />
-        <q-btn-dropdown
-          flat
-          dense
-          round
-          icon="more_vert"
-          dropdown-icon=" "
-          :disabled="!workout.id"
-        >
-          <q-list>
-            <q-item clickable v-close-popup @click="modalChangeDate = true">
-              <q-item-section>
-                <q-item-label>Move workout</q-item-label>
-              </q-item-section>
-            </q-item>
+        <q-btn flat dense round icon="more_vert" :disabled="!workout.id">
+          <q-menu>
+            <q-list>
+              <q-item clickable v-close-popup @click="modalChangeDate = true">
+                <q-item-section>
+                  <q-item-label>Move workout</q-item-label>
+                </q-item-section>
+              </q-item>
 
-            <q-item clickable v-close-popup @click="removeWorkout(workout.id)">
-              <q-item-section>
-                <q-item-label>Remove workout</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
+              <q-item
+                clickable
+                v-close-popup
+                @click="removeWorkout(workout.id)"
+              >
+                <q-item-section>
+                  <q-item-label>Remove workout</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </q-btn-group>
     </q-toolbar>
     <q-slide-transition>
