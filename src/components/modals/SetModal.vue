@@ -31,7 +31,7 @@
       <div class="row items-center full-space q-col-gutter-sm">
         <div class="col-2 text-right">KG</div>
         <div class="col-6">
-          <q-input v-model="set.weight" />
+          <q-input v-model="set.weight" type="number" />
         </div>
         <div class="col-1">
           <q-select
@@ -72,7 +72,7 @@
       <div class="row items-center full-space q-col-gutter-sm">
         <div class="col-2 text-right">REP</div>
         <div class="col-6">
-          <q-input v-model="set.reps" />
+          <q-input v-model="set.reps" type="number" />
         </div>
         <div class="col-1"></div>
         <div class="col-3 text-center">

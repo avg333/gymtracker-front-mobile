@@ -2,7 +2,9 @@
   <div>
     <div class="row bg-grey-1 items-center">
       <div class="col-2">
-        <q-icon size="lg" name="sports_gymnastics" />
+        <q-icon size="lg">
+          <img :src="getMuscleGroupIco(muscleGroup)" alt="?" />
+        </q-icon>
       </div>
       <div class="col-10">
         {{ muscleGroup.name }}
@@ -13,7 +15,11 @@
 </template>
 
 <script>
+import { getMuscleGroupIco } from "src/utils/icoUtils";
 export default {
   props: { muscleGroup: Object },
+  setup() {
+    return { getMuscleGroupIco };
+  },
 };
 </script>

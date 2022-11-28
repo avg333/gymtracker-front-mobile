@@ -2,7 +2,7 @@
   <div class="row g-0 items-center full-space q-col-gutter-sm">
     <div class="col-2 text-right">WEIGHT</div>
     <div class="col-6">
-      <q-input v-model="weight" />
+      <q-input v-model="weight" type="number" />
     </div>
     <div class="col-1">
       <q-select

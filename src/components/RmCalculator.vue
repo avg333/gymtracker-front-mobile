@@ -2,7 +2,7 @@
   <div class="row items-center full-space q-col-gutter-sm">
     <div class="col-2 text-right">WEIGHT</div>
     <div class="col-6">
-      <q-input v-model="weight" />
+      <q-input v-model="weight" type="number" />
     </div>
     <div class="col-1"></div>
     <div class="col-3 text-center">
@@ -27,7 +27,7 @@
   <div class="row items-center full-space q-col-gutter-sm">
     <div class="col-2 text-right">REP</div>
     <div class="col-6">
-      <q-input v-model="reps" />
+      <q-input v-model="reps" type="number" />
     </div>
     <div class="col-1"></div>
     <div class="col-3 text-center">
