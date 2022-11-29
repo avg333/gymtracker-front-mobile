@@ -1,6 +1,7 @@
 import { boot } from "quasar/wrappers";
 import axios from "axios";
 import { useLoginStore } from "stores/login-store";
+import { Loading } from 'quasar'
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -13,6 +14,7 @@ import { useLoginStore } from "stores/login-store";
 const api = axios.create({ baseURL: "http://gymtracker-backend.herokuapp.com/api/" });
 
 api.interceptors.request.use((request) => {
+  Loading.show()
   const useStore = useLoginStore()
   const authHeader = useStore.getAuthHeader
   if (authHeader) {
@@ -20,6 +22,14 @@ api.interceptors.request.use((request) => {
   }
   return request
 })
+
+api.interceptors.response.use(function (response) {
+  Loading.hide()
+  return response;
+}, function (error) {
+  Loading.hide()
+  return Promise.reject(error);
+});
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api

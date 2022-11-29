@@ -10,7 +10,7 @@
       :setsSize="setModalData.setsSize"
       :exerciseId="setModalData.exerciseId"
       @closeModal="
-        getWorkoutAndSets();
+        getSets();
         setModalData.visible = false;
       "
     />
@@ -36,8 +36,8 @@
         aria-label="Menu"
         @click="leftDrawerOpen = !leftDrawerOpen"
       />
-      <q-chip class="text-white" square color="positive" v-if="today == date">
-        <strong> Today </strong>
+      <q-chip v-if="today === date" square class="text-white" color="positive">
+        <strong> {{ $t("tracker.today") }} </strong>
       </q-chip>
       <span v-else>
         <strong>
@@ -46,7 +46,6 @@
       </span>
       <q-space />
       <q-btn-group flat>
-        <q-btn flat dense round icon="timer" v-if="false" />
         <q-btn
           flat
           dense
@@ -63,12 +62,18 @@
           icon="date_range"
           @click="showCalendar = !showCalendar"
         />
-        <q-btn flat dense round icon="more_vert" :disabled="!workout.id">
+        <q-btn
+          flat
+          dense
+          round
+          icon="more_vert"
+          :disabled="!workout.id || !isLogged"
+        >
           <q-menu>
             <q-list>
               <q-item clickable v-close-popup @click="modalChangeDate = true">
                 <q-item-section>
-                  <q-item-label>Move workout</q-item-label>
+                  <q-item-label>{{ $t("tracker.moveWorkout") }}</q-item-label>
                 </q-item-section>
               </q-item>
 
@@ -78,7 +83,7 @@
                 @click="removeWorkout(workout.id)"
               >
                 <q-item-section>
-                  <q-item-label>Remove workout</q-item-label>
+                  <q-item-label>{{ $t("tracker.deleteWorkout") }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -86,6 +91,7 @@
         </q-btn>
       </q-btn-group>
     </q-toolbar>
+
     <q-slide-transition>
       <div class="row text-center ancho" v-show="showCalendar">
         <div class="col-12">
@@ -100,41 +106,60 @@
         </div>
       </div>
     </q-slide-transition>
-    <div class="row text-center text-grey" v-if="workout.id">
-      <div class="col-12">
-        <span>
-          {{ summary.exerciseNumber || 0 }} EXS
-          {{ summary.setsNumber || 0 }} SETS {{ summary.weightVolume || 0 }} KG
-          {{ summary.duration || 0 }} MIN
-        </span>
+
+    <div v-if="setGroups.length && isLogged">
+      <div class="row text-center text-grey">
+        <div class="col-12">
+          <span>
+            {{ workout.exerciseNumber || 0 }} {{ $t("tracker.exs") }}
+            {{ workout.setsNumber || 0 }} {{ $t("tracker.sets") }}
+            {{ workout.weightVolume || 0 }} {{ $t("tracker.kg") }}
+            {{ workout.duration || 0 }} {{ $t("tracker.mins") }}
+          </span>
+        </div>
+      </div>
+
+      <div class="row text-center">
+        <div class="col-12">
+          <strong
+            v-for="(muscle, index) in workout.muscleGroupDtos"
+            :key="index"
+            :class="'text-' + getMuscleGroupColour(muscle)"
+          >
+            {{ muscle.name.toUpperCase() }}
+            {{ muscle.volume }}
+            {{ index + 1 !== workout.muscleGroupDtos.length ? " - " : "" }}
+          </strong>
+        </div>
+      </div>
+
+      <div class="row items-center">
+        <div class="col-12">
+          <SetGroupCard
+            class="bg-grey-1"
+            v-for="setGroup in setGroups"
+            :key="setGroup.listOrder"
+            :setGroup="setGroup"
+            @showSetModal="showSetModal"
+            @reloadData="getSets"
+          />
+        </div>
       </div>
     </div>
-    <div class="row text-center" v-else>
-      <div class="col-12">
-        <span> Empty Day </span>
+
+    <div v-else-if="isLogged" class="flex flex-center text-center q-pa-md">
+      <div>
+        <span> {{ $t("tracker.empty") }} </span>
       </div>
     </div>
-    <div class="row text-center" v-if="workout.id">
-      <div class="col-12">
-        <strong v-for="(muscle, index) in summary.muscles" :key="muscle">
-          {{ muscle.toUpperCase() }}
-          {{ index + 1 !== summary.muscles.length ? " - " : "" }}
-        </strong>
+
+    <div v-else class="flex flex-center text-center q-pa-md">
+      <div>
+        <span> {{ $t("tracker.notLogged") }} </span>
       </div>
     </div>
-    <div class="row items-center" v-if="workout.id">
-      <div class="col-12">
-        <SetGroupCard
-          class="bg-grey-1"
-          v-for="setGroup in setGroups"
-          :key="setGroup.listOrder"
-          :setGroup="setGroup"
-          @showSetModal="showSetModal"
-          @reloadData="getWorkoutAndSets"
-        />
-      </div>
-    </div>
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+
+    <q-page-sticky position="bottom-right" :offset="[18, 18]" v-if="isLogged">
       <q-btn
         v-if="workout.id"
         fab
@@ -148,18 +173,21 @@
         "
       />
       <q-btn v-else fab color="positive" @click="createWorkout">
-        Create Workout
+        {{ $t("tracker.create") }}
       </q-btn>
     </q-page-sticky>
   </q-page>
 </template>
 
 <script>
+import { getMuscleGroupColour } from "src/utils/colourUtils";
+import { useQuasar } from "quasar";
 import moment from "moment";
 import {
   defineComponent,
   ref,
   reactive,
+  computed,
   onBeforeMount,
   watchEffect,
 } from "vue";
@@ -167,38 +195,30 @@ import { useRoute, useRouter } from "vue-router";
 import { useLoginStore } from "stores/login-store";
 import LeftDrawner from "components/LeftDrawner.vue";
 import SetGroupCard from "components/cards/SetGroupCard.vue";
+import ChangeWorkoutDateModal from "components/modals/ChangeWorkoutDateModal.vue";
 import SetModal from "components/modals/SetModal.vue";
 import WorkoutService from "src/services/WorkoutService";
 import SetGroupService from "src/services/SetGroupService";
-import ChangeWorkoutDateModal from "src/components/modals/ChangeWorkoutDateModal.vue";
 export default defineComponent({
   name: "IndexPage",
   components: { LeftDrawner, SetGroupCard, SetModal, ChangeWorkoutDateModal },
   setup() {
+    const route = useRoute();
+    const router = useRouter();
+    const useStore = useLoginStore();
+    const isLogged = computed(() => useStore.getIsLogged);
+
     const leftDrawerOpen = ref(false);
     const showCalendar = ref(false);
+    const modalChangeDate = ref(false);
 
-    const route = useRoute();
     const today = moment().format("YYYY/MM/DD");
     const date = ref(route.query.date ? route.query.date : today);
 
-    const summary = reactive({
-      exerciseNumber: 0,
-      setsNumber: 0,
-      weightVolume: 0,
-      duration: 0,
-      muscles: [],
-    });
-
     const workoutDates = ref([]);
-    const workout = reactive({
-      id: null,
-      date: moment().format("YYYY/MM/DD"),
-      description: null,
-    });
+    const workout = reactive({ date: moment().format("YYYY/MM/DD") });
     const setGroups = ref([]);
 
-    const useStore = useLoginStore();
     onBeforeMount(() => {
       getWorkoutAndSets();
     });
@@ -207,20 +227,13 @@ export default defineComponent({
       getWorkoutAndSets(date.value);
     });
 
-    const router = useRouter();
     function getWorkoutAndSets() {
-      WorkoutService.getAllDatesFromUser(useStore.getUserId).then((res) => {
-        workoutDates.value = res.map((fecha) =>
-          moment(fecha).format("YYYY/MM/DD")
-        );
-      });
-      workout.id = null;
-      workout.description = null;
-      workout.date = moment(date.value).format("YYYY/MM/DD");
-      setGroups.value = [];
-      for (const key of Object.keys(summary)) summary[key] = null;
+      if (!isLogged.value) return;
 
       WorkoutService.getAllFromUser(useStore.getUserId).then((res) => {
+        workoutDates.value = res.map((wo) =>
+          moment(wo.date).format("YYYY/MM/DD")
+        );
         const workoutBd = res.find(
           (wo) =>
             wo.date &&
@@ -230,19 +243,24 @@ export default defineComponent({
         if (workoutBd) {
           for (const key of Object.keys(workoutBd))
             workout[key] = workoutBd[key];
+        } else {
+          workout.id = null;
+          workout.description = null;
+          workout.date = moment(date.value).format("YYYY/MM/DD");
+          setGroups.value = [];
         }
 
-        if (workout.id) {
-          router.replace({ query: { date: date.value } });
-          WorkoutService.getSummaryById(workout.id).then((resSummary) => {
-            for (const key of Object.keys(resSummary))
-              summary[key] = resSummary[key];
-          });
-          SetGroupService.getAllWorkoutSetGroups(workout.id).then((resSets) => {
-            setGroups.value = resSets;
-          });
-        }
+        getSets();
       });
+    }
+
+    function getSets() {
+      if (workout.id) {
+        router.replace({ query: { date: date.value } });
+        SetGroupService.getAllWorkoutSetGroups(workout.id).then((res) => {
+          setGroups.value = res;
+        });
+      }
     }
 
     const setModalData = reactive({
@@ -260,19 +278,29 @@ export default defineComponent({
       setModalData.visible = true;
     }
 
-    const modalChangeDate = ref(false);
-
     async function createWorkout() {
       workout.date = moment(date.value).format("YYYY-MM-DD");
       await WorkoutService.create(useStore.getUserId, workout);
       getWorkoutAndSets();
     }
 
+    const $q = useQuasar();
     async function removeWorkout() {
-      if (workout.id) {
-        await WorkoutService.delete(workout.id);
-        getWorkoutAndSets();
-      }
+      $q.dialog({
+        title: "¿Delete Workout?",
+        message: "This action can not be undone",
+        cancel: true,
+        ok: {
+          push: true,
+          label: "Delete",
+          color: "negative",
+        },
+      }).onOk(async () => {
+        if (workout.id) {
+          await WorkoutService.delete(workout.id);
+          getWorkoutAndSets();
+        }
+      });
     }
 
     return {
@@ -281,16 +309,18 @@ export default defineComponent({
       date,
       workoutDates,
       leftDrawerOpen,
-      summary,
       setGroups,
       showSetModal,
       setModalData,
       workout,
       getWorkoutAndSets,
+      getSets,
       moment,
       createWorkout,
       removeWorkout,
       modalChangeDate,
+      getMuscleGroupColour,
+      isLogged,
     };
   },
 });

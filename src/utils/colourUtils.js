@@ -1,37 +1,39 @@
-
+import { MuscleGroupEnum } from "./enums"
 
 export function getMuscleGroupColour(muscleGroup) {
   switch (muscleGroup.id) {
-    case 108:
-      return chestIco
-    case 109:
-      return latsIco
-    case 110:
-      return trapsIco
-    case 111:
-    case 112:
-    case 113:
-      return shoulderIco
-    case 114:
-      return forearmsIco
-    case 115:
-      return bicepsIco
-    case 116:
-      return tricepsIco
-    case 117:
-      return absIco
-    case 118://lowerBack
-      return null
-    case 119:
-      return quadricepsIco
-    case 120:
-      return hamstringsIco
-    case 121://glute
-      return gluteoIco
-    case 122:
-      return calvesIco
+    case MuscleGroupEnum.CHEST.id:
+      return "red-5"
+    case MuscleGroupEnum.LATS.id:
+      return "blue-5"
+    case MuscleGroupEnum.TRAPEZIOUS.id:
+      return "blue-7"
+    case MuscleGroupEnum.SHOULDER_ANTERIOR.id:
+      return "lime-5"
+    case MuscleGroupEnum.SHOULDER_LATERAL.id:
+      return "lime-7"
+    case MuscleGroupEnum.SHOULDER_POSTERIOR.id:
+      return "lime-9"
+    case MuscleGroupEnum.BICEPS.id:
+      return "brown-5"
+    case MuscleGroupEnum.TRICEPS.id:
+      return "brown-7"
+    case MuscleGroupEnum.FOREARMS.id:
+      return "brown-9"
+    case MuscleGroupEnum.ABS.id:
+      return "deep-orange-6"
+    case MuscleGroupEnum.LOWER_BACK.id:
+      return "deep-orange-8"
+    case MuscleGroupEnum.QUADRICEPS.id:
+      return "green-5"
+    case MuscleGroupEnum.HAMSTRINGS.id:
+      return "green-7"
+    case MuscleGroupEnum.GLUTE.id:
+      return "green-9"
+    case MuscleGroupEnum.CALVES.id:
+      return "green-11"
     default:
-      break;
+      return "blue-grey-5"
   }
 }
 

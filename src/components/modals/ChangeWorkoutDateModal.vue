@@ -1,6 +1,15 @@
 <template>
   <q-card>
     <q-card-section>
+      <div class="row text-h6">
+        {{ $t("modal.changeWorkoutDate.moveWorkout") }}
+      </div>
+      <div class="text-subtitle3 text-grey">
+        {{ $t("modal.changeWorkoutDate.from") }}
+        <strong> {{ moment(workout.date).format("YYYY/MM/DD") }}</strong>
+        {{ $t("modal.changeWorkoutDate.to") }}
+        <strong> {{ date }}</strong>
+      </div>
       <q-date
         class="ancho"
         v-model="date"
@@ -9,24 +18,32 @@
         minimal
         flat
       />
-      <span v-if="workoutDates.includes(date)">
-        Ya hay un entrenamiento ese dia
-      </span>
+      <div class="row">
+        <div class="col-12 text-center">
+          <span v-if="workoutDates.includes(date)">
+            {{ $t("modal.changeWorkoutDate.existsWorkout") }}
+          </span>
+          <span v-else>&nbsp;</span>
+        </div>
+      </div>
     </q-card-section>
     <q-card-actions>
       <q-space />
-      <q-btn flat v-close-popup>CANCEL</q-btn>
+      <q-btn flat v-close-popup>
+        {{ $t("modal.changeWorkoutDate.cancel") }}
+      </q-btn>
       <q-btn
         flat
         :disabled="workoutDates.includes(date)"
         class="text-positive"
         @click="workoutDates.includes(date) ? null : changeDate()"
       >
-        MOVE
+        {{ $t("modal.changeWorkoutDate.move") }}
       </q-btn>
     </q-card-actions>
   </q-card>
 </template>
+
 <script>
 import moment from "moment";
 import { ref, reactive, onBeforeMount } from "vue";
@@ -40,20 +57,22 @@ export default {
   },
   emits: ["closeModal"],
   setup(props, { emit }) {
-    const date = ref(true);
+    const date = ref(moment().format("YYYY/MM/DD"));
     const workoutDates = ref([]);
     const workout = reactive({});
 
     const useStore = useLoginStore();
     onBeforeMount(() => {
-      WorkoutService.getAllDatesFromUser(useStore.getUserId).then((res) => {
-        workoutDates.value = res.map((fecha) =>
-          moment(fecha).format("YYYY/MM/DD")
+      WorkoutService.getAllFromUser(useStore.getUserId).then((res) => {
+        workoutDates.value = res.map((wo) =>
+          moment(wo.date).format("YYYY/MM/DD")
         );
-      });
-      WorkoutService.getById(props.workoutId).then((res) => {
-        for (const key of Object.keys(res)) workout[key] = res[key];
-        date.value = moment(res.date).format("YYYY/MM/DD");
+        const workoutBd = res.find((wo) => wo.id === props.workoutId);
+        if (workoutBd) {
+          date.value = moment(workoutBd.date).format("YYYY/MM/DD");
+          for (const key of Object.keys(workoutBd))
+            workout[key] = workoutBd[key];
+        }
       });
     });
 
@@ -63,7 +82,7 @@ export default {
       emit("closeModal");
     }
 
-    return { date, workoutDates, workout, changeDate };
+    return { date, workoutDates, workout, changeDate, moment };
   },
 };
 </script>

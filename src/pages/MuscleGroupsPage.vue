@@ -12,7 +12,7 @@
       <q-toolbar v-if="setGroup.id">
         <span>
           {{
-            $t("replaceExerciseInWorkout", {
+            $t("muscleGroupPages.replaceExerciseInWorkout", {
               exerciseName: setGroup.exerciseDto?.name,
             })
           }}
@@ -21,7 +21,7 @@
       <q-toolbar v-else-if="workout.id">
         <span>
           {{
-            $t("addExerciseToWorkout", {
+            $t("muscleGroupPages.addExerciseToWorkout", {
               date: moment(workout.date).format("YYYY/MM/DD"),
             })
           }}

@@ -3,8 +3,7 @@
     <div class="bg-black text-white">
       <q-toolbar>
         <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-        <q-toolbar-title> Calculator </q-toolbar-title>
-        <q-space />
+        <q-toolbar-title> {{ $t("calculator.title") }} </q-toolbar-title>
       </q-toolbar>
       <q-toolbar>
         <div class="row opciones">
@@ -13,8 +12,8 @@
             class="opciones text-white bg-black"
             inline-label
           >
-            <q-tab name="rm" label="WORKING WEIGHT" />
-            <q-tab name="plate" label="PLATE CALCULATOR" />
+            <q-tab name="rm" :label="$t('calculator.rm')" />
+            <q-tab name="plate" :label="$t('calculator.plate')" />
           </q-tabs>
         </div>
       </q-toolbar>
@@ -55,6 +54,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .opciones {
   width: 100%;

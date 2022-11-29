@@ -1,25 +1,27 @@
 <template>
   <div class="row items-center ppal">
     <div class="col-auto">
-      <q-btn
-        flat
-        dense
-        round
-        size="lg"
-        icon="font_download"
-        :to="'/exercises/' + setGroup.exerciseId"
-      />
+      <q-btn flat dense round :to="'/exercises/' + setGroup.exerciseId">
+        <q-icon size="lg">
+          <img
+            :src="getMuscleGroupIco(setGroup.exerciseDto.muscleGroups[0])"
+            alt="?"
+          />
+        </q-icon>
+      </q-btn>
     </div>
+
     <div class="col">
       <div class="row items-center">
         <div class="col-10">
           <strong>{{ setGroup?.exerciseDto?.name.toUpperCase() }}</strong>
         </div>
+
         <div class="col-2 text-right">
           <q-btn flat dense round icon="more_vert">
             <q-menu>
               <q-list>
-                <q-item clickable v-close-popup>
+                <q-item v-close-popup clickable>
                   <q-item-section>
                     <q-item-label
                       @click="
@@ -28,18 +30,21 @@
                           query: { setGroupId: setGroup.id },
                         })
                       "
-                      >Replace exercise</q-item-label
                     >
+                      {{ $t("card.set.replaceExercise") }}
+                    </q-item-label>
                   </q-item-section>
                 </q-item>
 
                 <q-item
-                  clickable
                   v-close-popup
+                  clickable
                   @click="removeSetGroup(setGroup.id)"
                 >
                   <q-item-section>
-                    <q-item-label>Remove exercise</q-item-label>
+                    <q-item-label>
+                      {{ $t("card.set.removeExercise") }}
+                    </q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -47,11 +52,13 @@
           </q-btn>
         </div>
       </div>
+
       <div class="row items-center">
         <div class="col-12">
           {{ setGroup.description }}
         </div>
       </div>
+
       <div class="row items-center text-center">
         <div
           class="col-auto bg-grey-4 scndary"
@@ -68,13 +75,22 @@
           "
         >
           <div class="row">
-            <div class="col-12">{{ Math.round(set.weight) }} KG</div>
+            <div class="col-12">
+              {{ Math.round(set.weight) }}
+              {{ $t("card.set.kg") }}
+            </div>
           </div>
           <div class="row">
-            <div class="col-12">{{ Math.round(set.reps) }} REP</div>
+            <div class="col-12">
+              {{ Math.round(set.reps) }}
+              {{ $t("card.set.rep") }}
+            </div>
           </div>
           <div class="row">
-            <div class="col-12">{{ Math.round(set.rir) }} RIR</div>
+            <div class="col-12">
+              {{ Math.round(set.rir) }}
+              {{ $t("card.set.rir") }}
+            </div>
           </div>
         </div>
         <div class="col-auto">
@@ -99,6 +115,7 @@
   </div>
 </template>
 <script>
+import { getMuscleGroupIco } from "src/utils/icoUtils";
 import SetGroupService from "src/services/SetGroupService";
 export default {
   props: { setGroup: Object },
@@ -108,7 +125,7 @@ export default {
       await SetGroupService.delete(setGroupId);
       emit("reloadData");
     }
-    return { removeSetGroup };
+    return { removeSetGroup, getMuscleGroupIco };
   },
 };
 </script>

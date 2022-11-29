@@ -1,3 +1,4 @@
+import { MuscleGroupEnum, MuscleSupGroupEnum } from "./enums"
 
 import chestIco from "assets/mgs/mg-chest.png";
 import latsIco from "assets/mgs/mg-lats.png";
@@ -15,17 +16,17 @@ import gluteoIco from "assets/mgs/mg-gluteo.png";
 
 export function getMuscleSupGroupIco(muscleSupGroup) {
   switch (muscleSupGroup.id) {
-    case 102:
+    case MuscleSupGroupEnum.CHEST.id:
       return chestIco
-    case 103:
+    case MuscleSupGroupEnum.BACK.id:
       return latsIco
-    case 104:
+    case MuscleSupGroupEnum.SHOULDERS.id:
       return shoulderIco
-    case 105:
+    case MuscleSupGroupEnum.ARMS.id:
       return bicepsIco
-    case 106:
+    case MuscleSupGroupEnum.CORE.id:
       return absIco
-    case 107:
+    case MuscleSupGroupEnum.LEGS.id:
       return legsIco
     default:
       break;
@@ -34,33 +35,33 @@ export function getMuscleSupGroupIco(muscleSupGroup) {
 
 export function getMuscleGroupIco(muscleGroup) {
   switch (muscleGroup.id) {
-    case 108:
+    case MuscleGroupEnum.CHEST.id:
       return chestIco
-    case 109:
+    case MuscleGroupEnum.LATS.id:
       return latsIco
-    case 110:
+    case MuscleGroupEnum.TRAPEZIOUS.id:
       return trapsIco
-    case 111:
-    case 112:
-    case 113:
+    case MuscleGroupEnum.SHOULDER_ANTERIOR.id:
+    case MuscleGroupEnum.SHOULDER_LATERAL.id:
+    case MuscleGroupEnum.SHOULDER_POSTERIOR.id:
       return shoulderIco
-    case 114:
-      return forearmsIco
-    case 115:
+    case MuscleGroupEnum.BICEPS.id:
       return bicepsIco
-    case 116:
+    case MuscleGroupEnum.TRICEPS.id:
       return tricepsIco
-    case 117:
+    case MuscleGroupEnum.FOREARMS.id:
+      return forearmsIco
+    case MuscleGroupEnum.ABS.id:
       return absIco
-    case 118://lowerBack
+    case MuscleGroupEnum.LOWER_BACK.id:
       return null
-    case 119:
+    case MuscleGroupEnum.QUADRICEPS.id:
       return quadricepsIco
-    case 120:
+    case MuscleGroupEnum.HAMSTRINGS.id:
       return hamstringsIco
-    case 121://glute
+    case MuscleGroupEnum.GLUTE.id:
       return gluteoIco
-    case 122:
+    case MuscleGroupEnum.CALVES.id:
       return calvesIco
     default:
       break;

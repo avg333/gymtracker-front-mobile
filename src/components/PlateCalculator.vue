@@ -1,6 +1,6 @@
 <template>
   <div class="row g-0 items-center full-space q-col-gutter-sm">
-    <div class="col-2 text-right">WEIGHT</div>
+    <div class="col-2 text-right">{{ $t("plateCalculator.kg") }}</div>
     <div class="col-6">
       <q-input v-model="weight" type="number" />
     </div>
@@ -41,7 +41,7 @@
   </div>
 
   <div class="row g-0 items-center full-space q-col-gutter-sm">
-    <div class="col-2 text-right">BAR</div>
+    <div class="col-2 text-right">{{ $t("plateCalculator.bar") }}</div>
     <div class="col-10">
       <q-chip
         v-for="bar in bars"
@@ -58,7 +58,7 @@
   </div>
 
   <div class="row g-0 items-center full-space q-col-gutter-sm">
-    <div class="col-2 text-right">PLATES</div>
+    <div class="col-2 text-right">{{ $t("plateCalculator.plates") }}</div>
     <div class="col-10">
       <q-chip
         v-for="plate in plates"
@@ -80,14 +80,21 @@
 
   <q-separator />
 
-  <div class="row g-0 items-center full-space text-center" v-if="weight">
+  <div
+    class="row g-0 items-center full-space text-center"
+    v-if="weight && weight > estimatedWeight"
+  >
     <div class="col-12">
       <div class="row">
-        <div class="col-12 text-h6">Barra {{ selectedBar }} kg</div>
+        <div class="col-12 text-h6">
+          {{ $t("plateCalculator.bar") }}
+          {{ selectedBar }}
+          {{ $t("plateCalculator.kg") }}
+        </div>
       </div>
       <div class="row">
         <div class="col-12 text-subtitle1">
-          Con las siguientes parejas de discos:
+          {{ $t("plateCalculator.resumenDiscos") }}
         </div>
       </div>
       <div class="row">
@@ -111,13 +118,13 @@
   >
     <div class="col-12">
       <div class="row" v-if="weight < estimatedWeight">
-        <div class="col-12">El peso es inferior al peso de la barra</div>
+        <div class="col-12">{{ $t("plateCalculator.pesoInferior") }}</div>
       </div>
       <div class="row" v-else>
         <div class="col-12">
-          No se pueden añadir
+          {{ $t("plateCalculator.faltanDiscos1") }}
           <q-chip color="red" square :label="weight - estimatedWeight" />
-          kgs porque faltan discos
+          {{ $t("plateCalculator.faltanDiscos2") }}
         </div>
       </div>
     </div>
@@ -188,8 +195,8 @@ export default {
       platosDiponibles.reverse();
 
       const platosNecesarios = [];
-      var pesoCalc = peso - pesoBarra;
-      var i = 0;
+      let pesoCalc = peso - pesoBarra;
+      let i = 0;
       while (i < platosDiponibles.length) {
         if (platosDiponibles[i] * 2 > pesoCalc) {
           i++;

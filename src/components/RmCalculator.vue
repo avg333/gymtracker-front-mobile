@@ -1,6 +1,6 @@
 <template>
   <div class="row items-center full-space q-col-gutter-sm">
-    <div class="col-2 text-right">WEIGHT</div>
+    <div class="col-2 text-right">{{ $t("rmCalculator.kg") }}</div>
     <div class="col-6">
       <q-input v-model="weight" type="number" />
     </div>
@@ -25,7 +25,7 @@
     </div>
   </div>
   <div class="row items-center full-space q-col-gutter-sm">
-    <div class="col-2 text-right">REP</div>
+    <div class="col-2 text-right">{{ $t("rmCalculator.rep") }}</div>
     <div class="col-6">
       <q-input v-model="reps" type="number" />
     </div>

@@ -1,0 +1,82 @@
+{
+  "muscleGroupPages": {
+    "exercises": "Ejercicios",
+    "addExerciseToWorkout": "Añadir al entrenamiento del {date}",
+    "replaceExerciseInWorkout": "Sustituir {exerciseName}",
+    "filter": {
+      "unilateral": "Unilateral"
+    }
+  },
+  "modal": {
+    "changeWorkoutDate": {
+      "moveWorkout": "Mover Entrenamiento",
+      "from": "De",
+      "to": "a",
+      "existsWorkout": "Ya existe un entrenamiento ese día",
+      "cancel": "CANCELAR",
+      "move": "MOVER"
+    },
+    "setModal": {
+      "delete": "ELIMINAR",
+      "cancel": "CANCELAR",
+      "save": "GUARDAR",
+      "warmup": "WARMUP"
+    }
+  },
+  "card": {
+    "set": {
+      "replaceExercise": "Cambiar ejercicio",
+      "removeExercise": "Eliminar ejercicio",
+      "kg": "KG",
+      "rep": "REP",
+      "rir": "RIR"
+    }
+  },
+  "plateCalculator": {
+    "kg": "KG",
+    "bar": "BARRA",
+    "plates": "DISCOS",
+    "resumenDiscos": "Con las siguientes parejas de discos:",
+    "pesoInferior": "El peso es inferior al peso de la barra",
+    "faltanDiscos1": "No se pueden añadir",
+    "faltanDiscos2": "kgs porque faltan discos"
+  },
+  "rmCalculator": {
+    "kg": "KG",
+    "rep": "REP"
+  },
+  "calculator": {
+    "title": "CALCULADORA",
+    "rm": "CALCULAR RM",
+    "plate": "CALCULAR DISCOS"
+  },
+  "menu": {
+    "exercises": "Ejercicios",
+    "programs": "Programas",
+    "measurements": "Medidas",
+    "statistics": "Estadísticas",
+    "calculator": "Calculadora",
+    "notes": "Notas",
+    "settings": "Ajustes",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "login": {
+    "title": "INICIAR SESIÓN",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "login": "LOGIN"
+  },
+  "tracker": {
+    "today": "Hoy",
+    "exs": "EXS",
+    "sets": "SETS",
+    "kg": "KG",
+    "mins": "MINS",
+    "empty": "Ningún entrenamiento hoy",
+    "create": "Crear entrenamiento",
+    "moveWorkout": "Mover entrenamiento",
+    "deleteWorkout": "Eliminar entrenamiento",
+    "notLogged": "Inicie sesión para usar la aplicación"
+  }
+}

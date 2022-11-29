@@ -1,0 +1,82 @@
+{
+  "muscleGroupPages": {
+    "exercises": "Exercises",
+    "addExerciseToWorkout": "Add to {date} workout",
+    "replaceExerciseInWorkout": "Replace {exerciseName}",
+    "filter": {
+      "unilateral": "Unilateral"
+    }
+  },
+  "modal": {
+    "changeWorkoutDate": {
+      "moveWorkout": "Move Workout",
+      "from": "From",
+      "to": "to",
+      "existsWorkout": "There is already a training that day",
+      "cancel": "CANCEL",
+      "move": "MOVE"
+    },
+    "setModal": {
+      "delete": "DELETE",
+      "cancel": "CANCEL",
+      "save": "SAVE",
+      "warmup": "WARMUP"
+    }
+  },
+  "card": {
+    "set": {
+      "replaceExercise": "Replace exercise",
+      "removeExercise": "Remove exercise",
+      "kg": "KG",
+      "rep": "REP",
+      "rir": "RIR"
+    }
+  },
+  "plateCalculator": {
+    "kg": "KG",
+    "bar": "BAR",
+    "plates": "PLATES",
+    "resumenDiscos": "With the following pairs of plates:",
+    "pesoInferior": "The weight is less than the weight of the bar",
+    "faltanDiscos1": "Cannot be added",
+    "faltanDiscos2": "kgs because plates are missing"
+  },
+  "rmCalculator": {
+    "kg": "KG",
+    "rep": "REP"
+  },
+  "calculator": {
+    "title": "CALCULATOR",
+    "rm": "WORKING WEIGHT",
+    "plate": "PLATE CALCULATOR"
+  },
+  "menu": {
+    "exercises": "Exercises",
+    "programs": "Programs",
+    "measurements": "Measurements",
+    "statistics": "Statistics",
+    "calculator": "Calculator",
+    "notes": "Notes",
+    "settings": "Settings",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "login": {
+    "title": "LOGIN",
+    "username": "Username",
+    "password": "Password",
+    "login": "LOGIN"
+  },
+  "tracker": {
+    "today": "Today",
+    "exs": "EXS",
+    "sets": "SETS",
+    "kg": "KG",
+    "mins": "MINS",
+    "empty": "Empty day",
+    "create": "Crear workout",
+    "moveWorkout": "Move workout",
+    "deleteWorkout": "Remove workout",
+    "notLogged": "Please log in to use the app"
+  }
+}

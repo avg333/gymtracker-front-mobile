@@ -104,18 +104,20 @@
         <div class="col-3 text-center">
           <q-btn-group>
             <q-btn :push="set.rir === 5" dense @click="set.rir = 5">
-              WARMUP
+              {{ $t("modal.setModal.warmup") }}
             </q-btn>
           </q-btn-group>
         </div>
       </div>
     </q-card-section>
     <q-card-actions>
-      <q-btn flat v-if="setId" @click="deleteSet">DELETE</q-btn>
+      <q-btn flat v-if="setId" @click="deleteSet">{{
+        $t("modal.setModal.delete")
+      }}</q-btn>
       <q-space />
-      <q-btn flat v-close-popup>CANCEL</q-btn>
+      <q-btn flat v-close-popup>{{ $t("modal.setModal.cancel") }}</q-btn>
       <q-btn flat @click="saveSet" class="text-positive">
-        {{ setId ? "SAVE" : "ADD" }}
+        {{ setId ? $t("modal.setModal.save") : $t("modal.setModal.add") }}
       </q-btn>
     </q-card-actions>
   </q-card>

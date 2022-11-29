@@ -23,15 +23,6 @@ class WorkoutService {
     }
   }
 
-  async getSummaryById(workoutId) {
-    try {
-      const res = await api.get(API + "/" + workoutId + "/summary")
-      return res.data
-    } catch (error) {
-      console.error("Error al obtener el programa con ID: " + workoutId + ". Error: " + error)
-    }
-  }
-
   async getById(workoutId) {
     try {
       const res = await api.get(API + "/" + workoutId)

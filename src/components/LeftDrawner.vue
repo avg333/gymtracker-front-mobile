@@ -6,11 +6,16 @@
   </q-img>
 
   <q-list>
-    <q-item :to="item.to" v-for="item in linksList" :key="item.to">
+    <q-item
+      :to="item.to"
+      v-for="item in linksList"
+      :key="item.to"
+      :disabled="item.disabled"
+    >
       <q-item-section avatar>
         <q-icon :name="item.icon" />
       </q-item-section>
-      <q-item-section>{{ item.title }}</q-item-section>
+      <q-item-section>{{ $t(item.title) }}</q-item-section>
     </q-item>
     <q-separator />
     <q-item v-if="isLogged">
@@ -23,13 +28,13 @@
       <q-item-section avatar>
         <q-icon name="logout" />
       </q-item-section>
-      <q-item-section>Logout</q-item-section>
+      <q-item-section>{{ $t("menu.logout") }}</q-item-section>
     </q-item>
-    <q-item v-if="!isLogged" clickable @click="login">
+    <q-item v-if="!isLogged" to="login">
       <q-item-section avatar>
         <q-icon name="login" />
       </q-item-section>
-      <q-item-section>Login</q-item-section>
+      <q-item-section>{{ $t("menu.login") }}</q-item-section>
     </q-item>
   </q-list>
 </template>
@@ -38,54 +43,50 @@
 import { computed, defineComponent } from "vue";
 import { useLoginStore } from "stores/login-store";
 export default defineComponent({
-  name: "IndexPage",
+  name: "LeftDrawner",
   components: {},
   setup() {
     const linksList = [
       {
-        title: "Exercises",
+        title: "menu.exercises",
         icon: "fitness_center",
         to: "/muscleSupGroups",
       },
       {
-        title: "Programs",
+        title: "menu.programs",
         icon: "menu_book",
         to: "/programs",
       },
       {
-        title: "Measurements",
+        title: "menu.measurements",
         icon: "scale",
-        link: "https://chat.quasar.dev",
+        disabled: true,
       },
       {
-        title: "Statistics",
+        title: "menu.statistics",
         icon: "show_chart",
-        link: "https://forum.quasar.dev",
+        disabled: true,
       },
       {
-        title: "Calculator",
+        title: "menu.calculator",
         icon: "calculate",
         to: "/calculator",
       },
       {
-        title: "Notebook",
+        title: "menu.notes",
         icon: "text_snippet",
-        link: "https://facebook.quasar.dev",
+        disabled: true,
       },
       {
-        title: "Settings",
+        title: "menu.settings",
         icon: "settings",
-        link: "https://awesome.quasar.dev",
+        disabled: true,
       },
     ];
 
     const store = useLoginStore();
     const isLogged = computed(() => store.getIsLogged);
     const userName = computed(() => store.getLogedUserName);
-
-    function login() {
-      store.login("chema", "chema69");
-    }
 
     function logout() {
       store.logout();
@@ -95,7 +96,6 @@ export default defineComponent({
       linksList,
       isLogged,
       userName,
-      login,
       logout,
     };
   },
