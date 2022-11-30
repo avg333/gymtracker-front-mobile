@@ -3,7 +3,9 @@
     <div class="bg-black text-white">
       <q-toolbar>
         <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-        <q-toolbar-title>{{ muscleSupGroup.name }}</q-toolbar-title>
+        <q-toolbar-title>
+          {{ $t("muscleSupGroup." + $route.params.muscleSupGroupId) }}
+        </q-toolbar-title>
         <q-space />
         <q-btn-group flat>
           <q-btn flat dense round icon="add" />
@@ -29,7 +31,7 @@
       </q-toolbar>
     </div>
     <MuscleGroupCard
-      v-for="muscleGroup in muscleGroups"
+      v-for="muscleGroup in muscleSupGroup.muscleGroups"
       :key="muscleGroup.id"
       :muscleGroup="muscleGroup"
       @click="
@@ -48,7 +50,7 @@
 
 <script>
 import moment from "moment";
-import { defineComponent, ref, reactive, onBeforeMount } from "vue";
+import { defineComponent, reactive, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import MuscleGroupCard from "src/components/cards/MuscleGroupCard.vue";
 import MuscleGroupService from "src/services/MuscleGroupService";
@@ -58,7 +60,6 @@ export default defineComponent({
   name: "MuscleGroupsPage",
   components: { MuscleGroupCard },
   setup() {
-    const muscleGroups = ref([]);
     const muscleSupGroup = reactive({});
     const setGroup = reactive({});
     const workout = reactive({});
@@ -70,9 +71,6 @@ export default defineComponent({
     onBeforeMount(async () => {
       MuscleGroupService.getMuscleSupGroup(muscleSupGroupId).then((res) => {
         for (const key of Object.keys(res)) muscleSupGroup[key] = res[key];
-      });
-      MuscleGroupService.getAll(muscleSupGroupId).then((res) => {
-        muscleGroups.value = res;
       });
       if (setGroupId) {
         SetGroupService.getById(setGroupId).then((res) => {
@@ -86,7 +84,7 @@ export default defineComponent({
       }
     });
 
-    return { muscleGroups, muscleSupGroup, setGroup, workout, moment };
+    return { muscleSupGroup, setGroup, workout, moment };
   },
 });
 </script>

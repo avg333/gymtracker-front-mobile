@@ -1,5 +1,7 @@
 import { api } from "src/boot/axios";
 
+const AUTH_KEY = "gymtracker_token"
+
 const API = "auth/"
 
 class LoginService {
@@ -7,6 +9,7 @@ class LoginService {
   async login(username, password) {
     try {
       const res = await api.post(API + "signin", { username, password })
+      localStorage.setItem(AUTH_KEY, res.data.token)
       return res.data;
     } catch (error) {
       console.error("Error al intentar logear al usuario: " + username + ". Error: " + error)
@@ -16,6 +19,7 @@ class LoginService {
   async logout() {
     try {
       await api.post(API + "signout")
+      localStorage.removeItem(AUTH_KEY);
       return true
     } catch (error) {
       console.error("Error al deslogear y borrar el token del usuario. Error: " + error)

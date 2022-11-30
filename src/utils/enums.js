@@ -25,6 +25,23 @@ export const MuscleSupGroupEnum = Object.freeze({
   LEGS: { id: 108 }
 })
 
+export const MuscleSubGroupEnum = Object.freeze({
+  CHEST_UPP: { id: 124 },
+  CHEST_LOW: { id: 125 },
+  CHEST_MID: { id: 126 },
+  TRAPS_UPP: { id: 127 },
+  TRAPS_MID: { id: 128 },
+  TRAPS_LOW: { id: 129 },
+  TRICEPS_LAT: { id: 130 },
+  TRICEPS_LONG: { id: 131 },
+  TRICEPS_MED: { id: 132 },
+  GLUTE_MAX: { id: 133 },
+  GLUTE_MED: { id: 134 },
+  GLUTE_MIN: { id: 135 },
+  CALVES_SOLE: { id: 136 },
+  CALVES_GAST: { id: 137 }
+})
+
 export const ActivityLevelEnum = Object.freeze({
   SEDENTARY: "SEDENTARY",
   LIGHT: "LIGHT",

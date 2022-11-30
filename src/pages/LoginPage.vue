@@ -17,6 +17,8 @@
                 filled
                 v-model="username"
                 :label="$t('login.username')"
+                autocorrect="off"
+                autocapitalize="off"
               />
 
               <q-input
@@ -35,7 +37,9 @@
     </div>
   </q-page>
 </template>
+
 <script>
+import { useQuasar } from "quasar";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useLoginStore } from "stores/login-store";
@@ -45,16 +49,19 @@ export default {
     const password = ref("");
     const store = useLoginStore();
     const router = useRouter();
+    const $q = useQuasar();
     async function login() {
       const res = await store.login(username.value, password.value);
       if (res) {
         router.back();
       } else {
-        console.log("Error al logear");
+        $q.notify({
+          message: "La combinación de usuario y contraseña no existe",
+          color: "negative",
+        });
       }
     }
     return { username, password, login };
   },
 };
 </script>
-<style></style>

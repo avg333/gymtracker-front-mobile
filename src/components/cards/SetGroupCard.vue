@@ -2,7 +2,7 @@
   <div class="row items-center ppal">
     <div class="col-auto">
       <q-btn flat dense round :to="'/exercises/' + setGroup.exerciseId">
-        <q-icon size="lg">
+        <q-icon size="lg" v-if="setGroup?.exerciseDto?.muscleGroups?.length">
           <img
             :src="getMuscleGroupIco(setGroup.exerciseDto.muscleGroups[0])"
             alt="?"
@@ -120,7 +120,7 @@ import SetGroupService from "src/services/SetGroupService";
 export default {
   props: { setGroup: Object },
   emits: ["showSetModal", "reloadData"],
-  setup(_, { emit }) {
+  setup(props, { emit }) {
     async function removeSetGroup(setGroupId) {
       await SetGroupService.delete(setGroupId);
       emit("reloadData");

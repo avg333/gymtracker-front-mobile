@@ -83,6 +83,13 @@
     "deleteWorkout": "Remove workout",
     "notLogged": "Please log in to use the app"
   },
+  "loadType": {
+    "bar": "Bar",
+    "dumbbell": "Dumbbell",
+    "cable": "Cable",
+    "machine": "Machine",
+    "multipower": "Smith"
+  },
   "muscleSupGroup": {
     "103": "Chest",
     "104": "Back",
@@ -107,5 +114,21 @@
     "121": "Hamstrings",
     "122": "Glute",
     "123": "Calves"
+  },
+  "muscleSubGroup": {
+    "124": "Upper",
+    "125": "Lower",
+    "126": "Middle",
+    "127": "Upper",
+    "128": "Middle",
+    "129": "Lower",
+    "130": "Lateral head",
+    "131": "Long head",
+    "132": "Medial head",
+    "133": "Maximus",
+    "134": "Medius",
+    "135": "Minimus",
+    "136": "Soleus",
+    "137": "Gastrocnemius"
   }
 }

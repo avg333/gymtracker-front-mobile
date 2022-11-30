@@ -3,7 +3,9 @@
     <div class="bg-black text-white">
       <q-toolbar>
         <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-        <q-toolbar-title> {{ muscleGroup.name }} </q-toolbar-title>
+        <q-toolbar-title>
+          {{ $t("muscleGroup." + $route.params.muscleGroupId) }}
+        </q-toolbar-title>
         <q-space />
         <q-btn-group flat>
           <q-btn flat dense round icon="add" />
@@ -51,7 +53,7 @@
             {{ $t("muscleGroupPages.filter.unilateral") }}
           </q-chip>
           <q-chip
-            v-for="muscleSubGroup in muscleSubGroups"
+            v-for="muscleSubGroup in muscleGroup.muscleSubGroups"
             :key="muscleSubGroup.name"
             color="red"
             square
@@ -122,9 +124,9 @@ export default defineComponent({
   components: { ExerciseCard },
   setup() {
     const loadTypes = ref([]);
-    const muscleSubGroups = ref([]);
     const exercises = ref([]);
     const muscleGroup = reactive({});
+
     const workout = reactive({});
     const setGroup = reactive({
       id: null,
@@ -153,11 +155,6 @@ export default defineComponent({
       MuscleGroupService.getMuscleGroup(muscleGroupId).then((res) => {
         for (const key of Object.keys(res)) muscleGroup[key] = res[key];
       });
-      MuscleGroupService.getAllMuscleGroupMuscleSubGroups(muscleGroupId).then(
-        (res) => {
-          muscleSubGroups.value = res;
-        }
-      );
       loadExercises();
       if (setGroupId) {
         SetGroupService.getById(setGroupId).then((res) => {
@@ -202,7 +199,6 @@ export default defineComponent({
 
     return {
       loadTypes,
-      muscleSubGroups,
       exercises,
       muscleGroup,
       workout,

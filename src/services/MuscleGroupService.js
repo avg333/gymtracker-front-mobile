@@ -1,23 +1,14 @@
 import { api } from "src/boot/axios";
 
 class MuscleGroupService {
-  async getAll(muscleSupGroupId) {
-    //Implementar sistema de filtros
-    try {
-      const res = await api.get("muscleSupGroups/" + muscleSupGroupId + "/muscleGroups")
-      return res.data
-    } catch (error) {
-      console.error("Error al obtener todos los programas con los filtros: " + muscleSupGroupId + ". Error: " + error)
-      return []
-    }
-  }
-
+  // Muscle Sup Group
   async getAllMuscleSupGroups() {
     try {
       const res = await api.get("muscleSupGroups")
       return res.data
     } catch (error) {
-      console.error("Error al obtener el programa. Error: " + error)
+      console.error("Error al obtener todos los muscleSupGroups. Error: ", error)
+      return []
     }
   }
 
@@ -26,7 +17,19 @@ class MuscleGroupService {
       const res = await api.get("muscleSupGroups/" + muscleSupGroupId)
       return res.data
     } catch (error) {
-      console.error("Error al obtener el programa. Error: " + error)
+      console.error("Error al obtener el muscleSupGroup con ID=" + muscleSupGroupId + ". Error: ", error)
+      return {}
+    }
+  }
+
+  // Muscle Group
+  async getAllMuscleSupGroupMuscleGroups(muscleSupGroupId) { // NO SE USA
+    try {
+      const res = await api.get("muscleSupGroups/" + muscleSupGroupId + "/muscleGroups")
+      return res.data
+    } catch (error) {
+      console.error("Error al obtener todos los muscleGroups del muscleSupGroup=" + muscleSupGroupId + ". Error: ", error)
+      return []
     }
   }
 
@@ -35,16 +38,19 @@ class MuscleGroupService {
       const res = await api.get("muscleGroups/" + muscleGroupId)
       return res.data
     } catch (error) {
-      console.error("Error al obtener el programa. Error: " + error)
+      console.error("Error al obtener el muscleGroup con ID=" + muscleGroupId + ". Error: ", error)
+      return {}
     }
   }
 
-  async getAllMuscleGroupMuscleSubGroups(programId) {
+  // Muscle Sub Group
+  async getAllMuscleGroupMuscleSubGroups(muscleGroupId) { // NO SE USA
     try {
-      const res = await api.get("muscleGroups/" + programId + "/muscleSubGroups")
+      const res = await api.get("muscleGroups/" + muscleGroupId + "/muscleSubGroups")
       return res.data
     } catch (error) {
-      console.error("Error al obtener el programa con ID: " + programId + ". Error: " + error)
+      console.error("Error al obtener todos los muscleSubGroups del muscleGroup=" + muscleGroupId + ". Error: ", error)
+      return []
     }
   }
 

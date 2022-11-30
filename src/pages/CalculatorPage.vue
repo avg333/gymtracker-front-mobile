@@ -6,18 +6,13 @@
         <q-toolbar-title> {{ $t("calculator.title") }} </q-toolbar-title>
       </q-toolbar>
       <q-toolbar>
-        <div class="row opciones">
-          <q-tabs
-            v-model="slide"
-            class="opciones text-white bg-black"
-            inline-label
-          >
-            <q-tab name="rm" :label="$t('calculator.rm')" />
-            <q-tab name="plate" :label="$t('calculator.plate')" />
-          </q-tabs>
-        </div>
+        <q-tabs v-model="slide" inline-label class="opciones">
+          <q-tab name="rm" :label="$t('calculator.rm')" />
+          <q-tab name="plate" :label="$t('calculator.plate')" />
+        </q-tabs>
       </q-toolbar>
     </div>
+
     <q-carousel
       v-model="slide"
       transition-prev="slide-right"

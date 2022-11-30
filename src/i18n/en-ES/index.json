@@ -83,6 +83,13 @@
     "deleteWorkout": "Eliminar entrenamiento",
     "notLogged": "Inicie sesión para usar la aplicación"
   },
+  "loadType": {
+    "bar": "Barra",
+    "dumbbell": "Mancuernas",
+    "cable": "Cable",
+    "machine": "Máquina",
+    "multipower": "Multipower"
+  },
   "muscleSupGroup": {
     "103": "Pectoral",
     "104": "Espalda",
@@ -107,5 +114,21 @@
     "121": "Femorales",
     "122": "Glúteos",
     "123": "Gemelos"
+  },
+  "muscleSubGroup": {
+    "124": "Superior",
+    "125": "Inferior",
+    "126": "Medio",
+    "127": "Superior",
+    "128": "Medio",
+    "129": "Inferior",
+    "130": "Cabeza lateral",
+    "131": "Cabeza larga",
+    "132": "Cabeza media",
+    "133": "Máximo",
+    "134": "Medio",
+    "135": "Mínimo",
+    "136": "Soleo",
+    "137": "Gastrocnemio"
   }
 }
