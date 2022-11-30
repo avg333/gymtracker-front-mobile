@@ -1,4 +1,7 @@
 {
+  "programs": {
+    "title": "PROGRAMAS"
+  },
   "muscleGroupPages": {
     "exercises": "Ejercicios",
     "addExerciseToWorkout": "Añadir al entrenamiento del {date}",
@@ -20,6 +23,7 @@
       "delete": "ELIMINAR",
       "cancel": "CANCELAR",
       "save": "GUARDAR",
+      "add": "AÑADIR",
       "warmup": "WARMUP"
     }
   },
@@ -78,5 +82,30 @@
     "moveWorkout": "Mover entrenamiento",
     "deleteWorkout": "Eliminar entrenamiento",
     "notLogged": "Inicie sesión para usar la aplicación"
+  },
+  "muscleSupGroup": {
+    "103": "Pectoral",
+    "104": "Espalda",
+    "105": "Hombros",
+    "106": "Brazos",
+    "107": "Core",
+    "108": "Piernas"
+  },
+  "muscleGroup": {
+    "109": "Pectoral",
+    "110": "Dorsales",
+    "111": "Trapecios",
+    "112": "Hombro anterior",
+    "113": "Hombro lateral",
+    "114": "Hombro posterior",
+    "115": "Antebrazos",
+    "116": "Bíceps",
+    "117": "Tríceps",
+    "118": "Abdominales",
+    "119": "Espalda baja",
+    "120": "Cuádriceps",
+    "121": "Femorales",
+    "122": "Glúteos",
+    "123": "Gemelos"
   }
 }

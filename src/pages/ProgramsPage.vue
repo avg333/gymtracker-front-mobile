@@ -2,7 +2,7 @@
   <q-page>
     <q-toolbar class="bg-black text-white">
       <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-      <q-toolbar-title> Programs </q-toolbar-title>
+      <q-toolbar-title> {{ $t("programs.title") }} </q-toolbar-title>
       <q-space />
       <q-btn-group flat>
         <q-btn flat dense round icon="add" />
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { defineComponent, onBeforeMount, reactive, ref } from "vue";
+import { defineComponent, onBeforeMount, ref } from "vue";
 import { useLoginStore } from "stores/login-store";
 import ProgramCard from "src/components/cards/ProgramCard.vue";
 import ProgramService from "src/services/ProgramService";
@@ -31,7 +31,6 @@ export default defineComponent({
     const useStore = useLoginStore();
     onBeforeMount(async () => {
       const total = await ProgramService.countAll(useStore.getUserId);
-
       ProgramService.getAll(useStore.getUserId, 0, total).then((res) => {
         programs.value = res;
       });

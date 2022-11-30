@@ -126,7 +126,7 @@
             :key="index"
             :class="'text-' + getMuscleGroupColour(muscle)"
           >
-            {{ muscle.name.toUpperCase() }}
+            {{ $t("muscleGroup." + muscle.id).toUpperCase() }}
             {{ muscle.volume }}
             {{ index + 1 !== workout.muscleGroupDtos.length ? " - " : "" }}
           </strong>

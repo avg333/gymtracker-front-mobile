@@ -7,7 +7,7 @@
         </q-icon>
       </div>
       <div class="col-10">
-        {{ muscleGroup.name }}
+        {{ $t("muscleGroup." + muscleGroup.id) }}
       </div>
     </div>
     <q-separator />
