@@ -33,6 +33,16 @@ class MuscleGroupService {
     }
   }
 
+  async getAllMuscleGroups() {
+    try {
+      const res = await api.get("muscleGroups")
+      return res.data
+    } catch (error) {
+      console.error("Error al obtener todos los muscleGroups. Error: ", error)
+      return []
+    }
+  }
+
   async getMuscleGroup(muscleGroupId) {
     try {
       const res = await api.get("muscleGroups/" + muscleGroupId)

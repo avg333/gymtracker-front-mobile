@@ -52,9 +52,14 @@ export default {
     const $q = useQuasar();
     async function login() {
       const res = await store.login(username.value, password.value);
-      if (res) {
+      if (res === 200) {
         router.back();
-      } else {
+      } else if (res === 404) {
+        $q.notify({
+          message: "El usuario no existe",
+          color: "negative",
+        });
+      } else if (res === 401) {
         $q.notify({
           message: "La combinación de usuario y contraseña no existe",
           color: "negative",

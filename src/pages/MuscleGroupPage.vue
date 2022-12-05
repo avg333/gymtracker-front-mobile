@@ -15,7 +15,7 @@
         <span>
           {{
             $t("muscleGroupPages.replaceExerciseInWorkout", {
-              exerciseName: setGroup.exerciseDto?.name,
+              exerciseName: setGroup.exercise?.name,
             })
           }}
         </span>
@@ -54,7 +54,7 @@
           </q-chip>
           <q-chip
             v-for="muscleSubGroup in muscleGroup.muscleSubGroups"
-            :key="muscleSubGroup.name"
+            :key="muscleSubGroup.id"
             color="red"
             square
             clickable
@@ -132,10 +132,9 @@ export default defineComponent({
       id: null,
       description: null,
       listOrder: -1,
-      exerciseId: null,
-      sessionId: null,
-      workoutId: null,
-      exerciseDto: {},
+      session: {},
+      workout: {},
+      exercise: {},
     });
     const filter = reactive({
       selectedFav: false,
@@ -163,7 +162,7 @@ export default defineComponent({
       }
       if (workoutId) {
         WorkoutService.getById(workoutId).then((res) => {
-          for (const key of Object.keys(res)) workout[key] = res[key];
+          for (const key of Object.keys(res)) workout[key] = res[key]; //FIXME Cambiar por =
         });
       }
     });
@@ -184,11 +183,11 @@ export default defineComponent({
 
     const router = useRouter();
     async function addExercise(exerciseId) {
-      setGroup.exerciseId = exerciseId;
+      setGroup.exercise.id = exerciseId;
       if (setGroup.id) {
         await SetGroupService.update(setGroup.id, setGroup);
       } else {
-        setGroup.workoutId = workoutId;
+        setGroup.workout.id = workoutId;
         await SetGroupService.createInWorkout(workoutId, setGroup);
       }
       router.push({

@@ -3,16 +3,6 @@ import { api } from "src/boot/axios";
 const API = "workouts"
 
 class WorkoutService {
-  async getAllDatesFromUser(userId, filter) {
-    try {
-      const res = await api.get("users/" + userId + "/workouts/dates")
-      return res.data
-    } catch (error) {
-      console.error("Error al obtener todos los programas con los filtros: " + filter + ". Error: " + error)
-      return []
-    }
-  }
-
   async getAllFromUser(userId, filter) {
     try {
       const res = await api.get("users/" + userId + "/workouts")

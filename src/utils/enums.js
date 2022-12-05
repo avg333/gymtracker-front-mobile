@@ -1,45 +1,45 @@
 export const MuscleGroupEnum = Object.freeze({
-  CHEST: { id: 109 },
-  LATS: { id: 110 },
-  TRAPEZIOUS: { id: 111 },
-  SHOULDER_ANTERIOR: { id: 112 },
-  SHOULDER_LATERAL: { id: 113 },
-  SHOULDER_POSTERIOR: { id: 114 },
-  FOREARMS: { id: 115 },
-  BICEPS: { id: 116 },
-  TRICEPS: { id: 117 },
-  ABS: { id: 118 },
-  LOWER_BACK: { id: 119 },
-  QUADRICEPS: { id: 120 },
-  HAMSTRINGS: { id: 121 },
-  GLUTE: { id: 122 },
-  CALVES: { id: 123 }
+  CHEST: { id: 1 },
+  LATS: { id: 2 },
+  TRAPEZIOUS: { id: 3 },
+  SHOULDER_ANTERIOR: { id: 4 },
+  SHOULDER_LATERAL: { id: 5 },
+  SHOULDER_POSTERIOR: { id: 6 },
+  FOREARMS: { id: 7 },
+  BICEPS: { id: 8 },
+  TRICEPS: { id: 9 },
+  ABS: { id: 10 },
+  LOWER_BACK: { id: 11 },
+  QUADRICEPS: { id: 12 },
+  HAMSTRINGS: { id: 13 },
+  GLUTE: { id: 14 },
+  CALVES: { id: 15 }
 })
 
 export const MuscleSupGroupEnum = Object.freeze({
-  CHEST: { id: 103 },
-  BACK: { id: 104 },
-  SHOULDERS: { id: 105 },
-  ARMS: { id: 106 },
-  CORE: { id: 107 },
-  LEGS: { id: 108 }
+  CHEST: { id: 1 },
+  BACK: { id: 2 },
+  SHOULDERS: { id: 3 },
+  ARMS: { id: 4 },
+  CORE: { id: 5 },
+  LEGS: { id: 6 }
 })
 
 export const MuscleSubGroupEnum = Object.freeze({
-  CHEST_UPP: { id: 124 },
-  CHEST_LOW: { id: 125 },
-  CHEST_MID: { id: 126 },
-  TRAPS_UPP: { id: 127 },
-  TRAPS_MID: { id: 128 },
-  TRAPS_LOW: { id: 129 },
-  TRICEPS_LAT: { id: 130 },
-  TRICEPS_LONG: { id: 131 },
-  TRICEPS_MED: { id: 132 },
-  GLUTE_MAX: { id: 133 },
-  GLUTE_MED: { id: 134 },
-  GLUTE_MIN: { id: 135 },
-  CALVES_SOLE: { id: 136 },
-  CALVES_GAST: { id: 137 }
+  CHEST_UPP: { id: 1 },
+  CHEST_LOW: { id: 2 },
+  CHEST_MID: { id: 3 },
+  TRAPS_UPP: { id: 4 },
+  TRAPS_MID: { id: 5 },
+  TRAPS_LOW: { id: 6 },
+  TRICEPS_LAT: { id: 7 },
+  TRICEPS_LONG: { id: 8 },
+  TRICEPS_MED: { id: 9 },
+  GLUTE_MAX: { id: 10 },
+  GLUTE_MED: { id: 11 },
+  GLUTE_MIN: { id: 12 },
+  CALVES_SOLE: { id: 13 },
+  CALVES_GAST: { id: 14 }
 })
 
 export const ActivityLevelEnum = Object.freeze({

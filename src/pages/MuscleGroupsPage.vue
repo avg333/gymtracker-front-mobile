@@ -15,7 +15,7 @@
         <span>
           {{
             $t("muscleGroupPages.replaceExerciseInWorkout", {
-              exerciseName: setGroup.exerciseDto?.name,
+              exerciseName: setGroup.exercise?.name,
             })
           }}
         </span>
@@ -79,7 +79,7 @@ export default defineComponent({
       }
       if (workoutId) {
         WorkoutService.getById(workoutId).then((res) => {
-          for (const key of Object.keys(res)) workout[key] = res[key];
+          for (const key of Object.keys(res)) workout[key] = res[key]; //FIXME Cambiar por =
         });
       }
     });

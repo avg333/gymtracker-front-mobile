@@ -1,10 +1,17 @@
 <template>
   <div class="row items-center ppal">
     <div class="col-auto">
-      <q-btn flat dense round :to="'/exercises/' + setGroup.exerciseId">
-        <q-icon size="lg" v-if="setGroup?.exerciseDto?.muscleGroups?.length">
+      <q-btn flat dense round :to="'/exercises/' + setGroup.exercise.id">
+        <q-icon
+          size="lg"
+          v-if="setGroup?.exercise?.muscleGroupExercises?.length"
+        >
           <img
-            :src="getMuscleGroupIco(setGroup.exerciseDto.muscleGroups[0])"
+            :src="
+              getMuscleGroupIco(
+                setGroup.exercise.muscleGroupExercises[0].muscleGroup
+              )
+            "
             alt="?"
           />
         </q-icon>
@@ -14,7 +21,7 @@
     <div class="col">
       <div class="row items-center">
         <div class="col-10">
-          <strong>{{ setGroup?.exerciseDto?.name.toUpperCase() }}</strong>
+          <strong>{{ setGroup?.exercise?.name.toUpperCase() }}</strong>
         </div>
 
         <div class="col-2 text-right">
@@ -63,14 +70,14 @@
         <div
           class="col-auto bg-grey-4 scndary"
           :class="Math.round(set.rir) > 3 && 'text-grey'"
-          v-for="set in setGroup.setDtoList"
-          :key="set.listOrder"
+          v-for="set in setGroup.sets"
+          :key="set.id"
           @click="
             $emit('showSetModal', {
               setId: set.id,
               setGroupId: setGroup.id,
-              setsSize: setGroup.setDtoList.length,
-              exerciseId: setGroup.exerciseId,
+              setsSize: setGroup.sets.length,
+              exerciseId: setGroup.exercise.id,
             })
           "
         >
@@ -104,8 +111,8 @@
               $emit('showSetModal', {
                 setId: null,
                 setGroupId: setGroup.id,
-                setsSize: setGroup.setDtoList.length,
-                exerciseId: setGroup.exerciseId,
+                setsSize: setGroup.sets.length,
+                exerciseId: setGroup.exercise.id,
               })
             "
           />
@@ -120,7 +127,7 @@ import SetGroupService from "src/services/SetGroupService";
 export default {
   props: { setGroup: Object },
   emits: ["showSetModal", "reloadData"],
-  setup(props, { emit }) {
+  setup(_, { emit }) {
     async function removeSetGroup(setGroupId) {
       await SetGroupService.delete(setGroupId);
       emit("reloadData");

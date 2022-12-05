@@ -71,15 +71,23 @@
       </div>
     </div>
 
-    <div class="row text-center" v-if="exercise?.muscleGroups">
+    <div class="row text-center" v-if="exercise?.muscleGroupExercises">
       <div class="col-12">
         <strong
-          v-for="(muscle, index) in exercise.muscleGroups"
-          :key="index"
-          :class="'text-' + getMuscleGroupColour(muscle)"
+          v-for="(muscleGroupExercises, index) in exercise.muscleGroupExercises"
+          :key="muscleGroupExercises.muscleGroup.id"
+          :class="
+            'text-' + getMuscleGroupColour(muscleGroupExercises.muscleGroup)
+          "
         >
-          {{ $t("muscleGroup." + muscle.id).toUpperCase() }}
-          {{ index + 1 !== exercise.muscleGroups.length ? " - " : "" }}
+          {{
+            $t(
+              "muscleGroup." + muscleGroupExercises.muscleGroup.id
+            ).toUpperCase()
+          }}
+          -
+          {{ muscleGroupExercises.weight }}
+          {{ index + 1 !== exercise.muscleGroupExercises.length ? " - " : "" }}
         </strong>
       </div>
     </div>
@@ -87,10 +95,10 @@
     <div class="row text-center" v-if="exercise?.muscleSubGroups">
       <div class="col-12">
         <strong
-          v-for="(muscle, index) in exercise.muscleSubGroups"
-          :key="index"
+          v-for="(muscleSubGroup, index) in exercise.muscleSubGroups"
+          :key="muscleSubGroup.id"
         >
-          {{ $t("muscleSubGroup." + muscle.id).toUpperCase() }}
+          {{ $t("muscleSubGroup." + muscleSubGroup.id).toUpperCase() }}
           {{ index + 1 !== exercise.muscleSubGroups.length ? " - " : "" }}
         </strong>
       </div>

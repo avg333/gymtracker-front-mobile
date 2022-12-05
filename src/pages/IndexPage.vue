@@ -138,7 +138,7 @@
           <SetGroupCard
             class="bg-grey-1"
             v-for="setGroup in setGroups"
-            :key="setGroup.listOrder"
+            :key="setGroup.id"
             :setGroup="setGroup"
             @showSetModal="showSetModal"
             @reloadData="getSets"

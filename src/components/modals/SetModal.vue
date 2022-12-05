@@ -111,9 +111,9 @@
       </div>
     </q-card-section>
     <q-card-actions>
-      <q-btn flat v-if="setId" @click="deleteSet">{{
-        $t("modal.setModal.delete")
-      }}</q-btn>
+      <q-btn flat v-if="setId" @click="deleteSet">
+        {{ $t("modal.setModal.delete") }}
+      </q-btn>
       <q-space />
       <q-btn flat v-close-popup>{{ $t("modal.setModal.cancel") }}</q-btn>
       <q-btn flat @click="saveSet" class="text-positive">

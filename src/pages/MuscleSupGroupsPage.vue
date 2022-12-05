@@ -1,4 +1,8 @@
 <template>
+  <q-dialog v-model="exerciseModal.visible">
+    <ExerciseModal @closeModal="exerciseModal.visible = false" />
+  </q-dialog>
+
   <q-page>
     <div class="bg-black text-white">
       <q-toolbar>
@@ -8,14 +12,20 @@
         </q-toolbar-title>
         <q-space />
         <q-btn-group flat>
-          <q-btn flat dense round icon="add" />
+          <q-btn
+            flat
+            dense
+            round
+            icon="add"
+            @click="exerciseModal.visible = true"
+          />
         </q-btn-group>
       </q-toolbar>
       <q-toolbar v-if="setGroup.id">
         <span>
           {{
             $t("muscleGroupPages.replaceExerciseInWorkout", {
-              exerciseName: setGroup.exerciseDto?.name,
+              exerciseName: setGroup.exercise?.name,
             })
           }}
         </span>
@@ -48,14 +58,17 @@
 import moment from "moment";
 import { defineComponent, ref, reactive, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
+import ExerciseModal from "src/components/modals/ExerciseModal.vue";
 import MuscleSupGroupCard from "src/components/cards/MuscleSupGroupCard.vue";
 import MuscleGroupService from "src/services/MuscleGroupService";
 import SetGroupService from "src/services/SetGroupService";
 import WorkoutService from "src/services/WorkoutService";
 export default defineComponent({
   name: "MuscleSupGroupsPage",
-  components: { MuscleSupGroupCard },
+  components: { MuscleSupGroupCard, ExerciseModal },
   setup() {
+    const exerciseModal = reactive({ visible: false });
+
     const muscleSupGroups = ref([]);
     const setGroup = reactive({});
     const workout = reactive({});
@@ -74,12 +87,12 @@ export default defineComponent({
       }
       if (workoutId) {
         WorkoutService.getById(workoutId).then((res) => {
-          for (const key of Object.keys(res)) workout[key] = res[key];
+          for (const key of Object.keys(res)) workout[key] = res[key]; //FIXME Cambiar por =
         });
       }
     });
 
-    return { muscleSupGroups, setGroup, workout, moment };
+    return { exerciseModal, muscleSupGroups, setGroup, workout, moment };
   },
 });
 </script>

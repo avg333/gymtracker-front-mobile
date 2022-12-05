@@ -13,6 +13,7 @@ class LoginService {
       return res.data;
     } catch (error) {
       console.error("Error al intentar logear al usuario: " + username + ". Error: " + error)
+      throw (error.response.status)
     }
   }
 

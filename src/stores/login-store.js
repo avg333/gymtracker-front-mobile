@@ -5,7 +5,7 @@ export const useLoginStore = defineStore("login", {
   state: () => ({
     userId: 0,
     userName: "",
-    jwtType: "Bearer ",
+    jwtType: "Bearer",
     jwt: "",
     logged: false
   }),
@@ -31,10 +31,10 @@ export const useLoginStore = defineStore("login", {
         this.userName = user.username;
         this.jwt = user.token;
         this.logged = true;
-        return true;
+        return 200;
       } catch (error) {
         console.error("Error al intentar realizar el login. Userdata: " + userName + ". Error:" + error)
-        return false;
+        return error;
       }
     },
     async logout() {

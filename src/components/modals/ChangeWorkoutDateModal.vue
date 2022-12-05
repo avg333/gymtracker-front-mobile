@@ -71,7 +71,7 @@ export default {
         if (workoutBd) {
           date.value = moment(workoutBd.date).format("YYYY/MM/DD");
           for (const key of Object.keys(workoutBd))
-            workout[key] = workoutBd[key];
+            workout[key] = workoutBd[key]; //FIXME Cambiar por =
         }
       });
     });
