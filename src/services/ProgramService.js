@@ -34,7 +34,7 @@ class ProgramService {
 
   async create(userId, dataProgram) {
     try {
-      const res = await api.post(process.env.VUE_APP_BASE_URL_API + "users/" + userId + "/programs", dataProgram)
+      const res = await api.post("users/" + userId + "/programs", dataProgram)
       return res.data
     } catch (error) {
       console.error("Error al crear el programa con los datos: " + dataProgram + ". Error: " + error)

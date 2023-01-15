@@ -21,7 +21,7 @@
     <div class="col">
       <div class="row items-center">
         <div class="col-10">
-          <strong>{{ setGroup?.exercise?.name.toUpperCase() }}</strong>
+          <strong>{{ setGroup?.exercise?.name?.toUpperCase() }}</strong>
         </div>
 
         <div class="col-2 text-right">
@@ -121,21 +121,23 @@
     </div>
   </div>
 </template>
+
 <script>
 import { getMuscleGroupIco } from "src/utils/icoUtils";
 import SetGroupService from "src/services/SetGroupService";
 export default {
   props: { setGroup: Object },
-  emits: ["showSetModal", "reloadData"],
+  emits: ["showSetModal", "closeModal"],
   setup(_, { emit }) {
     async function removeSetGroup(setGroupId) {
       await SetGroupService.delete(setGroupId);
-      emit("reloadData");
+      emit("closeModal");
     }
     return { removeSetGroup, getMuscleGroupIco };
   },
 };
 </script>
+
 <style scoped>
 .ppal {
   border-radius: 7px !important;

@@ -35,15 +35,6 @@ class SetGroupService {
     }
   }
 
-  async create(dataSetGroup) {
-    try {
-      const res = await api.post(API, dataSetGroup)
-      return res.data
-    } catch (error) {
-      console.error("Error al crear la sesión con los datos: " + dataSetGroup + ". Error: " + error)
-    }
-  }
-
   async createInWorkout(workoutId, dataSetGroup) {
     try {
       const res = await api.post("workouts/" + workoutId + "/setGroups", dataSetGroup)

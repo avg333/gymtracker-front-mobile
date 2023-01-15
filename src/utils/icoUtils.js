@@ -15,6 +15,9 @@ import legsIco from "assets/mgs/mg-leg.png";
 import gluteoIco from "assets/mgs/mg-gluteo.png";
 
 export function getMuscleSupGroupIco(muscleSupGroup) {
+  if (!muscleSupGroup)
+    return
+
   switch (muscleSupGroup.id) {
     case MuscleSupGroupEnum.CHEST.id:
       return chestIco
@@ -34,6 +37,9 @@ export function getMuscleSupGroupIco(muscleSupGroup) {
 }
 
 export function getMuscleGroupIco(muscleGroup) {
+  if (!muscleGroup)
+    return
+
   switch (muscleGroup.id) {
     case MuscleGroupEnum.CHEST.id:
       return chestIco

@@ -10,6 +10,7 @@
         {{ $t("modal.changeWorkoutDate.to") }}
         <strong> {{ date }}</strong>
       </div>
+
       <q-date
         class="ancho"
         v-model="date"
@@ -23,10 +24,10 @@
           <span v-if="workoutDates.includes(date)">
             {{ $t("modal.changeWorkoutDate.existsWorkout") }}
           </span>
-          <span v-else>&nbsp;</span>
         </div>
       </div>
     </q-card-section>
+
     <q-card-actions>
       <q-space />
       <q-btn flat v-close-popup>

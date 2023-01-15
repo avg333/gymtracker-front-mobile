@@ -48,6 +48,24 @@ class WorkoutService {
       console.error("Error al eliminar el programa con ID: " + workoutId + ". Error: " + error)
     }
   }
+
+  async copyToDate(workoutId, date) {
+    try {
+      const res = await api.post("workouts/" + workoutId + "/copy", { date })
+      return res.data
+    } catch (error) {
+      console.error("Error al crear el programa con los datos: " + workoutId + ". Error: " + error)
+    }
+  }
+
+  async addSetGroupsToWorkoutFromWorkout(workoutDestinationId, workoutSourceId) {
+    try {
+      const res = await api.post("/workouts/" + workoutDestinationId + "/addSetGroupsFrom/workouts/" + workoutSourceId)
+      return res.data
+    } catch (error) {
+      console.error("Error al crear el programa con los datos: " + workoutDestinationId + ". Error: " + error)
+    }
+  }
 }
 
 export default new WorkoutService()

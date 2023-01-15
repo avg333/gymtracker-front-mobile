@@ -7,6 +7,7 @@ import MuscleSupGroupsPage from "src/pages/MuscleSupGroupsPage.vue"
 import MuscleGroupsPage from "src/pages/MuscleGroupsPage.vue"
 import MuscleGroupPage from "src/pages/MuscleGroupPage.vue"
 import ExercisePage from "pages/ExercisePage.vue"
+import CopyWorkout from "pages/CopyWorkout.vue"
 
 
 const routes = [
@@ -19,9 +20,10 @@ const routes = [
       { path: "muscleSupGroups/:muscleSupGroupId/muscleGroups/:muscleGroupId", component: MuscleGroupPage },
       { path: "exercises/:exerciseId", component: ExercisePage },
       { path: "login", component: LoginPage },
-      { path: "calculator", component: CalculatorPage },
+      { name: "calculator", path: "calculator", component: CalculatorPage },
       { path: "programs", component: ProgramsPage },
       { path: "programs/:programId/sessions", component: SessionsPage },
+      { path: "copyWorkout", component: CopyWorkout },
       { path: "", component: Index },
     ],
 

@@ -108,30 +108,8 @@
     </q-slide-transition>
 
     <div v-if="setGroups.length && isLogged">
-      <div class="row text-center text-grey">
-        <div class="col-12">
-          <span>
-            {{ workout.exerciseNumber || 0 }} {{ $t("tracker.exs") }}
-            {{ workout.setsNumber || 0 }} {{ $t("tracker.sets") }}
-            {{ workout.weightVolume || 0 }} {{ $t("tracker.kg") }}
-            {{ workout.duration || 0 }} {{ $t("tracker.mins") }}
-          </span>
-        </div>
-      </div>
-
-      <div class="row text-center">
-        <div class="col-12">
-          <strong
-            v-for="(muscle, index) in workout.muscleGroupDtos"
-            :key="index"
-            :class="'text-' + getMuscleGroupColour(muscle)"
-          >
-            {{ $t("muscleGroup." + muscle.id).toUpperCase() }}
-            {{ muscle.volume }}
-            {{ index + 1 !== workout.muscleGroupDtos.length ? " - " : "" }}
-          </strong>
-        </div>
-      </div>
+      <SummaryWo :workout="workout" />
+      <SummaryMuscleGroups :workout="workout" />
 
       <div class="row items-center">
         <div class="col-12">
@@ -141,7 +119,7 @@
             :key="setGroup.id"
             :setGroup="setGroup"
             @showSetModal="showSetModal"
-            @reloadData="getSets"
+            @closeModal="getSets"
           />
         </div>
       </div>
@@ -160,18 +138,7 @@
     </div>
 
     <q-page-sticky position="bottom-right" :offset="[18, 18]" v-if="isLogged">
-      <q-btn
-        v-if="workout.id"
-        fab
-        icon="add"
-        color="positive"
-        @click="
-          $router.push({
-            path: '/muscleSupGroups/',
-            query: { workoutId: workout.id },
-          })
-        "
-      />
+      <AddButton v-if="workout.id" :workoutId="workout.id" :date="date" />
       <q-btn v-else fab color="positive" @click="createWorkout">
         {{ $t("tracker.create") }}
       </q-btn>
@@ -180,7 +147,6 @@
 </template>
 
 <script>
-import { getMuscleGroupColour } from "src/utils/colourUtils";
 import { useQuasar } from "quasar";
 import moment from "moment";
 import {
@@ -199,9 +165,20 @@ import ChangeWorkoutDateModal from "components/modals/ChangeWorkoutDateModal.vue
 import SetModal from "components/modals/SetModal.vue";
 import WorkoutService from "src/services/WorkoutService";
 import SetGroupService from "src/services/SetGroupService";
+import SummaryWo from "src/components/tracker/summaryWo.vue";
+import SummaryMuscleGroups from "src/components/tracker/summaryMuscleGroups.vue";
+import AddButton from "src/components/tracker/addButton.vue";
 export default defineComponent({
   name: "IndexPage",
-  components: { LeftDrawner, SetGroupCard, SetModal, ChangeWorkoutDateModal },
+  components: {
+    LeftDrawner,
+    SetGroupCard,
+    SetModal,
+    ChangeWorkoutDateModal,
+    SummaryWo,
+    SummaryMuscleGroups,
+    AddButton,
+  },
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -319,7 +296,6 @@ export default defineComponent({
       createWorkout,
       removeWorkout,
       modalChangeDate,
-      getMuscleGroupColour,
       isLogged,
     };
   },

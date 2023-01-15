@@ -24,7 +24,18 @@
       "cancel": "CANCEL",
       "save": "SAVE",
       "add": "ADD",
-      "warmup": "WARMUP"
+      "warmup": "WARMUP",
+      "titleEdit": "Set Nº{setNumber} of {setsSize}",
+      "titleNew": "Set Nº{setsSize}",
+      "kg": "KG",
+      "rep": "REP",
+      "rir": "RIR"
+    },
+    "exercise": {
+      "delete": "DELETE",
+      "cancel": "CANCEL",
+      "save": "SAVE",
+      "add": "ADD"
     }
   },
   "card": {

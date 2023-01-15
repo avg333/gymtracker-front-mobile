@@ -24,9 +24,9 @@ class SetService {
     }
   }
 
-  async create(dataSet) {
+  async create(setGroupId, dataSet) {
     try {
-      const res = await api.post(API, dataSet)
+      const res = await api.post("setGroups/" + setGroupId + "/sets", dataSet)
       return res.data
     } catch (error) {
       console.error("Error al crear la sesión con los datos: " + dataSet + ". Error: " + error)

@@ -1,70 +1,106 @@
 <template>
   <q-card style="width: 400px">
-    <q-card-section>
-      <div class="row">
-        <div class="col-12">
-          <q-input v-model="exercise.name" label="Name" />
-          <q-select
-            v-model="exercise.loadType"
-            :options="loadTypes"
-            label="LoadType"
-          />
-          <q-input v-model="exercise.description" label="Description" />
-          <q-btn-toggle
-            v-model="exercise.unilateral"
-            class="my-custom-toggle"
-            no-caps
-            rounded
-            unelevated
-            toggle-color="primary"
-            color="white"
-            text-color="primary"
-            :options="[
-              { label: 'Bilateral', value: false },
-              { label: 'Unilateral', value: true },
-            ]"
-          />
-          <q-select
-            filled
-            v-model="exercise.muscleSubGroups"
-            multiple
-            :options="muscleSubGroups"
-            option-label="name"
-            label="MuscleSubGroups"
-          />
-          <q-btn flat dense round icon="add" @click="addMuscleGroup()" />
-          <div
-            class="row"
-            v-for="(
-              muscleGroupExercises, index
-            ) in exercise.muscleGroupExercises"
-            :key="index"
-          >
-            <div class="col-12">
-              <q-select
-                filled
-                v-model="exercise.muscleGroupExercises[index].muscleGroup"
-                :options="muscleGroups"
-                option-label="name"
-                label="MuscleGroups"
-              />
-              <q-input
-                v-model="exercise.muscleGroupExercises[index].weight"
-                label="Weight"
-              />
-            </div>
+    <q-form @submit="saveExercise">
+      <q-card-section>
+        <div class="row text-h6">
+          <div class="col-12">
+            {{ exerciseId ? `Editar ${exercise.name}` : `Nuevo ejercicio` }}
           </div>
         </div>
-      </div>
-    </q-card-section>
-    <q-card-actions>
-      <q-btn flat v-if="exerciseId" @click="deleteExercise"> Eliminar </q-btn>
-      <q-space />
-      <q-btn flat v-close-popup>Cancelar</q-btn>
-      <q-btn flat @click="saveExercise" class="text-positive">
-        {{ exerciseId ? "Guardar" : "Añadir" }}
-      </q-btn>
-    </q-card-actions>
+        <div class="row">
+          <div class="col-12">
+            <q-input
+              v-model="exercise.name"
+              label="Nombre *"
+              :rules="[
+                (val) =>
+                  (val && val.length > 10 && val.length < 100) ||
+                  'Must match password.',
+              ]"
+            />
+            <q-select
+              v-model="exercise.loadType"
+              :options="loadTypes"
+              label="Tipo de carga *"
+            />
+            <q-input v-model="exercise.description" label="Descripción" />
+            <q-btn-toggle
+              v-model="exercise.unilateral"
+              spread
+              no-caps
+              unelevated
+              :options="[
+                { label: 'Bilateral', value: false },
+                { label: 'Unilateral', value: true },
+              ]"
+            />
+            <q-select
+              filled
+              v-model="exercise.muscleSubGroups"
+              multiple
+              :options="muscleSubGroups"
+              option-label="name"
+              label="MuscleSubGroups"
+            />
+            <div
+              class="row"
+              v-for="(
+                muscleGroupExercises, index
+              ) in exercise.muscleGroupExercises"
+              :key="index"
+            >
+              <div class="col-10">
+                <q-select
+                  filled
+                  v-model="exercise.muscleGroupExercises[index].muscleGroup"
+                  :options="muscleGroups"
+                  option-label="name"
+                  label="MuscleGroups"
+                />
+                <q-input
+                  v-model="exercise.muscleGroupExercises[index].weight"
+                  label="Weight"
+                  type="number"
+                />
+              </div>
+              <div class="col-2">
+                <q-btn
+                  dense
+                  class="full-width"
+                  @click="exercise.muscleGroupExercises.splice(index, 1)"
+                >
+                  <q-icon name="remove" />
+                </q-btn>
+              </div>
+            </div>
+            <q-btn dense class="full-width" @click="addMuscleGroup()">
+              <div>Añadir Grupo Muscular</div>
+              <q-icon name="add" />
+            </q-btn>
+          </div>
+        </div>
+        <div class="password-criteria q-pa-sm">
+          <div class="text-subtitle2 q-mb-sm">Password Criteria:</div>
+          <div>
+            <q-icon name="cancel" color="negative" />
+            Must contain at least one symbol.
+          </div>
+        </div>
+      </q-card-section>
+
+      <q-card-actions>
+        <q-btn flat v-if="exerciseId" @click="deleteExercise">
+          {{ $t("modal.setModal.delete") }}
+        </q-btn>
+        <q-space />
+        <q-btn flat v-close-popup>{{ $t("modal.setModal.cancel") }}</q-btn>
+        <q-btn flat class="text-positive" type="submit">
+          {{
+            exerciseId ? $t("modal.setModal.save") : $t("modal.setModal.add")
+          }}
+        </q-btn>
+      </q-card-actions>
+    </q-form>
   </q-card>
 </template>
 
@@ -101,29 +137,42 @@ export default {
       MuscleGroupService.getAllMuscleGroups().then((res) => {
         muscleGroups.value = res;
       });
-      MuscleGroupService.getAllMuscleGroupMuscleSubGroups(1).then((res) => {
-        muscleSubGroups.value = res;
-      });
     });
 
-    function addMuscleGroup() {
-      exercise.muscleGroupExercises.push({
-        muscleGroup: null,
-        weight: null,
-        exercise: null,
-      });
-    }
-    /*
+    function reloadMuscleSubGroups() {}
+
     watchEffect(() => {
       muscleSubGroups.value = [];
       if (!exercise || !exercise.muscleGroupExercises.length) return;
-      for (const muscleGroup of exercise.muscleGroupExercises) {
-        MuscleGroupService.getAllMuscleGroupMuscleSubGroups(
-          muscleGroup.id
-        ).then((res) => muscleSubGroups.value.push(...res));
+      for (const muscleGroupId of exercise.muscleGroupExercises.map(
+        (mge) => mge.muscleGroup.id
+      )) {
+        if (muscleGroupId)
+          MuscleGroupService.getAllMuscleGroupMuscleSubGroups(
+            muscleGroupId
+          ).then((res) => muscleSubGroups.value.push(...res));
       }
     });
-    */
+
+    function validateName() {
+      if (!exercise.name) {
+        return false;
+      }
+      if (!exercise.name.length < 10) {
+        return false;
+      }
+      if (!exercise.name.length > 100) {
+        return false;
+      }
+    }
+
+    function addMuscleGroup() {
+      exercise.muscleGroupExercises.push({
+        muscleGroup: { name: "" },
+        exercise: {},
+        weight: 0,
+      });
+    }
 
     async function saveExercise() {
       props.exerciseId
@@ -139,12 +188,12 @@ export default {
 
     return {
       exercise,
-      muscleSubGroups,
-      muscleGroups,
       saveExercise,
       deleteExercise,
-      loadTypes,
       addMuscleGroup,
+      muscleGroups,
+      muscleSubGroups,
+      loadTypes,
     };
   },
 };
