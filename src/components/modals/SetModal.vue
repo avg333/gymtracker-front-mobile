@@ -37,7 +37,7 @@
         <div class="row items-center full-space q-col-gutter-sm">
           <div class="col-2 text-right">{{ $t("modal.setModal.kg") }}</div>
           <div class="col-6">
-            <q-input v-model="set.weight" type="number" autofocus />
+            <q-input v-model="set.weight" type="number" step="any" autofocus />
           </div>
           <div class="col-1">
             <IncrementSelect
@@ -105,7 +105,9 @@
 const rirOptions = [0, 0.5, 1, 2, 3, 4, 5];
 import moment from "moment";
 import { ref, reactive, onBeforeMount } from "vue";
+import { useLoginStore } from "stores/login-store";
 import SetService from "src/services/SetService";
+import SetGroupService from "src/services/SetGroupService";
 import ExerciseService from "src/services/ExerciseService";
 import IncrementDecrementButtons from "../IncrementDecrementButtons.vue";
 import IncrementSelect from "../IncrementSelect.vue";
@@ -138,6 +140,9 @@ export default {
         SetService.getById(props.setId).then((res) => {
           for (const key of Object.keys(res)) set[key] = res[key];
         });
+      else {
+        getLastTimeWeightAndReps();
+      }
     });
 
     async function saveSet() {
@@ -149,6 +154,26 @@ export default {
     async function deleteSet() {
       await SetService.delete(props.setId);
       emit("closeModal");
+    }
+
+    const useStore = useLoginStore();
+    function getLastTimeWeightAndReps() {
+      SetGroupService.getLastExerciseSetGroup(
+        useStore.getUserId,
+        props.exerciseId
+      ).then((setGroup) => {
+        if (
+          !setGroup ||
+          !setGroup.id ||
+          !setGroup.sets ||
+          setGroup.sets.length < props.setsSize + 1
+        ) {
+          return;
+        }
+        const setDb = setGroup.sets[props.setsSize];
+        set.reps = setDb.reps;
+        set.weight = setDb.weight;
+      });
     }
 
     const selectedIncrement = ref(2.5);

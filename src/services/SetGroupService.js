@@ -70,6 +70,15 @@ class SetGroupService {
       console.error("Error al eliminar la sesión con ID: " + idSetGroup + ". Error: " + error)
     }
   }
+
+  async getLastExerciseSetGroup(idUser, idExercise) {
+    try {
+      const res = await api.get("/users/" + idUser + "/exercises/" + idExercise + "/last")
+      return res.data
+    } catch (error) {
+      console.error("Error al obtener la sesión con ID: " + idExercise + ". Error: " + error)
+    }
+  }
 }
 
 export default new SetGroupService()

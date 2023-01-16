@@ -5,38 +5,18 @@
       <q-input v-model="weight" type="number" />
     </div>
     <div class="col-1">
-      <q-select
-        v-model="selectedIncrement"
-        :options="increments"
-        borderless
-        dropdown-icon=" "
+      <IncrementSelect
+        :selectedValue="selectedIncrement"
+        @changueSelectedIncrement="changueSelectedIncrement"
       />
     </div>
     <div class="col-3 text-center">
-      <q-btn-group flat>
-        <q-btn
-          flat
-          dense
-          round
-          icon="remove"
-          @click="
-            weight > 0 && weight - selectedIncrement.value > 0
-              ? (weight -= selectedIncrement.value)
-              : (weight = 0)
-          "
-        />
-        <q-btn
-          flat
-          dense
-          round
-          icon="add"
-          @click="
-            weight
-              ? (weight += selectedIncrement.value)
-              : (weight = selectedIncrement.value)
-          "
-        />
-      </q-btn-group>
+      <IncrementDecrementButtons
+        :numberValue="weight"
+        @increment="weight += selectedIncrement"
+        @decrement="weight -= selectedIncrement"
+        @setZero="weight = 0"
+      />
     </div>
   </div>
 
@@ -132,9 +112,16 @@
 </template>
 
 <script>
+const bars = [20, 15, 10, 5];
+const plates = [50, 25, 20, 15, 10, 5, 2.5, 1.25, 1, 0.5, 0.25, 0.125];
+const defaultSelectedBar = 20;
+const defaultSelectedPlates = [20, 15, 10, 5, 2.5, 1.25];
 import { ref, computed } from "vue";
+import IncrementSelect from "./IncrementSelect.vue";
+import IncrementDecrementButtons from "./IncrementDecrementButtons.vue";
 export default {
   name: "PlateCalculator",
+  components: { IncrementDecrementButtons, IncrementSelect, IncrementSelect },
   props: {
     defaultWeight: {
       type: Number,
@@ -142,41 +129,8 @@ export default {
   },
   setup(props) {
     const weight = ref(props.defaultWeight || 0);
-
-    const bars = [20, 15, 10, 5];
-    const plates = [50, 25, 20, 15, 10, 5, 2.5, 1.25, 1, 0.5, 0.25, 0.125];
-    const increments = [
-      {
-        label: "±0.25",
-        value: 0.25,
-      },
-      {
-        label: "±0.5",
-        value: 0.5,
-      },
-      {
-        label: "±1.0",
-        value: 1.0,
-      },
-      {
-        label: "±1.25",
-        value: 1.25,
-      },
-      {
-        label: "±2.5",
-        value: 2.5,
-      },
-      {
-        label: "±5.0",
-        value: 5.0,
-      },
-    ];
-    const selectedIncrement = ref({
-      label: "±0.25",
-      value: 0.25,
-    });
-    const selectedBar = ref(20);
-    const selectedPlates = ref([20, 15, 10, 5, 2.5, 1.25]);
+    const selectedBar = ref(defaultSelectedBar);
+    const selectedPlates = ref(defaultSelectedPlates);
 
     const neededPlates = computed(() =>
       getNeededPlates(weight.value, selectedBar.value, selectedPlates.value)
@@ -209,6 +163,11 @@ export default {
       return platosNecesarios;
     }
 
+    const selectedIncrement = ref(2.5);
+    function changueSelectedIncrement(value) {
+      selectedIncrement.value = value;
+    }
+
     return {
       weight,
       bars,
@@ -217,8 +176,8 @@ export default {
       selectedPlates,
       neededPlates,
       estimatedWeight,
-      increments,
       selectedIncrement,
+      changueSelectedIncrement,
     };
   },
 };

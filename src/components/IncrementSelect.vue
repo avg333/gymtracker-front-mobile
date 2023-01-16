@@ -6,16 +6,18 @@
     borderless
     dropdown-icon=" "
     @update:model-value="
-      $emit('changueSelectedIncrement', selectedIncrement.value)
+      changeSelectedIncrement();
+      $emit('changueSelectedIncrement', selectedIncrement.value);
     "
   />
 </template>
 <script>
 import { ref } from "vue";
+import { useSettingsStore } from "stores/settings-store";
 export default {
   props: { selectedValue: Number },
   emits: ["changueSelectedIncrement"],
-  setup(props) {
+  setup() {
     const increments = [
       {
         label: "±0.25",
@@ -42,13 +44,21 @@ export default {
         value: 5,
       },
     ];
+    const useStore = useSettingsStore();
     const selectedIncrement = ref(
-      increments.find((element) => element.value === props.selectedValue)
+      increments.find(
+        (element) => element.value === useStore.getSelectedIncrement
+      )
     );
+
+    function changeSelectedIncrement() {
+      useStore.setSelectedIncrement(selectedIncrement.value.value);
+    }
 
     return {
       selectedIncrement,
       increments,
+      changeSelectedIncrement,
     };
   },
 };

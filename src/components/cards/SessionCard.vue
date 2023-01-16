@@ -10,7 +10,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-12">&nbsp;</div>
+        <div class="col-12">{{ session.dayOfWeek }}</div>
       </div>
     </div>
   </div>

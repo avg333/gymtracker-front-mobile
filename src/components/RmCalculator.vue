@@ -6,24 +6,15 @@
     </div>
     <div class="col-1"></div>
     <div class="col-3 text-center">
-      <q-btn-group flat>
-        <q-btn
-          flat
-          dense
-          round
-          icon="remove"
-          @click="weight > 0 ? weight-- : (weight = 0)"
-        />
-        <q-btn
-          flat
-          dense
-          round
-          icon="add"
-          @click="weight ? weight++ : (weight = 1)"
-        />
-      </q-btn-group>
+      <IncrementDecrementButtons
+        :numberValue="weight"
+        @increment="weight += 1"
+        @decrement="weight -= 1"
+        @setZero="weight = 0"
+      />
     </div>
   </div>
+
   <div class="row items-center full-space q-col-gutter-sm">
     <div class="col-2 text-right">{{ $t("rmCalculator.rep") }}</div>
     <div class="col-6">
@@ -31,22 +22,12 @@
     </div>
     <div class="col-1"></div>
     <div class="col-3 text-center">
-      <q-btn-group flat>
-        <q-btn
-          flat
-          dense
-          round
-          icon="remove"
-          @click="reps > 0 ? reps-- : (reps = 0)"
-        />
-        <q-btn
-          flat
-          dense
-          round
-          icon="add"
-          @click="reps ? reps++ : (reps = 1)"
-        />
-      </q-btn-group>
+      <IncrementDecrementButtons
+        :numberValue="reps"
+        @increment="reps += 1"
+        @decrement="reps -= 1"
+        @setZero="reps = 0"
+      />
     </div>
   </div>
 
@@ -71,6 +52,7 @@
 
 <script>
 import { ref, computed } from "vue";
+import IncrementDecrementButtons from "./IncrementDecrementButtons.vue";
 export default {
   name: "RmCalculator",
   props: {
@@ -81,26 +63,23 @@ export default {
       type: Number,
     },
   },
+  components: { IncrementDecrementButtons },
   setup(props) {
     const weight = ref(props.defaultWeight || 0);
     const reps = ref(props.defaultReps || 0);
 
     const maxWeight = computed(() => weight.value * (1 + reps.value / 30));
     const calculators = computed(() => getCalculators(maxWeight.value));
-
     function getCalculators(maxPeso) {
       const calcs = [];
-
       for (let i = 1; i <= 15; i++) {
         const peso = Math.round(maxPeso / (1 + i / 30));
-
         calcs.push({
           reps: i,
           percentage: Math.round((peso / maxPeso) * 100),
           eww: peso,
         });
       }
-
       return calcs;
     }
 
