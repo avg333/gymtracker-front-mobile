@@ -3,24 +3,11 @@
     <LeftDrawner />
   </q-drawer>
 
-  <q-dialog v-model="setModalData.visible">
-    <SetModal
-      :setId="setModalData.setId"
-      :setGroupId="setModalData.setGroupId"
-      :setsSize="setModalData.setsSize"
-      :exerciseId="setModalData.exerciseId"
-      @closeModal="
-        getSets();
-        setModalData.visible = false;
-      "
-    />
-  </q-dialog>
-
   <q-dialog v-model="modalChangeDate">
     <ChangeWorkoutDateModal
       :workoutId="workout.id"
       @closeModal="
-        getWorkoutAndSets();
+        getWorkouts();
         modalChangeDate = false;
       "
     />
@@ -107,29 +94,11 @@
       </div>
     </q-slide-transition>
 
-    <div v-if="setGroups.length && isLogged">
-      <SummaryWo :workout="workout" />
-      <SummaryMuscleGroups :workout="workout" />
-
-      <div class="row items-center">
-        <div class="col-12">
-          <SetGroupCard
-            class="bg-grey-1"
-            v-for="setGroup in setGroups"
-            :key="setGroup.id"
-            :setGroup="setGroup"
-            @showSetModal="showSetModal"
-            @closeModal="getSets"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div v-else-if="isLogged" class="flex flex-center text-center q-pa-md">
-      <div>
-        <span> {{ $t("tracker.empty") }} </span>
-      </div>
-    </div>
+    <SetGroupsContainer
+      v-if="isLogged"
+      :workout="workout"
+      :showSummary="true"
+    />
 
     <div v-else class="flex flex-center text-center q-pa-md">
       <div>
@@ -160,24 +129,17 @@ import {
 import { useRoute, useRouter } from "vue-router";
 import { useLoginStore } from "stores/login-store";
 import LeftDrawner from "components/LeftDrawner.vue";
-import SetGroupCard from "components/cards/SetGroupCard.vue";
 import ChangeWorkoutDateModal from "components/modals/ChangeWorkoutDateModal.vue";
-import SetModal from "components/modals/SetModal.vue";
 import WorkoutService from "src/services/WorkoutService";
-import SetGroupService from "src/services/SetGroupService";
-import SummaryWo from "src/components/tracker/summaryWo.vue";
-import SummaryMuscleGroups from "src/components/tracker/summaryMuscleGroups.vue";
 import AddButton from "src/components/tracker/addButton.vue";
+import SetGroupsContainer from "src/components/tracker/SetGroupsContainer.vue";
 export default defineComponent({
   name: "IndexPage",
   components: {
     LeftDrawner,
-    SetGroupCard,
-    SetModal,
     ChangeWorkoutDateModal,
-    SummaryWo,
-    SummaryMuscleGroups,
     AddButton,
+    SetGroupsContainer,
   },
   setup() {
     const route = useRoute();
@@ -194,17 +156,17 @@ export default defineComponent({
 
     const workoutDates = ref([]);
     const workout = reactive({ date: moment().format("YYYY/MM/DD") });
-    const setGroups = ref([]);
 
     onBeforeMount(() => {
-      getWorkoutAndSets();
+      getWorkouts();
     });
 
     watchEffect(() => {
-      getWorkoutAndSets(date.value);
+      date.value;
+      getWorkouts();
     });
 
-    function getWorkoutAndSets() {
+    function getWorkouts() {
       if (!isLogged.value) return;
 
       WorkoutService.getAllFromUser(useStore.getUserId).then((res) => {
@@ -224,41 +186,15 @@ export default defineComponent({
           workout.id = null;
           workout.description = null;
           workout.date = moment(date.value).format("YYYY/MM/DD");
-          setGroups.value = [];
         }
-
-        getSets();
-      });
-    }
-
-    function getSets() {
-      if (workout.id) {
         router.replace({ query: { date: date.value } });
-        SetGroupService.getAllWorkoutSetGroups(workout.id).then((res) => {
-          setGroups.value = res;
-        });
-      }
-    }
-
-    const setModalData = reactive({
-      setId: null,
-      setGroupId: null,
-      setsSize: null,
-      exerciseId: null,
-      visible: false,
-    });
-    function showSetModal(data) {
-      setModalData.setId = data.setId;
-      setModalData.setGroupId = data.setGroupId;
-      setModalData.setsSize = data.setsSize;
-      setModalData.exerciseId = data.exerciseId;
-      setModalData.visible = true;
+      });
     }
 
     async function createWorkout() {
       workout.date = moment(date.value).format("YYYY-MM-DD");
       await WorkoutService.create(useStore.getUserId, workout);
-      getWorkoutAndSets();
+      getWorkouts();
     }
 
     const $q = useQuasar();
@@ -275,7 +211,7 @@ export default defineComponent({
       }).onOk(async () => {
         if (workout.id) {
           await WorkoutService.delete(workout.id);
-          getWorkoutAndSets();
+          getWorkouts();
         }
       });
     }
@@ -286,12 +222,8 @@ export default defineComponent({
       date,
       workoutDates,
       leftDrawerOpen,
-      setGroups,
-      showSetModal,
-      setModalData,
       workout,
-      getWorkoutAndSets,
-      getSets,
+      getWorkouts,
       moment,
       createWorkout,
       removeWorkout,

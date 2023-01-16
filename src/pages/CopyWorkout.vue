@@ -9,7 +9,7 @@
           dense
           round
           icon="today"
-          :disabled="!setGroups || !setGroups.length"
+          :disabled="!workout || (workout && !workout.id)"
           @click="copiarEntreno"
         >
           Copiar
@@ -46,21 +46,11 @@
       </div>
     </q-slide-transition>
 
-    <div class="row items-center" v-if="setGroups && setGroups.length">
-      <div class="col-12">
-        <SetGroupCard
-          class="bg-grey-1"
-          v-for="setGroup in setGroups"
-          :key="setGroup.id"
-          :setGroup="setGroup"
-        />
-      </div>
-    </div>
-    <div v-else class="flex flex-center text-center q-pa-md">
-      <div>
-        <span> {{ $t("tracker.empty") }} </span>
-      </div>
-    </div>
+    <SetGroupsContainer
+      :onlyRead="true"
+      :workout="workout"
+      :showSummary="true"
+    />
   </q-page>
 </template>
 
@@ -75,12 +65,11 @@ import {
 } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLoginStore } from "stores/login-store";
-import SetGroupCard from "components/cards/SetGroupCard.vue";
-import SetGroupService from "src/services/SetGroupService";
 import WorkoutService from "src/services/WorkoutService";
+import SetGroupsContainer from "src/components/tracker/SetGroupsContainer.vue";
 export default defineComponent({
   name: "MuscleGroupPage",
-  components: { SetGroupCard },
+  components: { SetGroupsContainer },
   setup() {
     const showCalendar = ref(true);
     const useStore = useLoginStore();
@@ -90,17 +79,17 @@ export default defineComponent({
 
     const workoutDates = ref([]);
     const workout = reactive({ date: moment().format("YYYY/MM/DD") });
-    const setGroups = ref([]);
 
     onBeforeMount(() => {
-      getWorkoutAndSets();
+      getWorkouts();
     });
 
     watchEffect(() => {
-      getWorkoutAndSets(date.value);
+      date.value;
+      getWorkouts();
     });
 
-    function getWorkoutAndSets() {
+    function getWorkouts() {
       WorkoutService.getAllFromUser(useStore.getUserId).then((res) => {
         workoutDates.value = res.map((wo) =>
           moment(wo.date).format("YYYY/MM/DD")
@@ -118,19 +107,8 @@ export default defineComponent({
           workout.id = null;
           workout.description = null;
           workout.date = moment(date.value).format("YYYY/MM/DD");
-          setGroups.value = [];
         }
-
-        getSets();
       });
-    }
-
-    function getSets() {
-      if (workout.id) {
-        SetGroupService.getAllWorkoutSetGroups(workout.id).then((res) => {
-          setGroups.value = res;
-        });
-      }
     }
 
     const route = useRoute();
@@ -146,7 +124,7 @@ export default defineComponent({
       });
     }
 
-    return { showCalendar, date, workoutDates, setGroups, copiarEntreno };
+    return { showCalendar, date, workout, workoutDates, copiarEntreno };
   },
 });
 </script>
