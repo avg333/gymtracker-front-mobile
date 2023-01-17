@@ -66,6 +66,15 @@ class WorkoutService {
       console.error("Error al crear el programa con los datos: " + workoutDestinationId + ". Error: " + error)
     }
   }
+
+  async getUserWorkoutsWithExercise(userId, exerciseId) {
+    try {
+      const res = await api.get("/users/" + userId + "/exercises/" + exerciseId + "/workouts")
+      return res.data
+    } catch (error) {
+      console.error("Error al crear el programa con los datos: " + workoutDestinationId + ". Error: " + error)
+    }
+  }
 }
 
 export default new WorkoutService()

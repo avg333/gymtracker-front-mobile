@@ -1,5 +1,8 @@
 <template>
-  <div class="row items-center ppal">
+  <div
+    class="row items-center ppal"
+    :class="exerciseId && exerciseId === setGroup.exercise.id && 'text-primary'"
+  >
     <div class="col-auto">
       <q-btn flat dense round :to="'/exercises/' + setGroup.exercise.id">
         <q-icon
@@ -25,9 +28,28 @@
         </div>
 
         <div class="col-2 text-right">
-          <q-btn flat dense round icon="more_vert">
+          <q-btn flat dense round icon="more_vert" v-if="!onlyRead">
             <q-menu>
               <q-list>
+                <q-item v-close-popup clickable>
+                  <q-item-section>
+                    <q-item-label
+                      @click="
+                        $router.push({
+                          path: '/copyWorkout/',
+                          query: {
+                            date,
+                            setGroupId: setGroup.id,
+                            exerciseId: setGroup.exercise.id,
+                          },
+                        })
+                      "
+                    >
+                      Last time
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+
                 <q-item v-close-popup clickable>
                   <q-item-section>
                     <q-item-label
@@ -102,6 +124,7 @@
         </div>
         <div class="col-auto">
           <q-btn
+            v-if="!onlyRead"
             class="text-grey"
             flat
             dense
@@ -126,7 +149,7 @@
 import { getMuscleGroupIco } from "src/utils/icoUtils";
 import SetGroupService from "src/services/SetGroupService";
 export default {
-  props: { setGroup: Object },
+  props: { setGroup: Object, onlyRead: Boolean, exerciseId: Number },
   emits: ["showSetModal", "closeModal"],
   setup(_, { emit }) {
     async function removeSetGroup(setGroupId) {

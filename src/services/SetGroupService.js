@@ -79,6 +79,15 @@ class SetGroupService {
       console.error("Error al obtener la sesión con ID: " + idExercise + ". Error: " + error)
     }
   }
+
+  async replaceSetGroupSetsWithSetGroup(setGroupDestinationId, setGroupSourceId) {
+    try {
+      const res = await api.post("/setGroups/" + setGroupDestinationId + "/replaceWith/setGroups/" + setGroupSourceId)
+      return res.data
+    } catch (error) {
+      console.error("Error al obtener la sesión con ID: " + idExercise + ". Error: " + error)
+    }
+  }
 }
 
 export default new SetGroupService()

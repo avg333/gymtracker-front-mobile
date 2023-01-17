@@ -1,16 +1,12 @@
 <template>
-  <div>
-    <div class="row bg-grey-1 items-center">
-      <div class="col-2">
-        <q-icon size="lg">
-          <img :src="getMuscleGroupIco(muscleGroup)" alt="?" />
-        </q-icon>
-      </div>
-      <div class="col-10">
-        {{ $t("muscleGroup." + muscleGroup.id) }}
-      </div>
-    </div>
-    <q-separator />
+  <div class="col-6">
+    <q-card class="my-card">
+      <q-img :src="getMuscleGroupIco(muscleGroup)">
+        <div class="absolute-bottom text-subtitle2 text-center">
+          {{ $t("muscleGroup." + muscleGroup.id) }}
+        </div>
+      </q-img>
+    </q-card>
   </div>
 </template>
 

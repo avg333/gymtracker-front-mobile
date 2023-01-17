@@ -30,21 +30,24 @@
         </span>
       </q-toolbar>
     </div>
-    <MuscleGroupCard
-      v-for="muscleGroup in muscleSupGroup.muscleGroups"
-      :key="muscleGroup.id"
-      :muscleGroup="muscleGroup"
-      @click="
-        $router.push({
-          path:
-            '/muscleSupGroups/' +
-            muscleSupGroup.id +
-            '/muscleGroups/' +
-            muscleGroup.id,
-          query: $route.query,
-        })
-      "
-    />
+
+    <div class="row">
+      <MuscleGroupCard
+        v-for="muscleGroup in muscleSupGroup.muscleGroups"
+        :key="muscleGroup.id"
+        :muscleGroup="muscleGroup"
+        @click="
+          $router.push({
+            path:
+              '/muscleSupGroups/' +
+              muscleSupGroup.id +
+              '/muscleGroups/' +
+              muscleGroup.id,
+            query: $route.query,
+          })
+        "
+      />
+    </div>
   </q-page>
 </template>
 

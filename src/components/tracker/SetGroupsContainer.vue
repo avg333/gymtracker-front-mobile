@@ -23,6 +23,8 @@
           v-for="setGroup in setGroups"
           :key="setGroup.id"
           :setGroup="setGroup"
+          :onlyRead="onlyRead"
+          :exerciseId="exerciseId"
           @showSetModal="showSetModal"
           @closeModal="getSets"
         />
@@ -51,7 +53,12 @@ import SummaryMuscleGroups from "./summaryMuscleGroups.vue";
 import SummaryWo from "./summaryWo.vue";
 import SetGroupService from "src/services/SetGroupService";
 export default {
-  props: { workout: Object, onlyRead: Boolean, showSummary: Boolean },
+  props: {
+    workout: Object,
+    onlyRead: Boolean,
+    showSummary: Boolean,
+    exerciseId: Number,
+  },
   components: { SetModal, SummaryWo, SummaryMuscleGroups, SetGroupCard },
   setup(props) {
     const setGroups = ref([]);
