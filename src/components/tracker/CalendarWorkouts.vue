@@ -5,7 +5,7 @@
         <q-date
           class="ancho"
           v-model="date"
-          :events="workoutDates"
+          :events="state.workoutDates"
           :years-in-month-view="true"
           minimal
           flat
@@ -16,11 +16,11 @@
 </template>
 
 <script>
-import { ref, reactive, onBeforeMount, watchEffect } from "vue";
+import { ref, reactive, onBeforeMount, watch } from "vue";
 import { useRouter } from "vue-router";
-import moment from "moment";
 import WorkoutService from "src/services/WorkoutService";
 import { useLoginStore } from "stores/login-store";
+import { dateToISO8601, dateToBars } from "../../utils/dateFormater";
 export default {
   props: {
     showCalendar: Boolean,
@@ -30,26 +30,26 @@ export default {
   },
   emits: ["updateDate", "updateWorkout"],
   setup(props, { emit, expose }) {
-    const today = moment().format("YYYY/MM/DD");
     const useStore = useLoginStore();
     const router = useRouter();
 
-    const date = ref(props.defaultDate ? props.defaultDate : today);
-    const workoutDates = ref([]);
-    let workoutDatesAux = [];
+    let workoutDatesAux = []; //TODO Eliminar esto cuando se sepa como
 
-    const workout = reactive({ date: today });
+    const date = ref(props.defaultDate ? props.defaultDate : dateToBars());
+    const workoutId = ref(null);
 
-    // Cuando se cambia la fecha, la actualiza en el padre
-    watchEffect(() => {
-      //router.replace({ query: { date: date.value } }); //FIXME Esto da problemas
+    const state = reactive({
+      workout: {},
+      workoutDates: [],
+    });
+
+    watch(date, () => {
       emit("updateDate", date.value);
       getDateWorkout(date.value);
     });
 
-    // Cuando se obtiene un workout, lo actualiza en el padre
-    watchEffect(() => {
-      emit("updateWorkout", workout);
+    watch(workoutId, () => {
+      emit("updateWorkout", state.workout);
     });
 
     onBeforeMount(() => {
@@ -61,23 +61,19 @@ export default {
     function getDateWorkout(workoutDate, force) {
       if (
         !force &&
-        !workoutDatesAux.find(
-          (woDate) => woDate == moment(workoutDate).format("YYYY/MM/DD")
-        )
+        !workoutDatesAux.find((woDate) => woDate == dateToBars(workoutDate))
       ) {
-        cleanWorkout();
+        state.workout = {};
+        workoutId.value = state.workout?.id;
         return;
       }
 
       WorkoutService.getWorkoutsByUserAndDate(
         useStore.getUserId,
-        moment(workoutDate).format("YYYY-MM-DD")
+        dateToISO8601(workoutDate)
       ).then((res) => {
-        if (res && res.length && res[0] && res[0].id) {
-          for (const key of Object.keys(res[0])) workout[key] = res[0][key];
-          return;
-        }
-        cleanWorkout();
+        state.workout = res?.length && res[0]?.id ? res[0] : {};
+        workoutId.value = state.workout?.id;
       });
     }
 
@@ -95,22 +91,14 @@ export default {
     }
 
     function processWorkoutDates(dates) {
-      if (dates && dates.length) {
-        workoutDatesAux = dates.map((tempDate) =>
-          moment(tempDate).format("YYYY/MM/DD")
-        );
-        workoutDates.value = workoutDatesAux;
-      }
+      workoutDatesAux = dates?.length
+        ? dates.map((tempDate) => dateToBars(tempDate))
+        : [];
+      state.workoutDates = workoutDatesAux;
     }
 
     function setDate(dateValue) {
       date.value = dateValue;
-    }
-
-    function cleanWorkout() {
-      workout.id = null;
-      workout.description = null;
-      workout.date = moment(date.value).format("YYYY/MM/DD");
     }
 
     expose({
@@ -119,7 +107,7 @@ export default {
       setDate,
     });
 
-    return { date, workoutDates };
+    return { state, date };
   },
 };
 </script>
