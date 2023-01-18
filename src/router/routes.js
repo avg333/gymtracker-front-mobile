@@ -7,7 +7,7 @@ import MuscleSupGroupsPage from "src/pages/MuscleSupGroupsPage.vue"
 import MuscleGroupsPage from "src/pages/MuscleGroupsPage.vue"
 import MuscleGroupPage from "src/pages/MuscleGroupPage.vue"
 import ExercisePage from "pages/ExercisePage.vue"
-import CopyWorkout from "pages/CopyWorkout.vue"
+import CopyWorkout from "src/pages/CopyFromWorkout.vue"
 
 
 const routes = [

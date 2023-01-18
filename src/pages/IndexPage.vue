@@ -1,126 +1,80 @@
 <template>
-  <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+  <q-drawer v-model="state.leftDrawerOpen" show-if-above bordered>
     <LeftDrawner />
   </q-drawer>
 
-  <q-dialog v-model="modalChangeDate">
+  <q-dialog v-model="state.modalChangeDate">
     <ChangeWorkoutDateModal
-      :workoutId="workout.id"
-      :initialDate="date"
+      :workoutId="state.workout?.id"
+      :initialDate="state.date"
       @closeModal="
         reloadWorkout();
         reloadWorkoutDates();
-        modalChangeDate = false;
+        state.modalChangeDate = false;
       "
     />
   </q-dialog>
 
   <q-page class="bg-grey-4">
-    <q-toolbar class="bg-black text-white">
-      <q-btn
-        flat
-        dense
-        round
-        icon="menu"
-        aria-label="Menu"
-        @click="leftDrawerOpen = !leftDrawerOpen"
-      />
-      <q-chip v-if="today === date" square class="text-white" color="positive">
-        <strong> {{ $t("tracker.today") }} </strong>
-      </q-chip>
-      <span v-else>
-        <strong>
-          {{ moment(date).format("DD MMM") }}
-        </strong>
-      </span>
-      <q-space />
-      <q-btn-group flat>
-        <q-btn
-          flat
-          dense
-          round
-          icon="today"
-          :disabled="today == date"
-          @click="setDate(moment().format('YYYY/MM/DD'))"
-        />
-        <q-btn
-          flat
-          dense
-          round
-          :color="showCalendar ? 'positive' : ''"
-          icon="date_range"
-          @click="showCalendar = !showCalendar"
-        />
-        <q-btn
-          flat
-          dense
-          round
-          icon="more_vert"
-          :disabled="!workout.id || !isLogged"
-        >
-          <q-menu>
-            <q-list>
-              <q-item clickable v-close-popup @click="modalChangeDate = true">
-                <q-item-section>
-                  <q-item-label>{{ $t("tracker.moveWorkout") }}</q-item-label>
-                </q-item-section>
-              </q-item>
-
-              <q-item
-                clickable
-                v-close-popup
-                @click="removeWorkout(workout.id)"
-              >
-                <q-item-section>
-                  <q-item-label>{{ $t("tracker.deleteWorkout") }}</q-item-label>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
-      </q-btn-group>
-    </q-toolbar>
+    <TrackerToolbar
+      :date="state.date"
+      :isLogged="state.isLogged"
+      :calendarActive="state.showCalendar"
+      :workoutId="state.workout.id"
+      @showHideLeftDrawer="state.leftDrawerOpen = !state.leftDrawerOpen"
+      @setToday="setDate(dateToBars())"
+      @showHideCalendar="state.showCalendar = !state.showCalendar"
+      @showModalChangeDate="state.modalChangeDate = true"
+      @showRemoveWorkoutModal="removeWorkout"
+    />
 
     <CalendarWorkouts
+      v-if="state.isLogged"
       ref="calendarRef"
-      :showCalendar="showCalendar"
+      :showCalendar="state.showCalendar"
       @updateDate="updateDate"
       @updateWorkout="updateWorkout"
     />
 
     <SetGroupsContainer
-      v-if="isLogged"
-      :workout="workout"
+      v-if="state.isLogged"
+      :workout="state.workout"
       :showSummary="true"
     />
+
+    <q-page-sticky
+      v-if="state.isLogged"
+      position="bottom-right"
+      :offset="[18, 18]"
+    >
+      <AddButton
+        :workoutId="state.workout?.id"
+        :date="state.date"
+        @createWorkout="createWorkout"
+      />
+    </q-page-sticky>
 
     <div v-else class="flex flex-center text-center q-pa-md">
       <div>
         <span> {{ $t("tracker.notLogged") }} </span>
       </div>
     </div>
-
-    <q-page-sticky position="bottom-right" :offset="[18, 18]" v-if="isLogged">
-      <AddButton v-if="workout.id" :workoutId="workout.id" :date="date" />
-      <q-btn v-else fab color="positive" @click="createWorkout">
-        {{ $t("tracker.create") }}
-      </q-btn>
-    </q-page-sticky>
   </q-page>
 </template>
 
 <script>
 import { useQuasar } from "quasar";
-import moment from "moment";
 import { defineComponent, ref, reactive, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useLoginStore } from "stores/login-store";
 import LeftDrawner from "components/LeftDrawner.vue";
+import TrackerToolbar from "components/tracker/TrackerToolbar.vue";
 import ChangeWorkoutDateModal from "components/modals/ChangeWorkoutDateModal.vue";
+import CalendarWorkouts from "components/tracker/CalendarWorkouts.vue";
+import SetGroupsContainer from "components/tracker/SetGroupsContainer.vue";
+import AddButton from "components/tracker/addButton.vue";
 import WorkoutService from "src/services/WorkoutService";
-import AddButton from "src/components/tracker/addButton.vue";
-import SetGroupsContainer from "src/components/tracker/SetGroupsContainer.vue";
-import CalendarWorkouts from "src/components/tracker/CalendarWorkouts.vue";
+import { dateToISO8601, dateToBars } from "../utils/dateFormater";
 export default defineComponent({
   name: "IndexPage",
   components: {
@@ -129,24 +83,24 @@ export default defineComponent({
     AddButton,
     SetGroupsContainer,
     CalendarWorkouts,
+    TrackerToolbar,
   },
   setup() {
     const route = useRoute();
     const useStore = useLoginStore();
-    const isLogged = computed(() => useStore.getIsLogged);
 
-    const leftDrawerOpen = ref(false);
-    const showCalendar = ref(false);
-    const modalChangeDate = ref(false);
-
-    const today = moment().format("YYYY/MM/DD");
-    const date = ref(route.query.date ? route.query.date : today);
-
-    const workout = reactive({ date: moment().format("YYYY/MM/DD") });
+    const state = reactive({
+      workout: {},
+      date: route.query.date ? route.query.date : dateToBars(),
+      leftDrawerOpen: false,
+      showCalendar: false,
+      modalChangeDate: false,
+      isLogged: computed(() => useStore.getIsLogged),
+    });
 
     async function createWorkout() {
-      workout.date = moment(date.value).format("YYYY-MM-DD");
-      await WorkoutService.create(useStore.getUserId, workout);
+      const newWorkout = { date: dateToISO8601(state.date) };
+      await WorkoutService.create(useStore.getUserId, newWorkout);
       reloadWorkoutDates();
       reloadWorkout();
     }
@@ -163,8 +117,8 @@ export default defineComponent({
           color: "negative",
         },
       }).onOk(async () => {
-        if (workout.id) {
-          await WorkoutService.delete(workout.id);
+        if (state.workout?.id) {
+          await WorkoutService.delete(state.workout.id);
           reloadWorkout();
           reloadWorkoutDates();
         }
@@ -176,34 +130,21 @@ export default defineComponent({
       calendarRef.value.getWorkoutsDates();
     }
     function reloadWorkout() {
-      calendarRef.value.getDateWorkout(date.value, true);
+      calendarRef.value.getDateWorkout(state.date, true);
     }
     function setDate(dateValue) {
       calendarRef.value.setDate(dateValue);
     }
     function updateWorkout(workoutValue) {
-      if (workoutValue && workoutValue.id) {
-        for (const key of Object.keys(workoutValue))
-          workout[key] = workoutValue[key];
-        return;
-      }
-      workout.id = null;
-      workout.description = null;
-      workout.date = moment(date.value).format("YYYY/MM/DD");
+      state.workout = workoutValue;
     }
     function updateDate(dateCalendar) {
-      date.value = dateCalendar;
+      state.date = dateCalendar;
     }
 
     return {
-      showCalendar,
-      leftDrawerOpen,
-      modalChangeDate,
-      isLogged,
-      moment,
-      today,
-      date,
-      workout,
+      dateToBars,
+      state,
       createWorkout,
       removeWorkout,
       calendarRef,

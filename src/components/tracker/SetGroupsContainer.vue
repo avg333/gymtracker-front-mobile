@@ -49,8 +49,8 @@
 import { ref, reactive, onBeforeMount, watchEffect } from "vue";
 import SetGroupCard from "../cards/SetGroupCard.vue";
 import SetModal from "../modals/SetModal.vue";
-import SummaryMuscleGroups from "./summaryMuscleGroups.vue";
-import SummaryWo from "./summaryWo.vue";
+import SummaryMuscleGroups from "./SummaryMuscleGroups.vue";
+import SummaryWo from "./SummaryWo.vue";
 import SetGroupService from "src/services/SetGroupService";
 export default {
   props: {
