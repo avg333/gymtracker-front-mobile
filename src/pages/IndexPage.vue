@@ -6,8 +6,10 @@
   <q-dialog v-model="modalChangeDate">
     <ChangeWorkoutDateModal
       :workoutId="workout.id"
+      :initialDate="date"
       @closeModal="
-        getWorkouts();
+        reloadWorkout();
+        reloadWorkoutDates();
         modalChangeDate = false;
       "
     />
@@ -39,7 +41,7 @@
           round
           icon="today"
           :disabled="today == date"
-          @click="date = moment().format('YYYY/MM/DD')"
+          @click="setDate(moment().format('YYYY/MM/DD'))"
         />
         <q-btn
           flat
@@ -79,20 +81,12 @@
       </q-btn-group>
     </q-toolbar>
 
-    <q-slide-transition>
-      <div class="row text-center ancho" v-show="showCalendar">
-        <div class="col-12">
-          <q-date
-            class="ancho"
-            v-model="date"
-            :events="workoutDates"
-            :years-in-month-view="true"
-            minimal
-            flat
-          />
-        </div>
-      </div>
-    </q-slide-transition>
+    <CalendarWorkouts
+      ref="calendarRef"
+      :showCalendar="showCalendar"
+      @updateDate="updateDate"
+      @updateWorkout="updateWorkout"
+    />
 
     <SetGroupsContainer
       v-if="isLogged"
@@ -118,21 +112,15 @@
 <script>
 import { useQuasar } from "quasar";
 import moment from "moment";
-import {
-  defineComponent,
-  ref,
-  reactive,
-  computed,
-  onBeforeMount,
-  watchEffect,
-} from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { defineComponent, ref, reactive, computed } from "vue";
+import { useRoute } from "vue-router";
 import { useLoginStore } from "stores/login-store";
 import LeftDrawner from "components/LeftDrawner.vue";
 import ChangeWorkoutDateModal from "components/modals/ChangeWorkoutDateModal.vue";
 import WorkoutService from "src/services/WorkoutService";
 import AddButton from "src/components/tracker/addButton.vue";
 import SetGroupsContainer from "src/components/tracker/SetGroupsContainer.vue";
+import CalendarWorkouts from "src/components/tracker/CalendarWorkouts.vue";
 export default defineComponent({
   name: "IndexPage",
   components: {
@@ -140,10 +128,10 @@ export default defineComponent({
     ChangeWorkoutDateModal,
     AddButton,
     SetGroupsContainer,
+    CalendarWorkouts,
   },
   setup() {
     const route = useRoute();
-    const router = useRouter();
     const useStore = useLoginStore();
     const isLogged = computed(() => useStore.getIsLogged);
 
@@ -154,47 +142,13 @@ export default defineComponent({
     const today = moment().format("YYYY/MM/DD");
     const date = ref(route.query.date ? route.query.date : today);
 
-    const workoutDates = ref([]);
     const workout = reactive({ date: moment().format("YYYY/MM/DD") });
-
-    onBeforeMount(() => {
-      getWorkouts();
-    });
-
-    watchEffect(() => {
-      date.value;
-      getWorkouts();
-    });
-
-    function getWorkouts() {
-      if (!isLogged.value) return;
-
-      WorkoutService.getAllFromUser(useStore.getUserId).then((res) => {
-        workoutDates.value = res.map((wo) =>
-          moment(wo.date).format("YYYY/MM/DD")
-        );
-        const workoutBd = res.find(
-          (wo) =>
-            wo.date &&
-            date.value &&
-            moment(wo.date).format("YYYY/MM/DD") === date.value
-        );
-        if (workoutBd) {
-          for (const key of Object.keys(workoutBd))
-            workout[key] = workoutBd[key];
-        } else {
-          workout.id = null;
-          workout.description = null;
-          workout.date = moment(date.value).format("YYYY/MM/DD");
-        }
-        router.replace({ query: { date: date.value } });
-      });
-    }
 
     async function createWorkout() {
       workout.date = moment(date.value).format("YYYY-MM-DD");
       await WorkoutService.create(useStore.getUserId, workout);
-      getWorkouts();
+      reloadWorkoutDates();
+      reloadWorkout();
     }
 
     const $q = useQuasar();
@@ -211,31 +165,54 @@ export default defineComponent({
       }).onOk(async () => {
         if (workout.id) {
           await WorkoutService.delete(workout.id);
-          getWorkouts();
+          reloadWorkout();
+          reloadWorkoutDates();
         }
       });
     }
 
+    const calendarRef = ref(null);
+    function reloadWorkoutDates() {
+      calendarRef.value.getWorkoutsDates();
+    }
+    function reloadWorkout() {
+      calendarRef.value.getDateWorkout(date.value, true);
+    }
+    function setDate(dateValue) {
+      calendarRef.value.setDate(dateValue);
+    }
+    function updateWorkout(workoutValue) {
+      if (workoutValue && workoutValue.id) {
+        for (const key of Object.keys(workoutValue))
+          workout[key] = workoutValue[key];
+        return;
+      }
+      workout.id = null;
+      workout.description = null;
+      workout.date = moment(date.value).format("YYYY/MM/DD");
+    }
+    function updateDate(dateCalendar) {
+      date.value = dateCalendar;
+    }
+
     return {
       showCalendar,
-      today,
-      date,
-      workoutDates,
       leftDrawerOpen,
-      workout,
-      getWorkouts,
-      moment,
-      createWorkout,
-      removeWorkout,
       modalChangeDate,
       isLogged,
+      moment,
+      today,
+      date,
+      workout,
+      createWorkout,
+      removeWorkout,
+      calendarRef,
+      updateWorkout,
+      updateDate,
+      setDate,
+      reloadWorkoutDates,
+      reloadWorkout,
     };
   },
 });
 </script>
-
-<style scoped>
-.ancho {
-  width: 100%;
-}
-</style>

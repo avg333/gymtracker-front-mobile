@@ -41,7 +41,6 @@
           </div>
           <div class="col-1">
             <IncrementSelect
-              :selectedValue="selectedIncrement"
               @changueSelectedIncrement="changueSelectedIncrement"
             />
           </div>

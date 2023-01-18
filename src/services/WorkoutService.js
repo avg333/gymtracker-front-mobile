@@ -3,6 +3,44 @@ import { api } from "src/boot/axios";
 const API = "workouts"
 
 class WorkoutService {
+
+  async getAllWorkoutDatesByUser(userId) {
+    try {
+      const res = await api.get("/users/" + userId + "/workouts/dates")
+      return res.data
+    } catch (error) {
+      console.error("Error al obtener las fechas de los workouts del user: " + userId + ". Error: " + error)
+    }
+  }
+
+  async getAllWorkoutDatesWithExerciseByUser(userId, exerciseId) {
+    try {
+      const res = await api.get("/users/" + userId + "/exercises/" + exerciseId + "/workouts/dates")
+      return res.data
+    } catch (error) {
+      console.error("Error al obtener las fechas de los workouts del user: " + userId + ". Error: " + error)
+    }
+  }
+
+  async getUserWorkoutsWithExercise(userId, exerciseId) {
+    try {
+      const res = await api.get("/users/" + userId + "/exercises/" + exerciseId + "/workouts")
+      return res.data
+    } catch (error) {
+      console.error("Error al crear el programa con los datos: " + workoutDestinationId + ". Error: " + error)
+    }
+  }
+
+  async getWorkoutsByUserAndDate(userId, date) {
+    try {
+      const res = await api.get("/users/" + userId + "/workouts/date/" + date)
+      return res.data
+    } catch (error) {
+      console.error("Error al obtener los workouts del user: " + userId + " y fecha:" + date + ". Error: " + error)
+    }
+  }
+
+  //TODO DEPRECATED
   async getAllFromUser(userId, filter) {
     try {
       const res = await api.get("users/" + userId + "/workouts")
@@ -31,6 +69,24 @@ class WorkoutService {
     }
   }
 
+  async copySetGroupsFromWorkoutToWorkout(workoutDestinationId, workoutSourceId) {
+    try {
+      const res = await api.post("/workouts/" + workoutDestinationId + "/addSetGroupsFrom/workouts/" + workoutSourceId)
+      return res.data
+    } catch (error) {
+      console.error("Error al copiar en el workout: " + workoutDestinationId + " los setGroups del workout:" + workoutSourceId + ". Error: " + error)
+    }
+  }
+
+  async copySetGroupsFromSessionToWorkout(workoutDestinationId, sessionSourceId) {
+    try {
+      const res = await api.post("/workouts/" + workoutDestinationId + "/addSetGroupsFrom/sessions/" + sessionSourceId)
+      return res.data
+    } catch (error) {
+      console.error("Error al copiar en el workout: " + workoutDestinationId + " los setGroups de la sesion:" + sessionSourceId + ". Error: " + error)
+    }
+  }
+
   async update(workoutId, dataWorkout) {
     try {
       const res = await api.put(API + "/" + workoutId, dataWorkout)
@@ -46,33 +102,6 @@ class WorkoutService {
       return true
     } catch (error) {
       console.error("Error al eliminar el programa con ID: " + workoutId + ". Error: " + error)
-    }
-  }
-
-  async copyToDate(workoutId, date) {
-    try {
-      const res = await api.post("workouts/" + workoutId + "/copy", { date })
-      return res.data
-    } catch (error) {
-      console.error("Error al crear el programa con los datos: " + workoutId + ". Error: " + error)
-    }
-  }
-
-  async addSetGroupsToWorkoutFromWorkout(workoutDestinationId, workoutSourceId) {
-    try {
-      const res = await api.post("/workouts/" + workoutDestinationId + "/addSetGroupsFrom/workouts/" + workoutSourceId)
-      return res.data
-    } catch (error) {
-      console.error("Error al crear el programa con los datos: " + workoutDestinationId + ". Error: " + error)
-    }
-  }
-
-  async getUserWorkoutsWithExercise(userId, exerciseId) {
-    try {
-      const res = await api.get("/users/" + userId + "/exercises/" + exerciseId + "/workouts")
-      return res.data
-    } catch (error) {
-      console.error("Error al crear el programa con los datos: " + workoutDestinationId + ". Error: " + error)
     }
   }
 }

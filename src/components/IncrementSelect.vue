@@ -11,11 +11,11 @@
     "
   />
 </template>
+
 <script>
 import { ref } from "vue";
 import { useSettingsStore } from "stores/settings-store";
 export default {
-  props: { selectedValue: Number },
   emits: ["changueSelectedIncrement"],
   setup() {
     const increments = [

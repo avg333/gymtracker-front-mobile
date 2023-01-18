@@ -43,20 +43,15 @@
       </q-toolbar>
     </div>
 
-    <q-slide-transition>
-      <div class="row text-center ancho" v-show="showCalendar">
-        <div class="col-12">
-          <q-date
-            class="ancho"
-            v-model="date"
-            :events="workoutDates"
-            :years-in-month-view="true"
-            minimal
-            flat
-          />
-        </div>
-      </div>
-    </q-slide-transition>
+    <CalendarWorkouts
+      ref="calendarRef"
+      :showCalendar="showCalendar"
+      :exerciseId="
+        $route.query.exerciseId ? Number($route.query.exerciseId) : null
+      "
+      @updateDate="updateDate"
+      @updateWorkout="updateWorkout"
+    />
 
     <SetGroupsContainer
       :onlyRead="true"
@@ -71,122 +66,42 @@
 
 <script>
 import moment from "moment";
-import {
-  defineComponent,
-  ref,
-  reactive,
-  onBeforeMount,
-  watchEffect,
-} from "vue";
+import { defineComponent, ref, reactive, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useLoginStore } from "stores/login-store";
 import WorkoutService from "src/services/WorkoutService";
 import SetGroupService from "src/services/SetGroupService";
 import SetGroupsContainer from "src/components/tracker/SetGroupsContainer.vue";
+import CalendarWorkouts from "src/components/tracker/CalendarWorkouts.vue";
 export default defineComponent({
   name: "MuscleGroupPage",
-  components: { SetGroupsContainer },
+  components: { SetGroupsContainer, CalendarWorkouts },
   setup() {
     const route = useRoute();
     const router = useRouter();
 
     const showCalendar = ref(true);
-    const useStore = useLoginStore();
 
     const today = moment().format("YYYY/MM/DD");
     const date = ref(today);
 
-    const workoutDates = ref([]);
     const workout = reactive({ date: moment().format("YYYY/MM/DD") });
 
     const setGroupSourceId = ref(null);
-
-    onBeforeMount(() => {
-      getWorkouts();
-    });
-
     watchEffect(() => {
-      date.value;
-      getWorkouts();
-    });
-
-    function getWorkouts() {
-      setGroupSourceId.value = null;
-      if (route.query.exerciseId) {
-        WorkoutService.getUserWorkoutsWithExercise(
-          useStore.getUserId,
-          route.query.exerciseId
-        ).then((res) => {
-          workoutDates.value = res.map((wo) =>
-            moment(wo.date).format("YYYY/MM/DD")
-          );
-          const workoutBd = res.find(
-            (wo) =>
-              wo.date &&
-              date.value &&
-              moment(wo.date).format("YYYY/MM/DD") === date.value
-          );
-          if (workoutBd) {
-            for (const key of Object.keys(workoutBd))
-              workout[key] = workoutBd[key];
-          } else {
-            workout.id = null;
-            workout.description = null;
-            workout.date = moment(date.value).format("YYYY/MM/DD");
-          }
-
-          if (
-            route.query.exerciseId &&
-            workoutBd &&
-            workoutBd.setGroups &&
-            workoutBd.setGroups.length
-          ) {
-            const setGroupsDb = workoutBd.setGroups.reverse();
-            const setGroupDb = setGroupsDb.find(
-              (element) => element.exercise.id == route.query.exerciseId
-            );
-            if (setGroupDb && setGroupDb.id) {
-              setGroupSourceId.value = setGroupDb.id;
-            }
-          }
-        });
-      } else {
-        WorkoutService.getAllFromUser(useStore.getUserId).then((res) => {
-          workoutDates.value = res.map((wo) =>
-            moment(wo.date).format("YYYY/MM/DD")
-          );
-          const workoutBd = res.find(
-            (wo) =>
-              wo.date &&
-              date.value &&
-              moment(wo.date).format("YYYY/MM/DD") === date.value
-          );
-          if (workoutBd) {
-            for (const key of Object.keys(workoutBd))
-              workout[key] = workoutBd[key];
-          } else {
-            workout.id = null;
-            workout.description = null;
-            workout.date = moment(date.value).format("YYYY/MM/DD");
-          }
-
-          if (
-            route.query.exerciseId &&
-            workoutBd &&
-            workoutBd.setGroups &&
-            workoutBd.setGroups.length
-          ) {
-            const setGroupsDb = workoutBd.setGroups.reverse();
-            const setGroupDb = setGroupsDb.find(
-              (element) => element.exercise.id == route.query.exerciseId
-            );
-            if (setGroupDb && setGroupDb.id) {
-              setGroupSourceId.value = setGroupDb.id;
-            }
-          }
-        });
+      if (
+        route.query.exerciseId &&
+        workout.setGroups &&
+        workout.setGroups.length
+      ) {
+        const setGroupsDb = workout.setGroups.reverse();
+        const setGroupDb = setGroupsDb.find(
+          (element) => element.exercise.id == route.query.exerciseId
+        );
+        if (setGroupDb && setGroupDb.id) {
+          setGroupSourceId.value = setGroupDb.id;
+        }
       }
-    }
+    });
 
     async function copiarSetGroup() {
       await SetGroupService.replaceSetGroupSetsWithSetGroup(
@@ -197,21 +112,36 @@ export default defineComponent({
     }
 
     async function copiarEntreno() {
-      await WorkoutService.addSetGroupsToWorkoutFromWorkout(
+      await WorkoutService.copySetGroupsFromWorkoutToWorkout(
         route.query.workoutId,
         workout.id
       );
       router.back();
     }
 
+    function updateWorkout(workoutValue) {
+      if (workoutValue && workoutValue.id) {
+        for (const key of Object.keys(workoutValue))
+          workout[key] = workoutValue[key];
+        return;
+      }
+      workout.id = null;
+      workout.description = null;
+      workout.date = moment(date.value).format("YYYY/MM/DD");
+    }
+    function updateDate(dateCalendar) {
+      date.value = dateCalendar;
+    }
+
     return {
       showCalendar,
       date,
       workout,
-      workoutDates,
       copiarEntreno,
       copiarSetGroup,
       setGroupSourceId,
+      updateWorkout,
+      updateDate,
     };
   },
 });

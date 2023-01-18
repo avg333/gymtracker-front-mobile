@@ -6,7 +6,7 @@
       </div>
       <div class="text-subtitle3 text-grey">
         {{ $t("modal.changeWorkoutDate.from") }}
-        <strong> {{ moment(workout.date).format("YYYY/MM/DD") }}</strong>
+        <strong> {{ dateToBars(workout.date) }}</strong>
         {{ $t("modal.changeWorkoutDate.to") }}
         <strong> {{ date }}</strong>
       </div>
@@ -19,6 +19,7 @@
         minimal
         flat
       />
+
       <div class="row">
         <div class="col-12 text-center">
           <span v-if="workoutDates.includes(date)">
@@ -46,44 +47,54 @@
 </template>
 
 <script>
-import moment from "moment";
 import { ref, reactive, onBeforeMount } from "vue";
 import { useLoginStore } from "stores/login-store";
 import WorkoutService from "src/services/WorkoutService";
+import { dateToISO8601, dateToBars } from "../../utils/dateFormater";
 export default {
+  name: "ChangeWorkoutDateModal",
   props: {
     workoutId: {
       type: Number,
+      required: true,
+    },
+    initialDate: {
+      type: String,
     },
   },
   emits: ["closeModal"],
   setup(props, { emit }) {
-    const date = ref(moment().format("YYYY/MM/DD"));
+    const useStore = useLoginStore();
+
+    const date = ref(props.initialDate);
+
     const workoutDates = ref([]);
     const workout = reactive({});
 
-    const useStore = useLoginStore();
+    // TODO Crear un unico existsWorkout
+
     onBeforeMount(() => {
-      WorkoutService.getAllFromUser(useStore.getUserId).then((res) => {
-        workoutDates.value = res.map((wo) =>
-          moment(wo.date).format("YYYY/MM/DD")
-        );
-        const workoutBd = res.find((wo) => wo.id === props.workoutId);
-        if (workoutBd) {
-          date.value = moment(workoutBd.date).format("YYYY/MM/DD");
-          for (const key of Object.keys(workoutBd))
-            workout[key] = workoutBd[key]; //FIXME Cambiar por =
+      WorkoutService.getById(props.workoutId).then((res) => {
+        if (res) {
+          for (const key of Object.keys(res)) workout[key] = res[key];
         }
       });
+
+      WorkoutService.getAllWorkoutDatesByUser(useStore.getUserId).then(
+        (res) => {
+          workoutDates.value = res.map((dateTemp) => dateToBars(dateTemp));
+        }
+      );
     });
 
     async function changeDate() {
-      workout.date = moment(date.value).format("YYYY-MM-DD");
+      workout.date = dateToISO8601(date.value);
       await WorkoutService.update(workout.id, workout);
       emit("closeModal");
+      //TODO Mover a la fecha destino?
     }
 
-    return { date, workoutDates, workout, changeDate, moment };
+    return { date, workoutDates, workout, changeDate, dateToBars };
   },
 };
 </script>

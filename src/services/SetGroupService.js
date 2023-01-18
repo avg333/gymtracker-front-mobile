@@ -26,6 +26,15 @@ class SetGroupService {
     }
   }
 
+  async getLastExerciseSetGroup(idUser, idExercise) {
+    try {
+      const res = await api.get("/users/" + idUser + "/exercises/" + idExercise + "/last")
+      return res.data
+    } catch (error) {
+      console.error("Error al obtener el ultimo setGroup del usuario: " + idUser + " y el ejercicio: " + idExercise + ". Error: " + error)
+    }
+  }
+
   async getById(idSetGroup) {
     try {
       const res = await api.get(API + "/" + idSetGroup)
@@ -53,6 +62,15 @@ class SetGroupService {
     }
   }
 
+  async replaceSetGroupSetsWithSetGroup(setGroupDestinationId, setGroupSourceId) {
+    try {
+      const res = await api.post("/setGroups/" + setGroupDestinationId + "/replaceWith/setGroups/" + setGroupSourceId)
+      return res.data
+    } catch (error) {
+      console.error("Error al copiar las sets del setGroup: " + setGroupSourceId + " en el setGroup:" + setGroupDestinationId + ". Error: " + error)
+    }
+  }
+
   async update(idSetGroup, dataSetGroup) {
     try {
       const res = await api.put(API + "/" + idSetGroup, dataSetGroup)
@@ -68,24 +86,6 @@ class SetGroupService {
       return true
     } catch (error) {
       console.error("Error al eliminar la sesión con ID: " + idSetGroup + ". Error: " + error)
-    }
-  }
-
-  async getLastExerciseSetGroup(idUser, idExercise) {
-    try {
-      const res = await api.get("/users/" + idUser + "/exercises/" + idExercise + "/last")
-      return res.data
-    } catch (error) {
-      console.error("Error al obtener la sesión con ID: " + idExercise + ". Error: " + error)
-    }
-  }
-
-  async replaceSetGroupSetsWithSetGroup(setGroupDestinationId, setGroupSourceId) {
-    try {
-      const res = await api.post("/setGroups/" + setGroupDestinationId + "/replaceWith/setGroups/" + setGroupSourceId)
-      return res.data
-    } catch (error) {
-      console.error("Error al obtener la sesión con ID: " + idExercise + ". Error: " + error)
     }
   }
 }
