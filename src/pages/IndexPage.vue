@@ -72,7 +72,7 @@ import TrackerToolbar from "components/tracker/TrackerToolbar.vue";
 import ChangeWorkoutDateModal from "components/modals/ChangeWorkoutDateModal.vue";
 import CalendarWorkouts from "components/tracker/CalendarWorkouts.vue";
 import SetGroupsContainer from "components/tracker/SetGroupsContainer.vue";
-import AddButton from "components/tracker/addButton.vue";
+import AddButton from "components/tracker/AddButton.vue";
 import WorkoutService from "src/services/WorkoutService";
 import { dateToISO8601, dateToBars } from "../utils/dateFormater";
 export default defineComponent({
