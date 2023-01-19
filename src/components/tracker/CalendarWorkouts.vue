@@ -31,7 +31,7 @@ export default {
   emits: ["updateDate", "updateWorkout"],
   setup(props, { emit, expose }) {
     const useStore = useLoginStore();
-    const router = useRouter();
+    const router = useRouter(); //FIXME El date de la query deberia actualizarse al cambiar la fecha
 
     let workoutDatesAux = []; //TODO Eliminar esto cuando se sepa como
 
@@ -60,8 +60,9 @@ export default {
 
     function getDateWorkout(workoutDate, force) {
       if (
-        !force &&
-        !workoutDatesAux.find((woDate) => woDate == dateToBars(workoutDate))
+        workoutDate ||
+        (!force &&
+          !workoutDatesAux.find((woDate) => woDate == dateToBars(workoutDate)))
       ) {
         state.workout = {};
         workoutId.value = state.workout?.id;
