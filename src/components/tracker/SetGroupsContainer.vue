@@ -1,107 +1,102 @@
 <template>
-  <q-dialog v-model="setModalData.visible" v-if="!onlyRead">
+  <q-dialog v-model="state.modalSet.visible" v-if="!onlyRead">
     <SetModal
-      :setId="setModalData.setId"
-      :setGroupId="setModalData.setGroupId"
-      :setsSize="setModalData.setsSize"
-      :exerciseId="setModalData.exerciseId"
+      :setId="state.modalSet.setId"
+      :setGroupId="state.modalSet.setGroupId"
+      :setsSize="state.modalSet.setsSize"
+      :exerciseId="state.modalSet.exerciseId"
       @closeModal="
         getSets();
-        setModalData.visible = false;
+        $emit('reloadWorkout');
+        state.modalSet.visible = false;
       "
     />
   </q-dialog>
 
-  <div v-if="workout && workout.id">
+  <div v-if="workout?.id">
     <SummaryWo :workout="workout" v-if="showSummary" />
     <SummaryMuscleGroups :workout="workout" v-if="showSummary" />
 
-    <div class="row items-center" v-if="setGroups.length">
-      <div class="col-12">
-        <SetGroupCard
-          class="bg-grey-1"
-          v-for="setGroup in setGroups"
-          :key="setGroup.id"
-          :setGroup="setGroup"
-          :onlyRead="onlyRead"
-          :exerciseId="exerciseId"
-          @showSetModal="showSetModal"
-          @closeModal="getSets"
-        />
-      </div>
-    </div>
+    <SetGroupCard
+      v-for="setGroup in state.setGroups"
+      class="bg-grey-1 items-center"
+      :key="setGroup.id"
+      :setGroup="setGroup"
+      :onlyRead="onlyRead"
+      :exerciseId="exerciseId"
+      @showSetModal="showSetModal"
+      @closeModal="getSets()"
+    />
 
-    <div v-else class="flex flex-center text-center q-pa-md">
-      <div>
-        <span> Entrenamiento vacio </span>
-      </div>
+    <div
+      v-if="!state.setGroups.length"
+      class="flex flex-center text-center q-pa-md"
+    >
+      Entrenamiento vacio
     </div>
   </div>
 
   <div v-else class="flex flex-center text-center q-pa-md">
-    <div>
-      <span> {{ $t("tracker.empty") }} </span>
-    </div>
+    {{ $t("tracker.empty") }}
   </div>
 </template>
 
 <script>
-import { ref, reactive, onBeforeMount, watchEffect } from "vue";
-import SetGroupCard from "../cards/SetGroupCard.vue";
-import SetModal from "../modals/SetModal.vue";
-import SummaryMuscleGroups from "./summaryMuscleGroups.vue";
-import SummaryWo from "./summaryWo.vue";
+import { reactive, onBeforeMount, watchEffect } from "vue";
+import SummaryMuscleGroups from "components/tracker/summaryMuscleGroups.vue";
+import SummaryWo from "components/tracker/summaryWo.vue";
+import SetModal from "components/modals/SetModal.vue";
+import SetGroupCard from "components/cards/SetGroupCard.vue";
 import SetGroupService from "src/services/SetGroupService";
 export default {
   props: {
-    workout: Object,
+    workout: Object, //TODO Cambiar a workoutID?
     onlyRead: Boolean,
     showSummary: Boolean,
-    exerciseId: Number,
+    exerciseId: Number, //Remarca los setGroups con este ejercicio
   },
+  emits: ["reloadWorkout"],
   components: { SetModal, SummaryWo, SummaryMuscleGroups, SetGroupCard },
   setup(props) {
-    const setGroups = ref([]);
-    function getSets() {
-      if (props.workout && props.workout.id) {
-        SetGroupService.getAllWorkoutSetGroups(props.workout.id).then((res) => {
-          setGroups.value = res;
-        });
-      } else {
-        setGroups.value = [];
-      }
-    }
+    const state = reactive({
+      setGroups: [],
+      modalSet: {
+        visible: false,
+        setId: null,
+        setGroupId: null,
+        setsSize: null,
+        exerciseId: null,
+      },
+    });
 
     onBeforeMount(() => {
       getSets();
     });
 
     watchEffect(() => {
-      props.workout;
+      props.workout; // TODO Hacer esto mas elegante
       getSets();
     });
 
-    const setModalData = reactive({
-      setId: null,
-      setGroupId: null,
-      setsSize: null,
-      exerciseId: null,
-      visible: false,
-    });
-    function showSetModal(data) {
-      setModalData.setId = data.setId;
-      setModalData.setGroupId = data.setGroupId;
-      setModalData.setsSize = data.setsSize;
-      setModalData.exerciseId = data.exerciseId;
-      setModalData.visible = true;
+    function getSets() {
+      if (props.workout?.id) {
+        SetGroupService.getAllWorkoutSetGroups(props.workout.id).then((res) => {
+          state.setGroups = res;
+        });
+      } else {
+        state.setGroups = [];
+      }
     }
 
-    return {
-      setGroups,
-      getSets,
-      showSetModal,
-      setModalData,
-    };
+    function showSetModal(data) {
+      state.modalSet.setId = data.setId;
+      state.modalSet.setGroupId = data.setGroupId;
+      state.modalSet.setsSize = data.setsSize;
+      state.modalSet.exerciseId = data.exerciseId;
+      state.modalSet.visible = true;
+    }
+
+    return { state, getSets, showSetModal };
   },
 };
 </script>

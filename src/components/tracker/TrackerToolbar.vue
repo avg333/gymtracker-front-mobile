@@ -23,7 +23,7 @@
         dense
         round
         icon="today"
-        :disabled="today == date"
+        :disabled="today === date"
         @click="$emit('setToday')"
       />
       <q-btn
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { dateToBars, dateToDayMonth } from "../../utils/dateFormater";
+import { dateToISO8601, dateToDayMonth } from "../../utils/dateFormater";
 export default {
   emits: [
     "showHideLeftDrawer",
@@ -87,8 +87,8 @@ export default {
     workoutId: Number,
   },
   setup() {
-    const today = dateToBars();
-    return { today, dateToBars, dateToDayMonth };
+    const today = dateToISO8601();
+    return { today, dateToDayMonth };
   },
 };
 </script>

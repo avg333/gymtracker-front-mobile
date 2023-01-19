@@ -15,14 +15,7 @@
         </q-item>
 
         <q-item clickable v-close-popup>
-          <q-item-section
-            @click="
-              $router.push({
-                path: '/copyWorkout/',
-                query: { workoutId },
-              })
-            "
-          >
+          <q-item-section @click="$emit('showModalWorkouts', workoutId)">
             From calendar
           </q-item-section>
         </q-item>

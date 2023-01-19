@@ -1,27 +1,8 @@
 <template>
-  <q-page>
-    <div class="bg-black text-white">
-      <q-toolbar>
-        <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-        <q-toolbar-title>
-          {{ $route.query.exerciseId ? "Copiar series" : "Copiar entreno" }}
-        </q-toolbar-title>
-        <q-btn
-          flat
-          dense
-          round
-          icon="today"
-          :disabled="
-            ($route.query.exerciseId && !state.setGroupSourceId) ||
-            (!$route.query.exerciseId && !state.workout?.id)
-          "
-          @click="copiar"
-        >
-          Copiar{{ state.setGroupSourceId }}
-        </q-btn>
-      </q-toolbar>
-      <q-toolbar>
-        <q-toolbar-title> {{ state.date }} </q-toolbar-title>
+  <q-card>
+    <q-card-section>
+      <div class="row text-h6">
+        Copiar entreno
         <q-space />
         <q-btn-group flat>
           <q-btn
@@ -33,69 +14,89 @@
             @click="state.showCalendar = !state.showCalendar"
           />
         </q-btn-group>
-      </q-toolbar>
-    </div>
+        <q-btn
+          flat
+          dense
+          round
+          icon="today"
+          :disabled="
+            (exerciseId && !state.setGroupSourceId) ||
+            (!exerciseId && !state.workout?.id)
+          "
+          @click="copiar"
+        >
+          Copiar{{ state.setGroupSourceId }}
+        </q-btn>
+      </div>
 
-    <CalendarWorkouts
-      ref="calendarRef"
-      :showCalendar="state.showCalendar"
-      :exerciseId="
-        $route.query.exerciseId ? Number($route.query.exerciseId) : null
-      "
-      @updateDate="updateDate"
-      @updateWorkout="updateWorkout"
-    />
+      <div class="text-subtitle3 text-grey">
+        {{ $t("modal.changeWorkoutDate.from") }}
+        <strong> {{ state.date }}</strong>
+        {{ $t("modal.changeWorkoutDate.to") }}
+        <strong> {{ state.workoutDestination.date }}</strong>
+      </div>
 
-    <SetGroupsContainer
-      :onlyRead="true"
-      :workout="state.workout"
-      :showSummary="true"
-      :exerciseId="
-        $route.query.exerciseId ? Number($route.query.exerciseId) : null
-      "
-    />
-  </q-page>
+      <CalendarWorkouts
+        :showCalendar="state.showCalendar"
+        :exerciseId="exerciseId ? exerciseId : null"
+        @updateDate="updateDate"
+        @updateWorkout="updateWorkout"
+      />
+
+      <q-separator />
+
+      <SetGroupsContainer
+        :onlyRead="true"
+        :workout="state.workout"
+        :showSummary="true"
+        :exerciseId="exerciseId ? exerciseId : null"
+      />
+    </q-card-section>
+  </q-card>
 </template>
 
 <script>
 //TODO Mejorar HTML
 import { defineComponent, reactive, onBeforeMount, watchEffect } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 import SetGroupsContainer from "components/tracker/SetGroupsContainer.vue";
 import CalendarWorkouts from "components/tracker/CalendarWorkouts.vue";
 import WorkoutService from "src/services/WorkoutService";
 import SetGroupService from "src/services/SetGroupService";
 import ExerciseService from "src/services/ExerciseService";
-import { dateToISO8601 } from "../utils/dateFormater";
+import { dateToISO8601 } from "../../utils/dateFormater";
 export default defineComponent({
   name: "CopyFromWorkout",
+  props: { exerciseId: Number, setGroupId: Number, workoutId: Number },
   components: { SetGroupsContainer, CalendarWorkouts },
-  setup() {
-    const route = useRoute();
+  setup(props) {
     const router = useRouter();
 
     const state = reactive({
       showCalendar: true,
       date: dateToISO8601(),
       workout: {},
+      workoutDestination: {},
       exercise: {},
       setGroupSourceId: null,
     });
 
     onBeforeMount(() => {
-      if (route.query.exerciseId) {
-        ExerciseService.getById(route.query.exerciseId).then((res) => {
+      if (props.exerciseId) {
+        ExerciseService.getById(props.exerciseId).then((res) => {
           state.exercise = res;
+        });
+      }
+      if (props.workoutId) {
+        WorkoutService.getById(props.workoutId).then((res) => {
+          state.workoutDestination = res;
         });
       }
     });
 
     watchEffect(() => {
-      const exerciseId = route.query.exerciseId;
-      const setGroupLength = state.workout?.setGroups?.length;
       state.setGroupSourceId = null;
-
-      if (!exerciseId || !setGroupLength) {
+      if (!props.exerciseId || !state.workout?.setGroups?.length) {
         return;
       }
 
@@ -103,21 +104,21 @@ export default defineComponent({
         .reverse()
         .find(
           (element) =>
-            element?.exercise?.id == route.query.exerciseId &&
-            element?.id != route.query.setGroupId
+            element?.exercise?.id == props.exerciseId &&
+            element?.id != props.setGroupId
         );
 
       state.setGroupSourceId = setGroupSource?.id ? setGroupSource.id : null;
     });
 
     async function copiar() {
-      route.query.setGroupId
+      props.setGroupId
         ? await SetGroupService.replaceSetGroupSetsWithSetGroup(
-            route.query.setGroupId,
+            props.setGroupId,
             state.setGroupSourceId
           )
         : await WorkoutService.copySetGroupsFromWorkoutToWorkout(
-            route.query.workoutId,
+            props.workoutId,
             state.workout.id
           );
       router.back();

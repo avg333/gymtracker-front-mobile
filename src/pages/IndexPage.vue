@@ -3,6 +3,10 @@
     <LeftDrawner />
   </q-drawer>
 
+  <q-dialog v-model="state.modalWorkouts.visible">
+    <ChangeFromWorkoutModal :workoutId="state.modalWorkouts.idWorkout" />
+  </q-dialog>
+
   <q-dialog v-model="state.modalChangeDate">
     <ChangeWorkoutDateModal
       :workoutId="state.workout?.id"
@@ -22,7 +26,7 @@
       :calendarActive="state.showCalendar"
       :workoutId="state.workout.id"
       @showHideLeftDrawer="state.leftDrawerOpen = !state.leftDrawerOpen"
-      @setToday="setDate(dateToBars())"
+      @setToday="setToday"
       @showHideCalendar="state.showCalendar = !state.showCalendar"
       @showModalChangeDate="state.modalChangeDate = true"
       @showRemoveWorkoutModal="removeWorkout"
@@ -32,6 +36,7 @@
       v-if="state.isLogged"
       ref="calendarRef"
       :showCalendar="state.showCalendar"
+      :defaultDate="$route.query.date"
       @updateDate="updateDate"
       @updateWorkout="updateWorkout"
     />
@@ -40,6 +45,7 @@
       v-if="state.isLogged"
       :workout="state.workout"
       :showSummary="true"
+      @reloadWorkout="reloadWorkout()"
     />
 
     <q-page-sticky
@@ -51,6 +57,7 @@
         :workoutId="state.workout?.id"
         :date="state.date"
         @createWorkout="createWorkout"
+        @showModalWorkouts="showModalWorkouts"
       />
     </q-page-sticky>
 
@@ -70,11 +77,12 @@ import { useLoginStore } from "stores/login-store";
 import LeftDrawner from "components/LeftDrawner.vue";
 import TrackerToolbar from "components/tracker/TrackerToolbar.vue";
 import ChangeWorkoutDateModal from "components/modals/ChangeWorkoutDateModal.vue";
+import ChangeFromWorkoutModal from "components/modals/ChangeFromWorkoutModal.vue";
 import CalendarWorkouts from "components/tracker/CalendarWorkouts.vue";
 import SetGroupsContainer from "components/tracker/SetGroupsContainer.vue";
 import AddButton from "components/tracker/AddButton.vue";
 import WorkoutService from "src/services/WorkoutService";
-import { dateToISO8601, dateToBars } from "../utils/dateFormater";
+import { dateToISO8601 } from "../utils/dateFormater";
 export default defineComponent({
   name: "IndexPage",
   components: {
@@ -84,18 +92,20 @@ export default defineComponent({
     SetGroupsContainer,
     CalendarWorkouts,
     TrackerToolbar,
+    ChangeFromWorkoutModal,
   },
   setup() {
     const route = useRoute();
     const useStore = useLoginStore();
 
     const state = reactive({
+      isLogged: computed(() => useStore.getIsLogged),
       workout: {},
-      date: route.query.date ? route.query.date : dateToBars(),
+      date: route.query.date ? route.query.date : dateToISO8601(), //TODO Quizas no inicializar esto?
       leftDrawerOpen: false,
       showCalendar: false,
       modalChangeDate: false,
-      isLogged: computed(() => useStore.getIsLogged),
+      modalWorkouts: { visible: false, idWorkout: null },
     });
 
     async function createWorkout() {
@@ -125,15 +135,20 @@ export default defineComponent({
       });
     }
 
+    function showModalWorkouts(idWorkout) {
+      state.modalWorkouts.idWorkout = idWorkout;
+      state.modalWorkouts.visible = true;
+    }
+
     const calendarRef = ref(null);
     function reloadWorkoutDates() {
       calendarRef.value.getWorkoutsDates();
     }
     function reloadWorkout() {
-      calendarRef.value.getDateWorkout(state.date, true);
+      calendarRef.value.getDateWorkout(true);
     }
-    function setDate(dateValue) {
-      calendarRef.value.setDate(dateValue);
+    function setToday() {
+      calendarRef.value.setDate(dateToISO8601());
     }
     function updateWorkout(workoutValue) {
       state.workout = workoutValue;
@@ -143,14 +158,14 @@ export default defineComponent({
     }
 
     return {
-      dateToBars,
       state,
       createWorkout,
       removeWorkout,
+      showModalWorkouts,
       calendarRef,
       updateWorkout,
       updateDate,
-      setDate,
+      setToday,
       reloadWorkoutDates,
       reloadWorkout,
     };

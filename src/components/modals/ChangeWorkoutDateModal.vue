@@ -6,26 +6,22 @@
       </div>
       <div class="text-subtitle3 text-grey">
         {{ $t("modal.changeWorkoutDate.from") }}
-        <strong> {{ dateToBars(workout.date) }}</strong>
+        <strong> {{ state.workout.date }}</strong>
         {{ $t("modal.changeWorkoutDate.to") }}
-        <strong> {{ date }}</strong>
+        <strong> {{ state.date }}</strong>
       </div>
 
       <q-date
-        class="ancho"
-        v-model="date"
+        mask="YYYY-MM-DD"
+        v-model="state.date"
         :years-in-month-view="true"
-        :events="workoutDates"
+        :events="state.workoutDates.map((el) => dateToBars(el))"
         minimal
         flat
       />
 
-      <div class="row">
-        <div class="col-12 text-center">
-          <span v-if="workoutDates.includes(date)">
-            {{ $t("modal.changeWorkoutDate.existsWorkout") }}
-          </span>
-        </div>
+      <div v-if="state.isDateInWorkoutDates" class="text-center">
+        {{ $t("modal.changeWorkoutDate.existsWorkout") }}
       </div>
     </q-card-section>
 
@@ -36,9 +32,9 @@
       </q-btn>
       <q-btn
         flat
-        :disabled="workoutDates.includes(date)"
         class="text-positive"
-        @click="workoutDates.includes(date) ? null : changeDate()"
+        :disabled="state.isDateInWorkoutDates"
+        @click="changeDate"
       >
         {{ $t("modal.changeWorkoutDate.move") }}
       </q-btn>
@@ -47,12 +43,14 @@
 </template>
 
 <script>
-import { ref, reactive, onBeforeMount } from "vue";
+//READY
+import { reactive, computed, onBeforeMount } from "vue";
 import { useLoginStore } from "stores/login-store";
 import WorkoutService from "src/services/WorkoutService";
-import { dateToISO8601, dateToBars } from "../../utils/dateFormater";
+import { dateToBars } from "../../utils/dateFormater";
 export default {
   name: "ChangeWorkoutDateModal",
+  emits: ["closeModal"],
   props: {
     workoutId: {
       type: Number,
@@ -62,39 +60,37 @@ export default {
       type: String,
     },
   },
-  emits: ["closeModal"],
   setup(props, { emit }) {
     const useStore = useLoginStore();
 
-    const date = ref(props.initialDate);
-
-    const workoutDates = ref([]);
-    const workout = reactive({});
-
-    // TODO Crear un unico existsWorkout
+    const state = reactive({
+      date: props.initialDate,
+      workoutDates: [],
+      workout: {},
+      isDateInWorkoutDates: computed(() =>
+        state.workoutDates.includes(state.date)
+      ),
+    });
 
     onBeforeMount(() => {
       WorkoutService.getById(props.workoutId).then((res) => {
-        if (res) {
-          for (const key of Object.keys(res)) workout[key] = res[key];
-        }
+        state.workout = res;
       });
 
       WorkoutService.getAllWorkoutDatesByUser(useStore.getUserId).then(
         (res) => {
-          workoutDates.value = res.map((dateTemp) => dateToBars(dateTemp));
+          state.workoutDates = res;
         }
       );
     });
 
     async function changeDate() {
-      workout.date = dateToISO8601(date.value);
-      await WorkoutService.update(workout.id, workout);
+      state.workout.date = state.date;
+      await WorkoutService.update(props.workoutId, state.workout);
       emit("closeModal");
-      //TODO Mover a la fecha destino?
     }
 
-    return { date, workoutDates, workout, changeDate, dateToBars };
+    return { state, changeDate, dateToBars };
   },
 };
 </script>
