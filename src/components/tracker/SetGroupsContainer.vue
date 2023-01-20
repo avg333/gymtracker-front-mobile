@@ -60,7 +60,7 @@ export default {
   },
   emits: ["reloadWorkout"],
   components: { SetModal, SummaryWo, SetGroupCard },
-  setup(props) {
+  setup(props, { expose }) {
     const state = reactive({
       setGroups: [],
       workout: {},
@@ -96,6 +96,7 @@ export default {
       }
     }
 
+    //TODO Eliminar los SetGroups y trabajar solo con el Workout
     function getSets() {
       if (props.workoutId) {
         SetGroupService.getAllWorkoutSetGroups(props.workoutId).then((res) => {
@@ -113,6 +114,11 @@ export default {
       state.modalSet.exerciseId = data.exerciseId;
       state.modalSet.visible = true;
     }
+
+    expose({
+      getWorkout,
+      getSets,
+    });
 
     return { state, getWorkout, getSets, showSetModal };
   },

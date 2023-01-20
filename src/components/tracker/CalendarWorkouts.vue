@@ -4,8 +4,8 @@
       v-show="showCalendar"
       class="ancho"
       mask="YYYY-MM-DD"
+      :events="Object.keys(workoutDates).map((el) => dateToBars(el))"
       v-model="date"
-      :events="state.workoutDates.map((el) => dateToBars(el))"
       :years-in-month-view="true"
       minimal
       flat
@@ -15,72 +15,58 @@
 
 <script>
 //READY
-import { ref, reactive, onBeforeMount, watch } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import { useRouter } from "vue-router";
 import WorkoutService from "src/services/WorkoutService";
 import { useLoginStore } from "stores/login-store";
 import { dateToBars, dateToISO8601 } from "../../utils/dateFormater";
 export default {
   name: "CalendarWorkouts",
-  emits: ["updateDate", "updateWorkout"],
+  emits: ["updateDate", "updateWorkoutId"],
   props: { showCalendar: Boolean, defaultDate: String, exerciseId: Number },
   setup(props, { emit, expose }) {
     const useStore = useLoginStore();
     const router = useRouter(); //FIXME El date de la query deberia actualizarse al cambiar la fecha
 
     const date = ref(props.defaultDate ? props.defaultDate : dateToISO8601());
+    const workoutDates = ref([]);
     const workoutId = ref(null);
 
-    const state = reactive({
-      workout: {},
-      workoutDates: [],
-    });
-
     watch(date, () => {
+      setWorkoutId();
       emit("updateDate", date.value);
-      getDateWorkout();
     });
 
     watch(workoutId, () => {
-      emit("updateWorkout", state.workout);
+      emit("updateWorkoutId", workoutId.value);
     });
 
     onBeforeMount(() => {
-      getWorkoutsDates();
-      getDateWorkout(true);
       emit("updateDate", date.value);
+      getWorkoutsDates();
     });
-
-    function getDateWorkout(force) {
-      if (
-        !force &&
-        !state.workoutDates.find((woDate) => woDate == date.value)
-      ) {
-        state.workout = {};
-        workoutId.value = state.workout?.id; //TODO Hacer esto mas elegante
-        return;
-      }
-
-      WorkoutService.getWorkoutsByUserAndDate(
-        useStore.getUserId,
-        date.value
-      ).then((res) => {
-        state.workout = res?.length && res[0]?.id ? res[0] : {};
-        workoutId.value = state.workout?.id;
-      });
-    }
 
     function getWorkoutsDates() {
       if (props.exerciseId) {
         WorkoutService.getAllWorkoutDatesWithExerciseByUser(
           useStore.getUserId,
           props.exerciseId
-        ).then((dates) => (state.workoutDates = dates));
+        ).then((dates) => {
+          workoutDates.value = dates;
+          setWorkoutId();
+        });
       } else {
         WorkoutService.getAllWorkoutDatesByUser(useStore.getUserId).then(
-          (dates) => (state.workoutDates = dates)
+          (dates) => {
+            workoutDates.value = dates;
+            setWorkoutId();
+          }
         );
       }
+    }
+
+    function setWorkoutId() {
+      workoutId.value = workoutDates.value[date.value];
     }
 
     function setDate(dateValue) {
@@ -89,11 +75,10 @@ export default {
 
     expose({
       getWorkoutsDates,
-      getDateWorkout,
       setDate,
     });
 
-    return { state, date, dateToBars };
+    return { date, workoutDates, dateToBars };
   },
 };
 </script>

@@ -15,7 +15,7 @@
         </q-item>
 
         <q-item clickable v-close-popup>
-          <q-item-section @click="$emit('showModalWorkouts', workoutId)">
+          <q-item-section @click="$emit('showModalWorkouts')">
             From calendar
           </q-item-section>
         </q-item>
@@ -34,7 +34,7 @@
 
 <script>
 export default {
-  props: { workoutId: Number, date: String },
-  emits: ["createWorkout"],
+  props: { workoutId: Number },
+  emits: ["createWorkout", "showModalWorkouts"],
 };
 </script>

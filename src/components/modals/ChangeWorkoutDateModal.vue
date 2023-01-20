@@ -15,7 +15,7 @@
         mask="YYYY-MM-DD"
         v-model="state.date"
         :years-in-month-view="true"
-        :events="state.workoutDates.map((el) => dateToBars(el))"
+        :events="Object.keys(state.workoutDates).map((el) => dateToBars(el))"
         minimal
         flat
       />
@@ -67,9 +67,7 @@ export default {
       date: props.initialDate,
       workoutDates: [],
       workout: {},
-      isDateInWorkoutDates: computed(() =>
-        state.workoutDates.includes(state.date)
-      ),
+      isDateInWorkoutDates: computed(() => state.workoutDates[state.date]),
     });
 
     onBeforeMount(() => {
