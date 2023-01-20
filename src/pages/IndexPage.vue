@@ -43,7 +43,7 @@
 
     <SetGroupsContainer
       v-if="state.isLogged"
-      :workout="state.workout"
+      :workoutId="state.workout?.id"
       :showSummary="true"
       @reloadWorkout="reloadWorkout()"
     />

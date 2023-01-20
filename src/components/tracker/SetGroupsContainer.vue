@@ -7,15 +7,14 @@
       :exerciseId="state.modalSet.exerciseId"
       @closeModal="
         getSets();
-        $emit('reloadWorkout');
+        getWorkout();
         state.modalSet.visible = false;
       "
     />
   </q-dialog>
 
-  <div v-if="workout?.id">
-    <SummaryWo :workout="workout" v-if="showSummary" />
-    <SummaryMuscleGroups :workout="workout" v-if="showSummary" />
+  <div v-if="workoutId">
+    <TheSummaryWo :workout="state.workout" v-if="showSummary" />
 
     <SetGroupCard
       v-for="setGroup in state.setGroups"
@@ -25,7 +24,10 @@
       :onlyRead="onlyRead"
       :exerciseId="exerciseId"
       @showSetModal="showSetModal"
-      @closeModal="getSets()"
+      @closeModal="
+        getSets();
+        getWorkout();
+      "
     />
 
     <div
@@ -42,24 +44,26 @@
 </template>
 
 <script>
-import { reactive, onBeforeMount, watchEffect } from "vue";
-import SummaryMuscleGroups from "components/tracker/summaryMuscleGroups.vue";
-import SummaryWo from "components/tracker/summaryWo.vue";
+//READY
+import { reactive, onBeforeMount, watch } from "vue";
+import TheSummaryWo from "components/tracker/TheSummaryWo.vue";
 import SetModal from "components/modals/SetModal.vue";
 import SetGroupCard from "components/cards/SetGroupCard.vue";
+import WorkoutService from "src/services/WorkoutService";
 import SetGroupService from "src/services/SetGroupService";
 export default {
   props: {
-    workout: Object, //TODO Cambiar a workoutID?
+    workoutId: Number,
     onlyRead: Boolean,
     showSummary: Boolean,
     exerciseId: Number, //Remarca los setGroups con este ejercicio
   },
   emits: ["reloadWorkout"],
-  components: { SetModal, SummaryWo, SummaryMuscleGroups, SetGroupCard },
+  components: { SetModal, TheSummaryWo, SetGroupCard },
   setup(props) {
     const state = reactive({
       setGroups: [],
+      workout: {},
       modalSet: {
         visible: false,
         setId: null,
@@ -70,17 +74,31 @@ export default {
     });
 
     onBeforeMount(() => {
+      getWorkout();
       getSets();
     });
 
-    watchEffect(() => {
-      props.workout; // TODO Hacer esto mas elegante
-      getSets();
-    });
+    watch(
+      () => props.workoutId,
+      () => {
+        getSets();
+        getWorkout();
+      }
+    );
+
+    function getWorkout() {
+      if (props.workoutId) {
+        WorkoutService.getById(props.workoutId).then((res) => {
+          state.workout = res;
+        });
+      } else {
+        state.workout = {};
+      }
+    }
 
     function getSets() {
-      if (props.workout?.id) {
-        SetGroupService.getAllWorkoutSetGroups(props.workout.id).then((res) => {
+      if (props.workoutId) {
+        SetGroupService.getAllWorkoutSetGroups(props.workoutId).then((res) => {
           state.setGroups = res;
         });
       } else {
@@ -96,7 +114,7 @@ export default {
       state.modalSet.visible = true;
     }
 
-    return { state, getSets, showSetModal };
+    return { state, getWorkout, getSets, showSetModal };
   },
 };
 </script>
