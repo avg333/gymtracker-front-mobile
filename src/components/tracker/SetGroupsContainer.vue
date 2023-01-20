@@ -14,7 +14,7 @@
   </q-dialog>
 
   <div v-if="workoutId">
-    <TheSummaryWo :workout="state.workout" v-if="showSummary" />
+    <SummaryWo :workout="state.workout" v-if="showSummary" />
 
     <SetGroupCard
       v-for="setGroup in state.setGroups"
@@ -46,7 +46,7 @@
 <script>
 //READY
 import { reactive, onBeforeMount, watch } from "vue";
-import TheSummaryWo from "components/tracker/TheSummaryWo.vue";
+import SummaryWo from "src/components/tracker/SummaryWo.vue";
 import SetModal from "components/modals/SetModal.vue";
 import SetGroupCard from "components/cards/SetGroupCard.vue";
 import WorkoutService from "src/services/WorkoutService";
@@ -59,7 +59,7 @@ export default {
     exerciseId: Number, //Remarca los setGroups con este ejercicio
   },
   emits: ["reloadWorkout"],
-  components: { SetModal, TheSummaryWo, SetGroupCard },
+  components: { SetModal, SummaryWo, SetGroupCard },
   setup(props) {
     const state = reactive({
       setGroups: [],

@@ -19,9 +19,10 @@
 </template>
 
 <script>
+//READY
 import { getMuscleGroupColour } from "src/utils/colourUtils";
 export default {
-  name: "TheSummaryWo",
+  name: "SummaryWo",
   props: { workout: Object },
   setup() {
     return { getMuscleGroupColour };
