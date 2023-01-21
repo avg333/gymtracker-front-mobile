@@ -11,7 +11,10 @@ import { Loading } from 'quasar'
 // for each client)
 //http://192.168.1.90:8081/api/
 //http://gymtracker-backend.herokuapp.com/api/
-const api = axios.create({ baseURL: "http://192.168.1.90:8081/api/" });
+const localUrl = "http://192.168.1.90:8081/api/"
+const preProdUrl = "http://gymtracker-back.fly.dev/api/"
+
+const api = axios.create({ baseURL: preProdUrl });
 
 api.interceptors.request.use((request) => {
   Loading.show()
