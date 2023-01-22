@@ -1,7 +1,7 @@
 <template>
-  <q-img src="https://cdn.quasar.dev/img/material.png" style="height: 100px">
+  <q-img :src="imgLogo" style="height: 100px">
     <div class="absolute-bottom bg-transparent">
-      <div class="text-weight-bold">GymTracker v1.0-a</div>
+      <div class="text-weight-bold text-right fixed-top">v1.0-a</div>
     </div>
   </q-img>
 
@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import imgLogo from "assets/logo-white.png";
 import { computed, defineComponent } from "vue";
 import { useLoginStore } from "stores/login-store";
 export default defineComponent({
@@ -97,6 +98,7 @@ export default defineComponent({
       isLogged,
       userName,
       logout,
+      imgLogo,
     };
   },
 });

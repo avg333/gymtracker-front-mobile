@@ -1,4 +1,5 @@
 import { api } from "src/boot/axios";
+import { processAxiosResponse, processAxiosError } from "src/utils/responseUtils"
 
 const AUTH_KEY = "gymtracker_token"
 
@@ -10,10 +11,10 @@ class LoginService {
     try {
       const res = await api.post(API + "signin", { username, password })
       localStorage.setItem(AUTH_KEY, res.data.token)
-      return res.data;
+      return processAxiosResponse(res)
     } catch (error) {
       console.error("Error al intentar logear al usuario: " + username + ". Error: " + error)
-      throw (error.response.status)
+      return processAxiosError(error)
     }
   }
 

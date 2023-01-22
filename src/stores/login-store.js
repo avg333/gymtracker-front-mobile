@@ -24,18 +24,11 @@ export const useLoginStore = defineStore("login", {
     }
   },
   actions: {
-    async login(userName, password) {
-      try {
-        const user = await LoginService.login(userName, password)
-        this.userId = user.id;
-        this.userName = user.username;
-        this.jwt = user.token;
-        this.logged = true;
-        return 200;
-      } catch (error) {
-        console.error("Error al intentar realizar el login. Userdata: " + userName + ". Error:" + error)
-        return error;
-      }
+    async login(user) {
+      this.userId = user.id;
+      this.userName = user.username;
+      this.jwt = user.token;
+      this.logged = true;
     },
     async logout() {
       try {
