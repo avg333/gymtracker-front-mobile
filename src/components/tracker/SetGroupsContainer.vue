@@ -6,7 +6,6 @@
       :setsSize="state.modalSet.setsSize"
       :exerciseId="state.modalSet.exerciseId"
       @closeModal="
-        getSets();
         getWorkout();
         state.modalSet.visible = false;
       "
@@ -17,21 +16,19 @@
     <SummaryWo :workout="state.workout" v-if="showSummary" />
 
     <SetGroupCard
-      v-for="setGroup in state.setGroups"
+      v-for="setGroup in state.workout?.setGroups"
       class="bg-grey-1 items-center"
       :key="setGroup.id"
       :setGroup="setGroup"
       :onlyRead="onlyRead"
       :exerciseId="exerciseId"
       @showSetModal="showSetModal"
-      @closeModal="
-        getSets();
-        getWorkout();
-      "
+      @showHistoricoModal="showHistoricoModal"
+      @updateSets="getWorkout()"
     />
 
     <div
-      v-if="!state.setGroups.length"
+      v-if="!state.workout?.setGroups?.length"
       class="flex flex-center text-center q-pa-md"
     >
       Entrenamiento vacio
@@ -46,23 +43,22 @@
 <script>
 //READY
 import { reactive, onBeforeMount, watch } from "vue";
-import SummaryWo from "src/components/tracker/SummaryWo.vue";
+import SummaryWo from "components/tracker/SummaryWo.vue";
 import SetModal from "components/modals/SetModal.vue";
 import SetGroupCard from "components/cards/SetGroupCard.vue";
 import WorkoutService from "src/services/WorkoutService";
-import SetGroupService from "src/services/SetGroupService";
 export default {
+  name: "SetGroupsContainer",
+  emits: ["showHistoricoModalUp"],
   props: {
     workoutId: Number,
     onlyRead: Boolean,
     showSummary: Boolean,
     exerciseId: Number, //Remarca los setGroups con este ejercicio
   },
-  emits: ["reloadWorkout"],
   components: { SetModal, SummaryWo, SetGroupCard },
-  setup(props, { expose }) {
+  setup(props, { expose, emit }) {
     const state = reactive({
-      setGroups: [],
       workout: {},
       modalSet: {
         visible: false,
@@ -75,13 +71,11 @@ export default {
 
     onBeforeMount(() => {
       getWorkout();
-      getSets();
     });
 
     watch(
       () => props.workoutId,
       () => {
-        getSets();
         getWorkout();
       }
     );
@@ -96,17 +90,6 @@ export default {
       }
     }
 
-    //TODO Eliminar los SetGroups y trabajar solo con el Workout
-    function getSets() {
-      if (props.workoutId) {
-        SetGroupService.getAllWorkoutSetGroups(props.workoutId).then((res) => {
-          state.setGroups = res;
-        });
-      } else {
-        state.setGroups = [];
-      }
-    }
-
     function showSetModal(data) {
       state.modalSet.setId = data.setId;
       state.modalSet.setGroupId = data.setGroupId;
@@ -115,12 +98,15 @@ export default {
       state.modalSet.visible = true;
     }
 
+    function showHistoricoModal(data) {
+      emit("showHistoricoModalUp", data);
+    }
+
     expose({
       getWorkout,
-      getSets,
     });
 
-    return { state, getWorkout, getSets, showSetModal };
+    return { state, getWorkout, showSetModal, showHistoricoModal };
   },
 };
 </script>

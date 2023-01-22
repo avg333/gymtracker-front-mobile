@@ -17,22 +17,30 @@
 //READY
 import { ref, onBeforeMount, watch } from "vue";
 import { useRouter } from "vue-router";
-import WorkoutService from "src/services/WorkoutService";
 import { useLoginStore } from "stores/login-store";
-import { dateToBars, dateToISO8601 } from "../../utils/dateFormater";
+import WorkoutService from "src/services/WorkoutService";
+import { dateToBars, dateToISO8601 } from "src/utils/dateFormater";
 export default {
   name: "CalendarWorkouts",
   emits: ["updateDate", "updateWorkoutId"],
-  props: { showCalendar: Boolean, defaultDate: String, exerciseId: Number },
+  props: {
+    showCalendar: Boolean,
+    defaultDate: String,
+    exerciseId: Number,
+    updateDateQuery: Boolean,
+  },
   setup(props, { emit, expose }) {
     const useStore = useLoginStore();
-    const router = useRouter(); //FIXME El date de la query deberia actualizarse al cambiar la fecha
+    const router = useRouter();
 
     const date = ref(props.defaultDate ? props.defaultDate : dateToISO8601());
     const workoutDates = ref([]);
     const workoutId = ref(null);
 
     watch(date, () => {
+      if (props.updateDateQuery) {
+        router.replace({ query: { date: date.value } });
+      }
       setWorkoutId();
       emit("updateDate", date.value);
     });
@@ -69,13 +77,13 @@ export default {
       workoutId.value = workoutDates.value[date.value];
     }
 
-    function setDate(dateValue) {
-      date.value = dateValue;
+    function setToday() {
+      date.value = dateToISO8601();
     }
 
     expose({
       getWorkoutsDates,
-      setDate,
+      setToday,
     });
 
     return { date, workoutDates, dateToBars };

@@ -7,9 +7,13 @@
     <ChangeFromWorkoutModal
       :workoutId="state.workoutId"
       :defaultDate="state.date"
+      :setGroupId="state.modalWorkouts.setGroupId"
+      :exerciseId="state.modalWorkouts.exerciseId"
       @closeModal="
         reloadWorkout();
         state.modalWorkouts.visible = false;
+        state.modalWorkouts.setGroupId = null;
+        state.modalWorkouts.exerciseId = null;
       "
     />
   </q-dialog>
@@ -41,6 +45,7 @@
     <CalendarWorkouts
       v-if="state.isLogged"
       ref="calendarRef"
+      :updateDateQuery="true"
       :showCalendar="state.showCalendar"
       :defaultDate="$route.query.date"
       @updateDate="updateDate"
@@ -52,6 +57,7 @@
       v-if="state.isLogged"
       :workoutId="state.workoutId"
       :showSummary="true"
+      @showHistoricoModalUp="showHistoricoModal"
     />
 
     <q-page-sticky
@@ -106,15 +112,15 @@ export default defineComponent({
     const state = reactive({
       isLogged: computed(() => useStore.getIsLogged),
       workoutId: null,
-      date: route.query.date ? route.query.date : dateToISO8601(), //TODO Quizas no inicializar esto?
+      date: route.query.date ? route.query.date : dateToISO8601(),
       leftDrawerOpen: false,
       showCalendar: false,
       modalChangeDate: false,
-      modalWorkouts: { visible: false },
+      modalWorkouts: { visible: false, setGroupId: null, exerciseId: null },
     });
 
     async function createWorkout() {
-      const newWorkout = { date: dateToISO8601(state.date) };
+      const newWorkout = { date: state.date };
       await WorkoutService.create(useStore.getUserId, newWorkout);
       reloadWorkoutDates();
     }
@@ -138,10 +144,15 @@ export default defineComponent({
       });
     }
 
+    function showHistoricoModal(data) {
+      state.modalWorkouts.setGroupId = data.setGroupId;
+      state.modalWorkouts.exerciseId = data.exerciseId;
+      state.modalWorkouts.visible = true;
+    }
+
     const setGroupsref = ref(null);
     function reloadWorkout() {
       setGroupsref.value.getWorkout();
-      setGroupsref.value.getSets();
     }
 
     const calendarRef = ref(null);
@@ -149,7 +160,7 @@ export default defineComponent({
       calendarRef.value.getWorkoutsDates();
     }
     function setToday() {
-      calendarRef.value.setDate(dateToISO8601());
+      calendarRef.value.setToday();
     }
     function updateWorkoutId(idWorkout) {
       state.workoutId = idWorkout;
@@ -162,13 +173,14 @@ export default defineComponent({
       state,
       createWorkout,
       removeWorkout,
+      showHistoricoModal,
+      setGroupsref,
+      reloadWorkout,
       calendarRef,
       updateWorkoutId,
       updateDate,
       setToday,
       reloadWorkoutDates,
-      setGroupsref,
-      reloadWorkout,
     };
   },
 });

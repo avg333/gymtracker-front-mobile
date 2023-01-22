@@ -47,7 +47,7 @@
 import { reactive, computed, onBeforeMount } from "vue";
 import { useLoginStore } from "stores/login-store";
 import WorkoutService from "src/services/WorkoutService";
-import { dateToBars } from "../../utils/dateFormater";
+import { dateToBars } from "src/utils/dateFormater";
 export default {
   name: "ChangeWorkoutDateModal",
   emits: ["closeModal"],

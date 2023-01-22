@@ -4,12 +4,15 @@
     <q-btn flat dense round icon="add" @click="increment" />
   </q-btn-group>
 </template>
+
 <script>
+//READY
 export default {
+  name: "IncrementDecrementButtons",
+  emits: ["increment", "decrement", "setZero"],
   props: {
     numberValue: Number,
   },
-  emits: ["increment", "decrement", "setZero"],
   setup(props, { emit }) {
     function increment() {
       if (props.numberValue) {

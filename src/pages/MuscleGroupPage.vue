@@ -24,7 +24,7 @@
         <span>
           {{
             $t("muscleGroupPages.addExerciseToWorkout", {
-              date: moment(workout.date).format("YYYY/MM/DD"),
+              date: workout.date,
             })
           }}
         </span>
@@ -104,7 +104,6 @@
 </template>
 
 <script>
-import moment from "moment";
 import {
   defineComponent,
   ref,
@@ -192,7 +191,7 @@ export default defineComponent({
       }
       router.push({
         path: "/",
-        query: { date: moment(workout.date).format("YYYY/MM/DD") },
+        query: { date: workout.date },
       });
     }
 
@@ -203,7 +202,6 @@ export default defineComponent({
       workout,
       setGroup,
       filter,
-      moment,
       addExercise,
     };
   },

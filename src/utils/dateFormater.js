@@ -11,3 +11,7 @@ export function dateToDayMonth(date) {
 export function dateToISO8601(date) {
   return moment(date).format("YYYY-MM-DD")
 }
+
+export function dateToTimeStamp(date) {
+  return moment(date).format("DD MMM HH:mm")
+}

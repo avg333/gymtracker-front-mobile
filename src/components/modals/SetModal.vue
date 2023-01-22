@@ -6,7 +6,7 @@
           {{
             setId
               ? $t("modal.setModal.titleEdit", {
-                  setNumber: set.listOrder + 1,
+                  setNumber: state.set?.listOrder + 1,
                   setsSize,
                 })
               : $t("modal.setModal.titleNew", {
@@ -22,14 +22,15 @@
             @click="
               $router.push({
                 name: 'calculator',
-                query: { weight: set.weight, reps: set.reps },
+                query: { weight: state.set.weight, reps: state.set.reps },
               })
             "
           />
         </div>
-        <div class="span">{{ exercise.name }}</div>
-        <div class="text-subtitle3 text-grey" v-if="setId">
-          {{ moment(set.lastModifiedAt).format("DD MMM HH:mm") }}
+
+        <div class="span">{{ state.exercise.name }}</div>
+        <div class="text-subtitle3 text-grey" v-if="state.set?.id">
+          {{ dateToTimeStamp(state.set.lastModifiedAt) }}
         </div>
       </q-card-section>
 
@@ -37,7 +38,12 @@
         <div class="row items-center full-space q-col-gutter-sm">
           <div class="col-2 text-right">{{ $t("modal.setModal.kg") }}</div>
           <div class="col-6">
-            <q-input v-model="set.weight" type="number" step="any" autofocus />
+            <q-input
+              v-model.number="state.set.weight"
+              type="number"
+              step="any"
+              autofocus
+            />
           </div>
           <div class="col-1">
             <IncrementSelect
@@ -46,10 +52,10 @@
           </div>
           <div class="col-3 text-center">
             <IncrementDecrementButtons
-              :numberValue="set.weight"
-              @increment="set.weight += selectedIncrement"
-              @decrement="set.weight -= selectedIncrement"
-              @setZero="set.weight = 0"
+              :numberValue="Number(state.set.weight)"
+              @increment="state.set.weight += state.selectedIncrement"
+              @decrement="state.set.weight -= state.selectedIncrement"
+              @setZero="state.set.weight = 0"
             />
           </div>
         </div>
@@ -57,15 +63,15 @@
         <div class="row items-center full-space q-col-gutter-sm">
           <div class="col-2 text-right">{{ $t("modal.setModal.rep") }}</div>
           <div class="col-6">
-            <q-input v-model="set.reps" type="number" />
+            <q-input v-model.number="state.set.reps" type="number" />
           </div>
           <div class="col-1"></div>
           <div class="col-3 text-center">
             <IncrementDecrementButtons
-              :numberValue="set.reps"
-              @increment="set.reps += 1"
-              @decrement="set.reps -= 1"
-              @setZero="set.reps = 0"
+              :numberValue="state.set.reps"
+              @increment="state.set.reps += 1"
+              @decrement="state.set.reps -= 1"
+              @setZero="state.set.reps = 0"
             />
           </div>
         </div>
@@ -73,12 +79,16 @@
         <div class="row items-center full-space q-col-gutter-sm">
           <div class="col-2 text-right">{{ $t("modal.setModal.rir") }}</div>
           <div class="col-6">
-            <q-select v-model="set.rir" :options="rirOptions" />
+            <q-select v-model="state.set.rir" :options="rirOptions" />
           </div>
           <div class="col-1"></div>
           <div class="col-3 text-center">
             <q-btn-group>
-              <q-btn :push="set.rir === 5" dense @click="set.rir = 5">
+              <q-btn
+                dense
+                :push="state.set.rir < efectiveRir"
+                @click="state.set.rir = 5"
+              >
                 {{ $t("modal.setModal.warmup") }}
               </q-btn>
             </q-btn-group>
@@ -101,53 +111,55 @@
 </template>
 
 <script>
+//READY
 const rirOptions = [0, 0.5, 1, 2, 3, 4, 5];
-import moment from "moment";
-import { ref, reactive, onBeforeMount } from "vue";
+const efectiveRir = 4;
+import { reactive, onBeforeMount } from "vue";
 import { useLoginStore } from "stores/login-store";
+import IncrementDecrementButtons from "components/IncrementDecrementButtons.vue";
+import IncrementSelect from "components/IncrementSelect.vue";
 import SetService from "src/services/SetService";
 import SetGroupService from "src/services/SetGroupService";
 import ExerciseService from "src/services/ExerciseService";
-import IncrementDecrementButtons from "../IncrementDecrementButtons.vue";
-import IncrementSelect from "../IncrementSelect.vue";
+import { dateToTimeStamp } from "src/utils/dateFormater";
 export default {
+  name: "SetModal",
+  emits: ["closeModal"],
   props: {
     setId: Number,
     setGroupId: Number,
     setsSize: Number,
     exerciseId: Number,
   },
-  emits: ["closeModal"],
   components: { IncrementDecrementButtons, IncrementSelect },
   setup(props, { emit }) {
-    const set = reactive({
-      id: props.setId,
-      description: "",
-      listOrder: -1,
-      reps: 0,
-      rir: 1,
-      weight: 0,
-      setGroupId: props.setGroupId,
-    });
-    const exercise = reactive({});
+    const useStore = useLoginStore();
 
-    onBeforeMount(() => {
+    const state = reactive({
+      selectedIncrement: 2.5,
+      set: {
+        id: props.setId,
+        description: "",
+        listOrder: -1,
+        reps: 0,
+        rir: 1,
+        weight: 0,
+        setGroupId: props.setGroupId,
+      },
+      exercise: {},
+    });
+
+    onBeforeMount(async () => {
       ExerciseService.getById(props.exerciseId).then((res) => {
-        for (const key of Object.keys(res)) exercise[key] = res[key];
+        state.exercise = res;
       });
-      if (props.setId)
-        SetService.getById(props.setId).then((res) => {
-          for (const key of Object.keys(res)) set[key] = res[key];
-        });
-      else {
-        getLastTimeWeightAndReps();
-      }
+      props.setId ? await getSet() : getLastTimeWeightAndReps();
     });
 
     async function saveSet() {
       props.setId
-        ? await SetService.update(props.setId, set)
-        : await SetService.create(props.setGroupId, set);
+        ? await SetService.update(props.setId, state.set)
+        : await SetService.create(props.setGroupId, state.set);
       emit("closeModal");
     }
     async function deleteSet() {
@@ -155,40 +167,39 @@ export default {
       emit("closeModal");
     }
 
-    const useStore = useLoginStore();
+    async function getSet() {
+      const res = await SetService.getById(props.setId);
+      if (res.ok) {
+        state.set = res.data;
+        return;
+      } //TODO Tratar casos de error
+    }
+
     function getLastTimeWeightAndReps() {
       SetGroupService.getLastExerciseSetGroup(
         useStore.getUserId,
         props.exerciseId
       ).then((setGroup) => {
-        if (
-          !setGroup ||
-          !setGroup.id ||
-          !setGroup.sets ||
-          setGroup.sets.length < props.setsSize + 1
-        ) {
-          return;
+        if (setGroup?.id && setGroup?.sets?.length >= props.setsSize + 1) {
+          const setDb = setGroup.sets[props.setsSize];
+          state.set.reps = setDb.reps;
+          state.set.weight = setDb.weight;
         }
-        const setDb = setGroup.sets[props.setsSize];
-        set.reps = setDb.reps;
-        set.weight = setDb.weight;
       });
     }
 
-    const selectedIncrement = ref(2.5);
     function changueSelectedIncrement(value) {
-      selectedIncrement.value = value;
+      state.selectedIncrement = value;
     }
 
     return {
-      exercise,
-      set,
-      moment,
-      deleteSet,
+      state,
       saveSet,
-      rirOptions,
-      selectedIncrement,
+      deleteSet,
       changueSelectedIncrement,
+      efectiveRir,
+      rirOptions,
+      dateToTimeStamp,
     };
   },
 };

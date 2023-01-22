@@ -1,4 +1,5 @@
 import { api } from "src/boot/axios";
+import { processAxiosResponse, processAxiosError } from "src/utils/responseUtils"
 
 const API = "sets"
 
@@ -8,19 +9,20 @@ class SetService {
     //Implementar sistema de filtros
     try {
       const res = await api.get("setGroups/" + setGroupId + "/sets")
-      return res.data
+      return processAxiosResponse(res)
     } catch (error) {
-      console.error("Error al obtener todos las sesiones del programa " + setGroupId + " con los filtros: " + filter + ". Error: " + error)
-      return []
+      console.error("Error al obtener todos las sesiones del serGroup " + setGroupId + " con los filtros: " + filter + ". Error: " + error)
+      return processAxiosError(error)
     }
   }
 
   async getById(idSet) {
     try {
       const res = await api.get(API + "/" + idSet)
-      return res.data
+      return processAxiosResponse(res)
     } catch (error) {
       console.error("Error al obtener la sesión con ID: " + idSet + ". Error: " + error)
+      return processAxiosError(error)
     }
   }
 

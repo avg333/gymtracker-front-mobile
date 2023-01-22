@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { dateToISO8601, dateToDayMonth } from "../../utils/dateFormater";
+import { dateToISO8601, dateToDayMonth } from "src/utils/dateFormater";
 export default {
   emits: [
     "showHideLeftDrawer",

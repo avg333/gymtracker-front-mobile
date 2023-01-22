@@ -36,6 +36,12 @@
       </q-item-section>
       <q-item-section>{{ $t("menu.login") }}</q-item-section>
     </q-item>
+    <q-item v-if="!isLogged" to="register">
+      <q-item-section avatar>
+        <q-icon name="how_to_reg" />
+      </q-item-section>
+      <q-item-section>Registrarse</q-item-section>
+    </q-item>
   </q-list>
 </template>
 
@@ -43,6 +49,7 @@
 import imgLogo from "assets/logo-white.png";
 import { computed, defineComponent } from "vue";
 import { useLoginStore } from "stores/login-store";
+import LoginService from "src/services/LoginService";
 export default defineComponent({
   name: "LeftDrawner",
   components: {},
@@ -90,6 +97,7 @@ export default defineComponent({
     const userName = computed(() => store.getLogedUserName);
 
     function logout() {
+      LoginService.logout();
       store.logout();
     }
 

@@ -35,13 +35,9 @@
                   <q-item-section>
                     <q-item-label
                       @click="
-                        $router.push({
-                          path: '/copyWorkout/',
-                          query: {
-                            date,
-                            setGroupId: setGroup.id,
-                            exerciseId: setGroup.exercise.id,
-                          },
+                        $emit('showHistoricoModal', {
+                          setGroupId: setGroup.id,
+                          exerciseId: setGroup.exercise.id,
                         })
                       "
                     >
@@ -82,10 +78,8 @@
         </div>
       </div>
 
-      <div class="row items-center">
-        <div class="col-12">
-          {{ setGroup.description }}
-        </div>
+      <div class="items-center">
+        {{ setGroup.description }}
       </div>
 
       <div class="row items-center text-center">
@@ -103,23 +97,17 @@
             })
           "
         >
-          <div class="row">
-            <div class="col-12">
-              {{ Math.round(set.weight) }}
-              {{ $t("card.set.kg") }}
-            </div>
+          <div>
+            {{ Math.round(set.weight) }}
+            {{ $t("card.set.kg") }}
           </div>
-          <div class="row">
-            <div class="col-12">
-              {{ Math.round(set.reps) }}
-              {{ $t("card.set.rep") }}
-            </div>
+          <div>
+            {{ Math.round(set.reps) }}
+            {{ $t("card.set.rep") }}
           </div>
-          <div class="row">
-            <div class="col-12">
-              {{ Math.round(set.rir) }}
-              {{ $t("card.set.rir") }}
-            </div>
+          <div>
+            {{ Math.round(set.rir) }}
+            {{ $t("card.set.rir") }}
           </div>
         </div>
         <div class="col-auto">
@@ -146,15 +134,17 @@
 </template>
 
 <script>
-import { getMuscleGroupIco } from "src/utils/icoUtils";
+//READY
 import SetGroupService from "src/services/SetGroupService";
+import { getMuscleGroupIco } from "src/utils/icoUtils";
 export default {
+  name: "SetGroupCard",
   props: { setGroup: Object, onlyRead: Boolean, exerciseId: Number },
-  emits: ["showSetModal", "closeModal"],
+  emits: ["showSetModal", "showHistoricoModal", "updateSets"],
   setup(_, { emit }) {
     async function removeSetGroup(setGroupId) {
       await SetGroupService.delete(setGroupId);
-      emit("closeModal");
+      emit("updateSets");
     }
     return { removeSetGroup, getMuscleGroupIco };
   },

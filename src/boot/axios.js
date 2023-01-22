@@ -17,10 +17,10 @@ api.interceptors.request.use((request) => {
   return request
 })
 
-api.interceptors.response.use(function (response) {
+api.interceptors.response.use((response) => {
   Loading.hide()
   return response;
-}, function (error) {
+}, (error) => {
   Loading.hide()
   return Promise.reject(error);
 });

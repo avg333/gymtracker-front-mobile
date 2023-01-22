@@ -31,17 +31,10 @@ export const useLoginStore = defineStore("login", {
       this.logged = true;
     },
     async logout() {
-      try {
-        await LoginService.logout()
-        this.userId = 0;
-        this.userName = "";
-        this.jwt = "";
-        this.logged = false
-        return true;
-      } catch (error) {
-        console.error("Error al intentar realizar el logout. Error:" + error)
-        return false;
-      }
+      this.userId = 0;
+      this.userName = "";
+      this.jwt = "";
+      this.logged = false
     }
   },
 });
