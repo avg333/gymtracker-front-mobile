@@ -2,20 +2,17 @@
   <div class="row g-0 items-center full-space q-col-gutter-sm">
     <div class="col-2 text-right">{{ $t("plateCalculator.kg") }}</div>
     <div class="col-6">
-      <q-input v-model="weight" type="number" />
+      <q-input v-model.number="state.weight" type="number" step="any" />
     </div>
     <div class="col-1">
-      <IncrementSelect
-        :selectedValue="selectedIncrement"
-        @changueSelectedIncrement="changueSelectedIncrement"
-      />
+      <IncrementSelect @changueSelectedIncrement="changueSelectedIncrement" />
     </div>
     <div class="col-3 text-center">
       <IncrementDecrementButtons
-        :numberValue="weight"
-        @increment="weight += selectedIncrement"
-        @decrement="weight -= selectedIncrement"
-        @setZero="weight = 0"
+        :numberValue="state.weight"
+        @increment="state.weight += state.selectedIncrement"
+        @decrement="state.weight -= state.selectedIncrement"
+        @setZero="state.weight = 0"
       />
     </div>
   </div>
@@ -26,10 +23,10 @@
       <q-chip
         v-for="bar in bars"
         :key="bar"
-        :outline="selectedBar === bar"
+        :outline="state.selectedBar === bar"
         square
         clickable
-        @click="selectedBar = bar"
+        @click="state.selectedBar = bar"
       >
         {{ bar }}
       </q-chip>
@@ -43,13 +40,16 @@
       <q-chip
         v-for="plate in plates"
         :key="plate"
-        :outline="selectedPlates.indexOf(plate) <= -1"
+        :outline="state.selectedPlates.includes(plate)"
         square
         clickable
         @click="
-          selectedPlates.indexOf(plate) > -1
-            ? selectedPlates.splice(selectedPlates.indexOf(plate), 1)
-            : selectedPlates.push(plate)
+          state.selectedPlates.includes(plate)
+            ? state.selectedPlates.splice(
+                state.selectedPlates.indexOf(plate),
+                1
+              )
+            : state.selectedPlates.push(plate)
         "
       >
         {{ plate }}
@@ -61,88 +61,81 @@
   <q-separator />
 
   <div
-    class="row g-0 items-center full-space text-center"
-    v-if="weight && weight > estimatedWeight"
+    class="items-center full-space text-center"
+    v-if="state.weight >= state.estimatedWeight"
   >
-    <div class="col-12">
-      <div class="row">
-        <div class="col-12 text-h6">
-          {{ $t("plateCalculator.bar") }}
-          {{ selectedBar }}
-          {{ $t("plateCalculator.kg") }}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 text-subtitle1">
-          {{ $t("plateCalculator.resumenDiscos") }}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <q-chip
-            v-for="(plate, index) in neededPlates"
-            :key="index"
-            size="xl"
-            color="teal"
-          >
-            {{ plate }}
-          </q-chip>
-        </div>
-      </div>
+    <div class="text-h6">
+      {{ $t("plateCalculator.bar") }}
+      {{ state.selectedBar }}
+      {{ $t("plateCalculator.kg") }}
+    </div>
+    <div class="text-subtitle1">
+      {{ $t("plateCalculator.resumenDiscos") }}
+    </div>
+    <div>
+      <q-chip
+        v-for="(plate, idx) in state.neededPlates"
+        :key="idx"
+        size="xl"
+        color="teal"
+      >
+        {{ plate }}
+      </q-chip>
     </div>
   </div>
 
-  <div
-    class="row g-0 items-center full-space text-center text-overline"
-    v-if="weight && weight != estimatedWeight"
-  >
-    <div class="col-12">
-      <div class="row" v-if="weight < estimatedWeight">
-        <div class="col-12">{{ $t("plateCalculator.pesoInferior") }}</div>
-      </div>
-      <div class="row" v-else>
-        <div class="col-12">
-          {{ $t("plateCalculator.faltanDiscos1") }}
-          <q-chip color="red" square :label="weight - estimatedWeight" />
-          {{ $t("plateCalculator.faltanDiscos2") }}
-        </div>
-      </div>
-    </div>
+  <div v-if="state.weight < state.estimatedWeight">
+    {{ $t("plateCalculator.pesoInferior") }}
+  </div>
+  <div v-else-if="state.weight > state.estimatedWeight">
+    {{ $t("plateCalculator.faltanDiscos1") }}
+    <q-chip color="red" square :label="state.weight - state.estimatedWeight" />
+    {{ $t("plateCalculator.faltanDiscos2") }}
   </div>
 </template>
 
 <script>
 const bars = [20, 15, 10, 5];
 const plates = [50, 25, 20, 15, 10, 5, 2.5, 1.25, 1, 0.5, 0.25, 0.125];
-const defaultSelectedBar = 20;
-const defaultSelectedPlates = [20, 15, 10, 5, 2.5, 1.25];
-import { ref, computed } from "vue";
-import IncrementSelect from "./IncrementSelect.vue";
-import IncrementDecrementButtons from "./IncrementDecrementButtons.vue";
+import { reactive, computed, watchEffect } from "vue";
+import IncrementSelect from "components/IncrementSelect.vue";
+import IncrementDecrementButtons from "components/IncrementDecrementButtons.vue";
+import { useSettingsStore } from "stores/settings-store";
 export default {
   name: "PlateCalculator",
-  components: { IncrementDecrementButtons, IncrementSelect, IncrementSelect },
-  props: {
-    defaultWeight: {
-      type: Number,
-    },
-  },
+  components: { IncrementDecrementButtons, IncrementSelect },
+  props: { defaultWeight: Number },
   setup(props) {
-    const weight = ref(props.defaultWeight || 0);
-    const selectedBar = ref(defaultSelectedBar);
-    const selectedPlates = ref(defaultSelectedPlates);
+    const useStore = useSettingsStore();
 
-    const neededPlates = computed(() =>
-      getNeededPlates(weight.value, selectedBar.value, selectedPlates.value)
-    );
+    const state = reactive({
+      selectedIncrement: 2.5,
+      weight: props.defaultWeight || 0,
+      selectedBar: useStore.selectedBar,
+      selectedPlates: useStore.selectedPlates,
+      neededPlates: computed(() =>
+        getNeededPlates(state.weight, state.selectedBar, state.selectedPlates)
+      ),
+      estimatedWeight: computed(
+        () =>
+          state.neededPlates.reduce((partialSum, a) => partialSum + a * 2, 0) +
+          state.selectedBar
+      ),
+    });
 
-    const estimatedWeight = computed(
-      () =>
-        neededPlates.value.reduce((partialSum, a) => partialSum + a * 2, 0) +
-        selectedBar.value
-    );
+    watchEffect(() => {
+      useStore.setSelectedBar(state.selectedBar);
+    });
+
+    watchEffect(() => {
+      useStore.setSelectedPlates(state.selectedPlates);
+    });
 
     function getNeededPlates(peso, pesoBarra, platosDiponibles) {
+      if (!peso) {
+        return [];
+      }
+
       platosDiponibles.sort(function (a, b) {
         return a - b;
       });
@@ -163,25 +156,20 @@ export default {
       return platosNecesarios;
     }
 
-    const selectedIncrement = ref(2.5);
     function changueSelectedIncrement(value) {
-      selectedIncrement.value = value;
+      state.selectedIncrement = value;
     }
 
     return {
-      weight,
+      state,
+      changueSelectedIncrement,
       bars,
       plates,
-      selectedBar,
-      selectedPlates,
-      neededPlates,
-      estimatedWeight,
-      selectedIncrement,
-      changueSelectedIncrement,
     };
   },
 };
 </script>
+
 <style scoped>
 .full-space {
   width: 100%;
