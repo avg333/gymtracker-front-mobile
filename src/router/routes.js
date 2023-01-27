@@ -8,6 +8,7 @@ import MuscleSupGroupsPage from "src/pages/MuscleSupGroupsPage.vue"
 import MuscleGroupsPage from "src/pages/MuscleGroupsPage.vue"
 import MuscleGroupPage from "src/pages/MuscleGroupPage.vue"
 import ExercisePage from "pages/ExercisePage.vue"
+import ExercisesPage from "pages/ExercisesPage.vue"
 
 
 const routes = [
@@ -15,9 +16,7 @@ const routes = [
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: "muscleSupGroups", component: MuscleSupGroupsPage },
-      { path: "muscleSupGroups/:muscleSupGroupId/muscleGroups", component: MuscleGroupsPage },
-      { path: "muscleSupGroups/:muscleSupGroupId/muscleGroups/:muscleGroupId", component: MuscleGroupPage },
+      { path: "exercises/", component: ExercisesPage },
       { path: "exercises/:exerciseId", component: ExercisePage },
       { path: "login", component: LoginPage },
       { path: "register", component: RegisterPage },

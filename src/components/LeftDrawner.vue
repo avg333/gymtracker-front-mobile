@@ -58,7 +58,7 @@ export default defineComponent({
       {
         title: "menu.exercises",
         icon: "fitness_center",
-        to: "/muscleSupGroups",
+        to: "/exercises",
       },
       {
         title: "menu.programs",
