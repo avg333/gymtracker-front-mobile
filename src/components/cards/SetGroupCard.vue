@@ -51,7 +51,7 @@
                     <q-item-label
                       @click="
                         $router.push({
-                          path: '/muscleSupGroups/',
+                          path: '/exercises/',
                           query: { setGroupId: setGroup.id },
                         })
                       "

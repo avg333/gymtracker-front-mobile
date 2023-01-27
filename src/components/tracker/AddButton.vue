@@ -6,7 +6,7 @@
           <q-item-section
             @click="
               $router.push({
-                path: '/muscleSupGroups/',
+                path: '/exercises/',
                 query: { workoutId },
               })
             "
