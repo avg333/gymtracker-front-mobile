@@ -1,8 +1,24 @@
 {
+  "addButton": {
+    "calendar": "Desde calendario",
+    "exercise": "Desde ejercicios",
+    "programs": "Desde programa"
+  },
   "calculator": {
     "plate": "CALCULAR DISCOS",
     "rm": "CALCULAR RM",
     "title": "CALCULADORA"
+  },
+  "calendar": {
+    "daysShort": [
+      "Dom",
+      "Lun",
+      "Mar",
+      "Mie",
+      "Jue",
+      "Vie",
+      "Sab"
+    ]
   },
   "card": {
     "set": {
@@ -38,6 +54,11 @@
     "statistics": "Estadísticas"
   },
   "modal": {
+    "changeFromWorkoutModal": {
+      "copy": "Copiar",
+      "copySets": "Copiar series",
+      "copyWorkout": "Copiar entreno"
+    },
     "changeWorkoutDate": {
       "cancel": "CANCELAR",
       "existsWorkout": "Ya existe un entrenamiento ese día",
@@ -130,12 +151,13 @@
   "tracker": {
     "create": "Crear entrenamiento",
     "deleteWorkout": "Eliminar entrenamiento",
-    "empty": "Ningún entrenamiento hoy",
+    "empty": "Entrenamiento vacío",
     "exs": "EXS",
     "kg": "KG",
     "mins": "MINS",
     "moveWorkout": "Mover entrenamiento",
     "notLogged": "Inicie sesión para usar la aplicación",
+    "null": "Ningún entrenamiento hoy",
     "sets": "SETS",
     "today": "Hoy"
   }

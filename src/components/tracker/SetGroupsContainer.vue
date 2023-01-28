@@ -31,17 +31,17 @@
       v-if="!state.workout?.setGroups?.length"
       class="flex flex-center text-center q-pa-md"
     >
-      Entrenamiento vacio
+      {{ $t("tracker.empty") }}
     </div>
   </div>
 
   <div v-else class="flex flex-center text-center q-pa-md">
-    {{ $t("tracker.empty") }}
+    {{ $t("tracker.null") }}
   </div>
 </template>
 
 <script>
-//READY
+//READY!
 import { reactive, onBeforeMount, watch } from "vue";
 import SummaryWo from "components/tracker/SummaryWo.vue";
 import SetModal from "components/modals/SetModal.vue";
@@ -50,13 +50,13 @@ import WorkoutService from "src/services/WorkoutService";
 export default {
   name: "SetGroupsContainer",
   emits: ["showHistoricoModalUp"],
+  components: { SetModal, SummaryWo, SetGroupCard },
   props: {
     workoutId: Number,
     onlyRead: Boolean,
     showSummary: Boolean,
     exerciseId: Number, //Remarca los setGroups con este ejercicio
   },
-  components: { SetModal, SummaryWo, SetGroupCard },
   setup(props, { expose, emit }) {
     const state = reactive({
       workout: {},

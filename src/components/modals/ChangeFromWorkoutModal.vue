@@ -2,7 +2,11 @@
   <q-card>
     <q-card-section>
       <div class="row text-h6">
-        {{ setGroupId ? "Copiar series" : "Copiar entreno" }}
+        {{
+          setGroupId
+            ? $t("modal.changeFromWorkoutModal.copySets")
+            : $t("modal.changeFromWorkoutModal.copyWorkout")
+        }}
         <q-space />
         <q-btn-group flat>
           <q-btn
@@ -13,20 +17,17 @@
             icon="date_range"
             @click="state.showCalendar = !state.showCalendar"
           />
+          <q-btn
+            flat
+            dense
+            round
+            icon="today"
+            :disabled="!state.workoutSource?.id"
+            @click="copiar"
+          >
+            {{ $t("modal.changeFromWorkoutModal.copy") }}
+          </q-btn>
         </q-btn-group>
-        <q-btn
-          flat
-          dense
-          round
-          icon="today"
-          :disabled="
-            (setGroupId && !state.setGroupSource?.id) ||
-            (!setGroupId && !state.workoutSource?.id)
-          "
-          @click="copiar"
-        >
-          Copiar
-        </q-btn>
       </div>
 
       <div class="text-subtitle3 text-grey">
@@ -49,53 +50,43 @@
       <SetGroupsContainer
         :onlyRead="true"
         :workoutId="state.workoutSource?.id"
-        :showSummary="true"
-        :exerciseId="exerciseId"
+        :exerciseId="state.setGroupDestination?.exercise?.id"
       />
     </q-card-section>
   </q-card>
 </template>
 
 <script>
-//READY
+//READY!
 import { defineComponent, reactive, onBeforeMount } from "vue";
 import SetGroupsContainer from "components/tracker/SetGroupsContainer.vue";
 import CalendarWorkouts from "components/tracker/CalendarWorkouts.vue";
 import WorkoutService from "src/services/WorkoutService";
 import SetGroupService from "src/services/SetGroupService";
-import ExerciseService from "src/services/ExerciseService";
-import { dateToISO8601 } from "src/utils/dateFormater";
 export default defineComponent({
-  name: "CopyFromWorkout",
+  name: "ChangeFromWorkoutModal",
+  emits: ["closeModal"],
   props: {
     defaultDate: String,
-    // Estos dos cuando se copia un setgroup
-    exerciseId: Number,
     setGroupId: Number,
-    // Este cuando se copia un workout
+    exerciseId: Number,
     workoutId: Number,
   },
   components: { SetGroupsContainer, CalendarWorkouts },
   setup(props, { emit }) {
     const state = reactive({
       showCalendar: true,
-      date: dateToISO8601(),
-      workoutSource: {},
+      date: null,
       workoutDestination: {},
-      exercise: {},
+      workoutSource: {},
       setGroupDestination: {},
-      setGroupSource: null,
+      setGroupSource: {},
     });
 
     onBeforeMount(() => {
-      if (props.exerciseId) {
+      if (props.setGroupId) {
         SetGroupService.getById(props.setGroupId).then((setGroup) => {
           state.setGroupDestination = setGroup;
-          if (setGroup?.exercise?.id) {
-            ExerciseService.getById(setGroup.exercise.id).then((res) => {
-              state.exercise = res;
-            });
-          }
           if (setGroup?.workout?.id) {
             WorkoutService.getById(setGroup.workout.id).then((res) => {
               state.workoutDestination = res;
@@ -112,14 +103,30 @@ export default defineComponent({
     async function copiar() {
       props.setGroupId
         ? await SetGroupService.replaceSetGroupSetsWithSetGroup(
-            props.setGroupId,
+            state.setGroupDestination.id,
             state.setGroupSource.id
           )
         : await WorkoutService.copySetGroupsFromWorkoutToWorkout(
-            props.workoutId,
+            state.workoutDestination.id,
             state.workoutSource.id
           );
       emit("closeModal");
+    }
+
+    function findSetGroupSourceInWorkout(workout) {
+      if (!workout?.setGroups?.length) {
+        state.setGroupSource = {};
+        return;
+      }
+
+      state.setGroupSource = workout.setGroups
+        .reverse()
+        .find(
+          (setGroupSource) =>
+            setGroupSource?.exercise?.id ===
+              state.setGroupDestination.exercise.id &&
+            setGroupSource?.id !== props.setGroupId
+        );
     }
 
     function updateWorkoutId(idWorkout) {
@@ -129,18 +136,11 @@ export default defineComponent({
         return;
       }
 
-      WorkoutService.getById(idWorkout).then((res) => {
-        state.workoutSource = res;
-        if (!props.exerciseId || !state.workoutSource?.setGroups?.length) {
-          return;
+      WorkoutService.getById(idWorkout).then((workoutSource) => {
+        state.workoutSource = workoutSource;
+        if (props.setGroupId) {
+          findSetGroupSourceInWorkout(workoutSource);
         }
-        state.setGroupSource = state.workoutSource.setGroups
-          .reverse()
-          .find(
-            (element) =>
-              element?.exercise?.id == props.exerciseId &&
-              element?.id != props.setGroupId
-          );
       });
     }
     function updateDate(dateCalendar) {

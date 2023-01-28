@@ -28,7 +28,7 @@
           />
         </div>
 
-        <div class="span">{{ state.exercise.name }}</div>
+        <div class="span">{{ state.exercise?.name }}</div>
         <div class="text-subtitle3 text-grey" v-if="state.set?.id">
           {{ dateToTimeStamp(state.set.lastModifiedAt) }}
         </div>
@@ -87,7 +87,7 @@
               <q-btn
                 dense
                 :push="state.set.rir < efectiveRir"
-                @click="state.set.rir = 5"
+                @click="state.set.rir = efectiveRir + 1"
               >
                 {{ $t("modal.setModal.warmup") }}
               </q-btn>
@@ -111,7 +111,7 @@
 </template>
 
 <script>
-//READY
+//READY!
 const rirOptions = [0, 0.5, 1, 2, 3, 4, 5];
 const efectiveRir = 4;
 import { reactive, onBeforeMount } from "vue";

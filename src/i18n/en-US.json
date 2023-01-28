@@ -1,8 +1,24 @@
 {
+  "addButton": {
+    "calendar": "From calendar",
+    "exercise": "From exercises",
+    "programs": "From program"
+  },
   "calculator": {
     "plate": "PLATE CALCULATOR",
     "rm": "WORKING WEIGHT",
     "title": "CALCULATOR"
+  },
+  "calendar": {
+    "daysShort": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ]
   },
   "card": {
     "set": {
@@ -38,6 +54,11 @@
     "statistics": "Statistics"
   },
   "modal": {
+    "changeFromWorkoutModal": {
+      "copy": "Copy",
+      "copySets": "Copy sets",
+      "copyWorkout": "Copy workout"
+    },
     "changeWorkoutDate": {
       "cancel": "CANCEL",
       "existsWorkout": "There is already a training that day",
@@ -136,6 +157,7 @@
     "mins": "MINS",
     "moveWorkout": "Move workout",
     "notLogged": "Please log in to use the app",
+    "null": "There is no training today",
     "sets": "SETS",
     "today": "Today"
   }

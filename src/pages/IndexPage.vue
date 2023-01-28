@@ -53,8 +53,8 @@
     />
 
     <SetGroupsContainer
-      ref="setGroupsref"
       v-if="state.isLogged"
+      ref="setGroupsref"
       :workoutId="state.workoutId"
       :showSummary="true"
       @showHistoricoModalUp="showHistoricoModal"
@@ -68,7 +68,11 @@
       <AddButton
         :workoutId="state.workoutId"
         @createWorkout="createWorkout"
-        @showModalWorkouts="state.modalWorkouts.visible = true"
+        @showModalWorkouts="
+          state.modalWorkouts.visible = true;
+          state.modalWorkouts.setGroupId = null;
+          state.modalWorkouts.exerciseId = null;
+        "
       />
     </q-page-sticky>
 
@@ -81,14 +85,15 @@
 </template>
 
 <script>
+//READY!
 import { useQuasar } from "quasar";
 import { defineComponent, ref, reactive, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useLoginStore } from "stores/login-store";
 import LeftDrawner from "components/LeftDrawner.vue";
-import TrackerToolbar from "components/tracker/TrackerToolbar.vue";
 import ChangeWorkoutDateModal from "components/modals/ChangeWorkoutDateModal.vue";
 import ChangeFromWorkoutModal from "components/modals/ChangeFromWorkoutModal.vue";
+import TrackerToolbar from "components/tracker/TrackerToolbar.vue";
 import CalendarWorkouts from "components/tracker/CalendarWorkouts.vue";
 import SetGroupsContainer from "components/tracker/SetGroupsContainer.vue";
 import AddButton from "components/tracker/AddButton.vue";
@@ -128,19 +133,17 @@ export default defineComponent({
     const $q = useQuasar();
     async function removeWorkout() {
       $q.dialog({
-        title: "¿Delete Workout?",
-        message: "This action can not be undone",
+        title: "¿Eliminar entrenamiento?",
+        message: "Esta acción no se puede deshacer",
         cancel: true,
         ok: {
           push: true,
-          label: "Delete",
+          label: "Eliminar",
           color: "negative",
         },
       }).onOk(async () => {
-        if (state.workoutId) {
-          await WorkoutService.delete(state.workoutId);
-          reloadWorkoutDates();
-        }
+        await WorkoutService.delete(state.workoutId);
+        reloadWorkoutDates();
       });
     }
 
@@ -162,6 +165,7 @@ export default defineComponent({
     function setToday() {
       calendarRef.value.setToday();
     }
+
     function updateWorkoutId(idWorkout) {
       state.workoutId = idWorkout;
     }

@@ -4,6 +4,48 @@
       v-show="showCalendar"
       class="ancho"
       mask="YYYY-MM-DD"
+      :locale="{
+        days: [
+          'Domingo',
+          'Lunes',
+          'Martes',
+          'Miércoles',
+          'Jueves',
+          'Viernes',
+          'Sábado',
+        ],
+        daysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+        months: [
+          'Enero',
+          'Febrero',
+          'Marzo',
+          'Abril',
+          'Mayo',
+          'Junio',
+          'Julio',
+          'Agosto',
+          'Septiembre',
+          'Octubre',
+          'Noviembre',
+          'Diciembre',
+        ],
+        monthsShort: [
+          'Ene',
+          'Feb',
+          'Mar',
+          'Abr',
+          'May',
+          'Jun',
+          'Jul',
+          'Ago',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dic',
+        ],
+      }"
+      first-day-of-week="1"
+      no-unset
       :events="Object.keys(workoutDates).map((el) => dateToBars(el))"
       v-model="date"
       :years-in-month-view="true"
@@ -14,7 +56,7 @@
 </template>
 
 <script>
-//READY
+//READY!
 import { ref, onBeforeMount, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useLoginStore } from "stores/login-store";

@@ -11,11 +11,9 @@
     <q-chip v-if="today === date" square class="text-white" color="positive">
       <strong> {{ $t("tracker.today") }} </strong>
     </q-chip>
-    <span v-else>
-      <strong>
-        {{ dateToDayMonth(date) }}
-      </strong>
-    </span>
+    <strong v-else>
+      {{ dateToDayMonth(date) }}
+    </strong>
     <q-space />
     <q-btn-group flat>
       <q-btn
@@ -71,8 +69,10 @@
 </template>
 
 <script>
+//READY!
 import { dateToISO8601, dateToDayMonth } from "src/utils/dateFormater";
 export default {
+  name: "TrackerToolbar",
   emits: [
     "showHideLeftDrawer",
     "setToday",

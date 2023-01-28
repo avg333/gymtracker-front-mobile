@@ -19,17 +19,6 @@
         {{ $t("muscleGroupPages.filter.unilateral") }}
       </q-chip>
       <q-chip
-        v-for="muscleSubGroup in state.muscleSubGroups"
-        :key="muscleSubGroup.id"
-        color="red"
-        square
-        clickable
-        :outline="!selectedMuscleSubGroups.includes(muscleSubGroup.id)"
-        @click="setSelectedMuscleSubGroups(muscleSubGroup.id)"
-      >
-        {{ muscleSubGroup.name }}
-      </q-chip>
-      <q-chip
         v-for="loadType in state.loadTypes"
         :key="loadType"
         color="primary"
@@ -47,34 +36,24 @@
       </q-chip>
     </q-tabs>
   </q-toolbar>
-
-  <q-toolbar v-if="state.muscleGroups.length">
+  <q-toolbar>
     <q-tabs class="maxAncho">
       <q-chip
-        color="primary"
+        v-if="selectedMuscleSupGroupId"
+        color="secondary"
         square
         clickable
-        @click="$emit('setSelectedMuscleSupGroup')"
+        removable
+        @remove="$emit('setSelectedMuscleSupGroup')"
       >
-        X
+        {{
+          state.muscleSupGroups.find(
+            (msg) => msg.id === selectedMuscleSupGroupId
+          )?.name
+        }}
       </q-chip>
       <q-chip
-        v-for="muscleGroup in state.muscleGroups"
-        :key="muscleGroup.id"
-        color="primary"
-        square
-        clickable
-        :outline="muscleGroup.id !== selectedMuscleGroupId"
-        @click="$emit('setSelectedMuscleGroup', muscleGroup.id)"
-      >
-        {{ muscleGroup.name }}
-      </q-chip>
-    </q-tabs>
-  </q-toolbar>
-
-  <q-toolbar v-else>
-    <q-tabs class="maxAncho">
-      <q-chip
+        v-else
         v-for="muscleSupGroup in state.muscleSupGroups"
         :key="muscleSupGroup.id"
         color="primary"
@@ -84,6 +63,44 @@
         @click="$emit('setSelectedMuscleSupGroup', muscleSupGroup.id)"
       >
         {{ muscleSupGroup.name }}
+      </q-chip>
+
+      <q-chip
+        v-if="selectedMuscleGroupId"
+        color="warning"
+        square
+        clickable
+        removable
+        @remove="$emit('setSelectedMuscleGroup')"
+      >
+        {{
+          state.muscleGroups.find((msg) => msg.id === selectedMuscleGroupId)
+            ?.name
+        }}
+      </q-chip>
+      <q-chip
+        v-else
+        v-for="muscleGroup in state.muscleGroups"
+        :key="muscleGroup.id"
+        color="warning"
+        square
+        clickable
+        :outline="muscleGroup.id !== selectedMuscleGroupId"
+        @click="$emit('setSelectedMuscleGroup', muscleGroup.id)"
+      >
+        {{ muscleGroup.name }}
+      </q-chip>
+
+      <q-chip
+        v-for="muscleSubGroup in state.muscleSubGroups"
+        :key="muscleSubGroup.id"
+        color="red"
+        square
+        clickable
+        :outline="!selectedMuscleSubGroups.includes(muscleSubGroup.id)"
+        @click="setSelectedMuscleSubGroups(muscleSubGroup.id)"
+      >
+        {{ muscleSubGroup.name }}
       </q-chip>
     </q-tabs>
   </q-toolbar>
@@ -104,13 +121,12 @@ export default {
     "setSelectedMuscleGroup",
   ],
   props: {
-    muscleGroupId: Number,
     selectedFav: Boolean,
     selectedUnilateral: Boolean,
     selectedLoadType: String,
-    selectedMuscleSubGroups: Array,
     selectedMuscleSupGroupId: Number,
     selectedMuscleGroupId: Number,
+    selectedMuscleSubGroups: Array,
   },
   setup(props, { emit }) {
     const state = reactive({

@@ -30,7 +30,6 @@
       </q-toolbar>
 
       <ExercisesFilterBar
-        :muscleGroupId="state.filter.selectedMuscleGroupId"
         :selectedFav="state.filter.selectedFav"
         :selectedUnilateral="state.filter.selectedUnilateral"
         :selectedLoadType="state.filter.selectedLoadType"
@@ -110,9 +109,20 @@ export default defineComponent({
       if (setGroupId) {
         SetGroupService.getById(setGroupId).then((res) => {
           state.setGroup = res;
+          const muscleGroupExercises = res?.exercise?.muscleGroupExercises;
+          const muscleSubGroups = res?.exercise?.muscleSubGroups;
+          state.filter.selectedMuscleGroupId =
+            muscleGroupExercises[0].muscleGroup.id;
+          state.filter.selectedMuscleSupGroupId =
+            muscleGroupExercises[0].muscleGroup.muscleSupGroups[0].id;
+          state.filter.selectedMuscleSubGroups = muscleSubGroups?.map(
+            (a) => a?.id
+          );
+          WorkoutService.getById(res.workout.id).then((wo) => {
+            state.workout = wo;
+          });
         });
-      }
-      if (workoutId) {
+      } else if (workoutId) {
         //TODO Esto es necesario si hay setGroupId?
         WorkoutService.getById(workoutId).then((res) => {
           state.workout = res;

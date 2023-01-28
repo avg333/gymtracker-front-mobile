@@ -6,22 +6,25 @@
           <q-item-section
             @click="
               $router.push({
-                path: '/exercises/',
+                name: 'exercises',
                 query: { workoutId },
               })
             "
-            >From exercises
+          >
+            {{ $t("addButton.exercise") }}
           </q-item-section>
         </q-item>
 
         <q-item clickable v-close-popup>
           <q-item-section @click="$emit('showModalWorkouts')">
-            From calendar
+            {{ $t("addButton.calendar") }}
           </q-item-section>
         </q-item>
 
         <q-item clickable v-close-popup>
-          <q-item-section>From program</q-item-section>
+          <q-item-section>
+            {{ $t("addButton.programs") }}
+          </q-item-section>
         </q-item>
       </q-list>
     </q-menu>
@@ -33,8 +36,10 @@
 </template>
 
 <script>
+//READY!
 export default {
-  props: { workoutId: Number },
+  name: "AddButon",
   emits: ["createWorkout", "showModalWorkouts"],
+  props: { workoutId: { type: Number } },
 };
 </script>

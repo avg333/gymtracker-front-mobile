@@ -7,8 +7,8 @@
 
   <q-list>
     <q-item
-      :to="item.to"
       v-for="item in linksList"
+      :to="item.to"
       :key="item.to"
       :disabled="item.disabled"
     >

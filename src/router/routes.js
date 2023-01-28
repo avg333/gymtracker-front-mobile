@@ -13,7 +13,7 @@ const routes = [
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: "exercises/", component: ExercisesPage },
+      { name: "exercises", path: "exercises/", component: ExercisesPage },
       { path: "exercises/:exerciseId", component: ExercisePage },
       { path: "login", component: LoginPage },
       { path: "register", component: RegisterPage },

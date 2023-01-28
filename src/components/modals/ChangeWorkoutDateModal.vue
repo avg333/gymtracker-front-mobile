@@ -14,6 +14,48 @@
       <q-date
         mask="YYYY-MM-DD"
         v-model="state.date"
+        :locale="{
+          days: [
+            'Domingo',
+            'Lunes',
+            'Martes',
+            'Miércoles',
+            'Jueves',
+            'Viernes',
+            'Sábado',
+          ],
+          daysShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'],
+          months: [
+            'Enero',
+            'Febrero',
+            'Marzo',
+            'Abril',
+            'Mayo',
+            'Junio',
+            'Julio',
+            'Agosto',
+            'Septiembre',
+            'Octubre',
+            'Noviembre',
+            'Diciembre',
+          ],
+          monthsShort: [
+            'Ene',
+            'Feb',
+            'Mar',
+            'Abr',
+            'May',
+            'Jun',
+            'Jul',
+            'Ago',
+            'Sep',
+            'Oct',
+            'Nov',
+            'Dic',
+          ],
+        }"
+        first-day-of-week="1"
+        no-unset
         :years-in-month-view="true"
         :events="Object.keys(state.workoutDates).map((el) => dateToBars(el))"
         minimal
@@ -43,11 +85,11 @@
 </template>
 
 <script>
-//READY
+//READY!
 import { reactive, computed, onBeforeMount } from "vue";
 import { useLoginStore } from "stores/login-store";
 import WorkoutService from "src/services/WorkoutService";
-import { dateToBars } from "src/utils/dateFormater";
+import { dateToBars } from "src/utils/dateFormater"; //TODO Descubrir como eliminar esta conversion
 export default {
   name: "ChangeWorkoutDateModal",
   emits: ["closeModal"],
