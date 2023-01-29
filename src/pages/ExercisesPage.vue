@@ -3,7 +3,9 @@
     <div class="bg-black text-white">
       <q-toolbar>
         <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-        <q-toolbar-title> Ejercicios </q-toolbar-title>
+        <q-toolbar-title>
+          {{ $t("muscleGroupPages.exercises") }}
+        </q-toolbar-title>
         <q-space />
         <q-btn-group flat>
           <q-btn flat dense round icon="add" />
@@ -29,44 +31,30 @@
         </span>
       </q-toolbar>
 
-      <ExercisesFilterBar
-        :selectedFav="state.filter.selectedFav"
-        :selectedUnilateral="state.filter.selectedUnilateral"
-        :selectedLoadType="state.filter.selectedLoadType"
-        :selectedMuscleSubGroups="state.filter.selectedMuscleSubGroups"
-        :selectedMuscleSupGroupId="state.filter.selectedMuscleSupGroupId"
-        :selectedMuscleGroupId="state.filter.selectedMuscleGroupId"
-        @changeSelectedFav="
-          state.filter.selectedFav = !state.filter.selectedFav
-        "
-        @changeSelectedUnilateral="
-          state.filter.selectedUnilateral = !state.filter.selectedUnilateral
-        "
-        @setSelectedLoadType="setSelectedLoadType"
-        @setSelectedMuscleSubGroups="setSelectedMuscleSubGroups"
-        @setSelectedMuscleSupGroup="setSelectedMuscleSupGroup"
-        @setSelectedMuscleGroup="setSelectedMuscleGroup"
-      />
+      <ExercisesFilterBar ref="exerciseFilterBarRef" @setFilter="setFilter" />
     </div>
-    <q-scroll-observer />
 
-    <div>
-      <ExerciseCard
-        v-for="exercise in state.exercises"
-        :key="exercise.id"
-        :exercise="exercise"
-        @click="
-          state.setGroup?.id || state.workout?.id
-            ? addExercise(exercise.id)
-            : $router.push('/exercises/' + exercise.id)
-        "
-      />
-    </div>
+    <ExerciseCard
+      v-for="exercise in state.exercises"
+      :key="exercise.id"
+      :exercise="exercise"
+      @click="
+        state.setGroup?.id || state.workout?.id
+          ? addExercise(exercise.id)
+          : $router.push('/exercises/' + exercise.id)
+      "
+    />
   </q-page>
 </template>
 
 <script>
-import { defineComponent, reactive, onBeforeMount, watchEffect } from "vue";
+import {
+  defineComponent,
+  ref,
+  reactive,
+  onBeforeMount,
+  watchEffect,
+} from "vue";
 import { useRoute, useRouter } from "vue-router";
 import ExerciseCard from "components/cards/ExerciseCard.vue";
 import ExercisesFilterBar from "components/ExercisesFilterBar.vue";
@@ -85,14 +73,6 @@ export default defineComponent({
 
     const state = reactive({
       exercises: [],
-      filter: {
-        selectedFav: false,
-        selectedUnilateral: null,
-        selectedLoadType: null,
-        selectedMuscleSupGroupId: null,
-        selectedMuscleGroupId: null,
-        selectedMuscleSubGroups: [],
-      },
       workout: {},
       setGroup: {
         id: null,
@@ -104,26 +84,19 @@ export default defineComponent({
       },
     });
 
-    onBeforeMount(async () => {
+    const filter = ref({});
+
+    onBeforeMount(() => {
       loadExercises();
       if (setGroupId) {
-        SetGroupService.getById(setGroupId).then((res) => {
-          state.setGroup = res;
-          const muscleGroupExercises = res?.exercise?.muscleGroupExercises;
-          const muscleSubGroups = res?.exercise?.muscleSubGroups;
-          state.filter.selectedMuscleGroupId =
-            muscleGroupExercises[0].muscleGroup.id;
-          state.filter.selectedMuscleSupGroupId =
-            muscleGroupExercises[0].muscleGroup.muscleSupGroups[0].id;
-          state.filter.selectedMuscleSubGroups = muscleSubGroups?.map(
-            (a) => a?.id
-          );
-          WorkoutService.getById(res.workout.id).then((wo) => {
+        SetGroupService.getById(setGroupId).then((setGroup) => {
+          state.setGroup = setGroup;
+          WorkoutService.getById(setGroup.workout.id).then((wo) => {
             state.workout = wo;
           });
+          preSetFilter(setGroup?.exercise);
         });
       } else if (workoutId) {
-        //TODO Esto es necesario si hay setGroupId?
         WorkoutService.getById(workoutId).then((res) => {
           state.workout = res;
         });
@@ -131,19 +104,24 @@ export default defineComponent({
     });
 
     watchEffect(() => {
-      loadExercises(state.filter);
+      loadExercises(filter.value);
     });
 
-    function loadExercises() {
-      ExerciseService.getAll({
-        unilateral: state.filter.selectedUnilateral,
-        loadType: state.filter.selectedLoadType,
-        muscleSupGroupIds: state.filter.selectedMuscleSupGroupId,
-        muscleGroupIds: state.filter.selectedMuscleGroupId,
-        selectedMuscleSubGroups: state.filter.selectedMuscleSubGroups,
-      }).then((res) => {
-        state.exercises = res;
-      });
+    function loadExercises(filter) {
+      if (filter)
+        ExerciseService.getAll({
+          unilateral: filter.selectedUnilateral,
+          loadType: filter.selectedLoadType,
+          muscleSupGroupIds: filter.selectedMuscleSupGroupId,
+          muscleGroupIds: filter.selectedMuscleGroupId,
+          selectedMuscleSubGroups: filter.selectedMuscleSubGroups,
+        }).then((res) => {
+          state.exercises = res;
+        });
+      else
+        ExerciseService.getAll().then((res) => {
+          state.exercises = res;
+        });
     }
 
     async function addExercise(exerciseId) {
@@ -160,47 +138,35 @@ export default defineComponent({
       });
     }
 
-    function setSelectedLoadType(loadType) {
-      state.filter.selectedLoadType = loadType;
-    }
-
-    function setSelectedMuscleSupGroup(muscleSupGroupId) {
-      state.filter.selectedMuscleGroupId = null;
-      if (!muscleSupGroupId) {
-        state.filter.selectedMuscleSupGroupId = null;
+    const exerciseFilterBarRef = ref(null);
+    function preSetFilter(exercise) {
+      if (!exercise) {
         return;
       }
+      //TODO Mejorar esto
+      const muscleGroupExercises = exercise.muscleGroupExercises;
+      const muscleSubGroups = exercise.muscleSubGroups;
+      const selectedMuscleGroupId = muscleGroupExercises[0].muscleGroup.id;
+      const selectedMuscleSupGroupId =
+        muscleGroupExercises[0].muscleGroup.muscleSupGroups[0].id;
+      const selectedMuscleSubGroups = muscleSubGroups?.map((a) => a?.id);
 
-      state.filter.selectedMuscleSupGroupId =
-        state.filter.selectedMuscleSupGroupId === muscleSupGroupId
-          ? null
-          : muscleSupGroupId;
+      exerciseFilterBarRef.value.preSetFilter(
+        selectedMuscleSupGroupId,
+        selectedMuscleGroupId,
+        selectedMuscleSubGroups
+      );
     }
 
-    function setSelectedMuscleGroup(muscleGroupId) {
-      if (
-        !muscleGroupId ||
-        state.filter.selectedMuscleGroupId === muscleGroupId
-      ) {
-        state.filter.selectedMuscleGroupId = null;
-      }
-      {
-        state.filter.selectedMuscleGroupId = muscleGroupId;
-      }
-    }
-
-    function setSelectedMuscleSubGroups(muscleSubGroups) {
-      state.filter.selectedMuscleSubGroups = muscleSubGroups;
-      loadExercises(state.filter);
+    function setFilter(filterValue) {
+      filter.value = filterValue;
     }
 
     return {
       state,
       addExercise,
-      setSelectedLoadType,
-      setSelectedMuscleSubGroups,
-      setSelectedMuscleSupGroup,
-      setSelectedMuscleGroup,
+      setFilter,
+      exerciseFilterBarRef,
     };
   },
 });

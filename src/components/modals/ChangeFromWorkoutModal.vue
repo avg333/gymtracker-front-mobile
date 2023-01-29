@@ -17,16 +17,6 @@
             icon="date_range"
             @click="state.showCalendar = !state.showCalendar"
           />
-          <q-btn
-            flat
-            dense
-            round
-            icon="today"
-            :disabled="!state.workoutSource?.id"
-            @click="copiar"
-          >
-            {{ $t("modal.changeFromWorkoutModal.copy") }}
-          </q-btn>
         </q-btn-group>
       </div>
 
@@ -47,12 +37,31 @@
 
       <q-separator />
 
-      <SetGroupsContainer
-        :onlyRead="true"
-        :workoutId="state.workoutSource?.id"
-        :exerciseId="state.setGroupDestination?.exercise?.id"
-      />
+      <q-scroll-area style="height: 300px">
+        <SetGroupsContainer
+          :onlyRead="true"
+          :workoutId="state.workoutSource?.id"
+          :exerciseId="state.setGroupDestination?.exercise?.id"
+        />
+      </q-scroll-area>
     </q-card-section>
+
+    <q-card-actions>
+      <q-space />
+      <q-btn flat v-close-popup>
+        {{ $t("modal.changeWorkoutDate.cancel") }}
+      </q-btn>
+      <q-btn
+        flat
+        dense
+        round
+        icon="today"
+        :disabled="!state.workoutSource?.id"
+        @click="copiar"
+      >
+        {{ $t("modal.changeFromWorkoutModal.copy") }}
+      </q-btn>
+    </q-card-actions>
   </q-card>
 </template>
 

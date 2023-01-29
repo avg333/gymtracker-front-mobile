@@ -22,6 +22,7 @@
   },
   "card": {
     "set": {
+      "historic": "Histórico",
       "kg": "KG",
       "removeExercise": "Eliminar ejercicio",
       "rep": "REP",
@@ -31,6 +32,7 @@
   },
   "loadType": {
     "bar": "Barra",
+    "bodyweight": "Sin carga",
     "cable": "Cable",
     "dumbbell": "Mancuernas",
     "machine": "Máquina",

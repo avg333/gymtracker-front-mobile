@@ -141,9 +141,9 @@ export default {
         id: props.setId,
         description: "",
         listOrder: -1,
-        reps: 0,
-        rir: 1,
-        weight: 0,
+        reps: undefined,
+        rir: 2,
+        weight: undefined,
         setGroupId: props.setGroupId,
       },
       exercise: {},
@@ -176,6 +176,7 @@ export default {
     }
 
     function getLastTimeWeightAndReps() {
+      //TODO Obtener datos ultima set
       SetGroupService.getLastExerciseSetGroup(
         useStore.getUserId,
         props.exerciseId

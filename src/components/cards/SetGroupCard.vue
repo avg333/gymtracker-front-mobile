@@ -41,7 +41,7 @@
                         })
                       "
                     >
-                      Last time
+                      {{ $t("card.set.historic") }}
                     </q-item-label>
                   </q-item-section>
                 </q-item>

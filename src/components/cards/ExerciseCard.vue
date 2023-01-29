@@ -20,7 +20,11 @@
 </template>
 
 <script>
+import { getMuscleGroupIco } from "src/utils/icoUtils";
 export default {
   props: { exercise: Object },
+  setup() {
+    return { getMuscleGroupIco }; //TODO
+  },
 };
 </script>
