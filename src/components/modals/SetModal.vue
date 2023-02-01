@@ -176,15 +176,11 @@ export default {
     }
 
     function getLastTimeWeightAndReps() {
-      //TODO Obtener datos ultima set
-      SetGroupService.getLastExerciseSetGroup(
-        useStore.getUserId,
-        props.exerciseId
-      ).then((setGroup) => {
-        if (setGroup?.id && setGroup?.sets?.length >= props.setsSize + 1) {
-          const setDb = setGroup.sets[props.setsSize];
-          state.set.reps = setDb.reps;
-          state.set.weight = setDb.weight;
+      SetService.getSetDefaultWeight(props.setGroupId).then((set) => {
+        if (set && set.id) {
+          state.set.reps = set.reps;
+          state.set.weight = set.weight;
+          state.set.rir = set.rir;
         }
       });
     }
