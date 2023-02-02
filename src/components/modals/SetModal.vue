@@ -176,13 +176,15 @@ export default {
     }
 
     function getLastTimeWeightAndReps() {
-      SetService.getSetDefaultWeight(props.setGroupId).then((set) => {
-        if (set && set.id) {
-          state.set.reps = set.reps;
-          state.set.weight = set.weight;
-          state.set.rir = set.rir;
+      SetService.getSetDefaultWeight(props.setGroupId, props.setsSize).then(
+        (set) => {
+          if (set && set.id) {
+            state.set.reps = set.reps;
+            state.set.weight = set.weight;
+            state.set.rir = set.rir;
+          }
         }
-      });
+      );
     }
 
     function changueSelectedIncrement(value) {
