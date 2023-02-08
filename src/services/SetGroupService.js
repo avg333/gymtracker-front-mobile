@@ -26,9 +26,9 @@ class SetGroupService {
     }
   }
 
-  async getLastExerciseSetGroup(idUser, idExercise) {
+  async getExerciseHistory(idUser, idExercise) {
     try {
-      const res = await api.get("/users/" + idUser + "/exercises/" + idExercise + "/last")
+      const res = await api.get("/users/" + idUser + "/exercises/" + idExercise + "/setGroups")
       return res.data
     } catch (error) {
       console.error("Error al obtener el ultimo setGroup del usuario: " + idUser + " y el ejercicio: " + idExercise + ". Error: " + error)

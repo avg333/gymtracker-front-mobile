@@ -3,7 +3,7 @@
     <div class="bg-black text-white">
       <q-toolbar>
         <q-btn flat dense round icon="arrow_back" @click="$router.back" />
-        <q-toolbar-title> {{ exercise.name }} </q-toolbar-title>
+        <q-toolbar-title> {{ state.exercise?.name }} </q-toolbar-title>
         <q-btn-group flat>
           <q-btn flat dense round icon="fitness_center" />
         </q-btn-group>
@@ -11,136 +11,84 @@
       <q-toolbar>
         <div class="row justify-center opciones">
           <q-tabs
-            v-model="slide"
+            v-model="state.slide"
             class="opciones text-white bg-black"
             inline-label
           >
-            <q-tab name="rm" label="INFORMATION" />
-            <q-tab name="plate" label="STATISTICS" />
-            <q-tab name="layers" label="HISTORY" />
+            <q-tab :name="categories.description" label="INFORMATION" />
+            <q-tab :name="categories.statistics" label="STATISTICS" />
+            <q-tab :name="categories.history" label="HISTORY" />
           </q-tabs>
         </div>
       </q-toolbar>
     </div>
 
-    <div class="row text-center">
-      <div class="col-2"></div>
-      <div class="col-8">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              {{ exercise.name }}
-            </h5>
-          </div>
-        </div>
-      </div>
-      <div class="col-2">
-        <div class="row">
-          <div class="col-12">&nbsp;</div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <q-btn
-              flat
-              :href="'https://www.google.com/search?q=' + exercise.name"
-              target="_blank"
-            >
-              <q-icon name="search" size="lg" />
-            </q-btn>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <q-btn
-              flat
-              :href="
-                'https://www.youtube.com/results?search_query=' + exercise.name
-              "
-              target="_blank"
-            >
-              <q-icon name="play_arrow" size="lg" />
-            </q-btn>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-12">
-            <q-icon name="favorite" size="lg" v-if="exercise.favourite" />
-            <q-icon name="favorite_border" size="lg" v-else />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row text-center" v-if="exercise?.muscleGroupExercises">
-      <div class="col-12">
-        <strong
-          v-for="(muscleGroupExercises, index) in exercise.muscleGroupExercises"
-          :key="muscleGroupExercises.muscleGroup.id"
-          :class="
-            'text-' + getMuscleGroupColour(muscleGroupExercises.muscleGroup)
-          "
-        >
-          {{
-            $t(
-              "muscleGroup." + muscleGroupExercises.muscleGroup.id
-            ).toUpperCase()
-          }}
-          -
-          {{ muscleGroupExercises.weight }}
-          {{ index + 1 !== exercise.muscleGroupExercises.length ? " - " : "" }}
-        </strong>
-      </div>
-    </div>
-
-    <div class="row text-center" v-if="exercise?.muscleSubGroups">
-      <div class="col-12">
-        <strong
-          v-for="(muscleSubGroup, index) in exercise.muscleSubGroups"
-          :key="muscleSubGroup.id"
-        >
-          {{ $t("muscleSubGroup." + muscleSubGroup.id).toUpperCase() }}
-          {{ index + 1 !== exercise.muscleSubGroups.length ? " - " : "" }}
-        </strong>
-      </div>
-    </div>
-
-    <div class="row text-center">
-      <div class="col-4">ID: {{ exercise.id }}</div>
-      <div class="col-4">
-        Uni/Bi: {{ exercise.unilateral ? "Unilateral" : "Bilateral" }}
-      </div>
-      <div class="col-4">
-        {{ $t("loadType." + exercise?.loadType?.toLowerCase()) }}
-      </div>
-    </div>
-
-    <div class="row text-center">
-      <div class="col-12">Description:</div>
-    </div>
-    <div class="row text-center">
-      <div class="col-12">{{ exercise.description }}</div>
-    </div>
+    <q-carousel
+      v-model="state.slide"
+      transition-prev="slide-right"
+      transition-next="slide-left"
+      animated
+      control-color="primary"
+      height="100%"
+    >
+      <q-carousel-slide :name="categories.description">
+        <ExerciseDescription :exercise="state.exercise" />
+      </q-carousel-slide>
+      <q-carousel-slide :name="categories.statistics">
+        Sin implementar
+      </q-carousel-slide>
+      <q-carousel-slide :name="categories.history">
+        <SetGroupCard
+          v-for="setGroup in state.setGroups"
+          class="bg-grey-1 items-center"
+          :key="setGroup.id"
+          :setGroup="setGroup"
+          :onlyRead="true"
+        />
+      </q-carousel-slide>
+    </q-carousel>
   </q-page>
 </template>
 
 <script>
-import { getMuscleGroupColour } from "src/utils/colourUtils";
-import { ref, defineComponent, reactive, onBeforeMount } from "vue";
+const categories = {
+  description: "description",
+  statistics: "statistics",
+  history: "history",
+};
+import { defineComponent, reactive, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
+import { useLoginStore } from "stores/login-store";
 import ExerciseService from "src/services/ExerciseService";
+import SetGroupService from "src/services/SetGroupService";
+import SetGroupCard from "src/components/cards/SetGroupCard.vue";
+import ExerciseDescription from "src/components/exercise/ExerciseDescription.vue";
 export default defineComponent({
-  name: "IndexPage",
+  name: "ExercisePage",
+  components: { SetGroupCard, ExerciseDescription },
   setup() {
-    const slide = ref("rm");
-
-    const exercise = reactive({});
     const route = useRoute();
-    onBeforeMount(async () => {
-      const res = await ExerciseService.getById(route.params.exerciseId);
-      for (const key of Object.keys(res)) exercise[key] = res[key];
+    const store = useLoginStore();
+
+    const state = reactive({
+      slide: categories.description,
+      exercise: {},
+      setGroups: [],
     });
 
-    return { exercise, slide, getMuscleGroupColour };
+    onBeforeMount(async () => {
+      ExerciseService.getById(route.params.exerciseId).then((res) => {
+        state.exercise = res;
+      });
+      SetGroupService.getExerciseHistory(
+        store.getUserId,
+        route.params.exerciseId
+      ).then((res) => {
+        state.setGroups = res;
+      });
+    });
+
+    return { categories, state };
   },
 });
 </script>
