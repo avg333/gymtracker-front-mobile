@@ -115,11 +115,9 @@
 const rirOptions = [0, 0.5, 1, 2, 3, 4, 5];
 const efectiveRir = 4;
 import { reactive, onBeforeMount } from "vue";
-import { useLoginStore } from "stores/login-store";
 import IncrementDecrementButtons from "components/IncrementDecrementButtons.vue";
 import IncrementSelect from "components/IncrementSelect.vue";
 import SetService from "src/services/SetService";
-import SetGroupService from "src/services/SetGroupService";
 import ExerciseService from "src/services/ExerciseService";
 import { dateToTimeStamp } from "src/utils/dateFormater";
 export default {
@@ -133,8 +131,6 @@ export default {
   },
   components: { IncrementDecrementButtons, IncrementSelect },
   setup(props, { emit }) {
-    const useStore = useLoginStore();
-
     const state = reactive({
       selectedIncrement: 2.5,
       set: {
@@ -176,15 +172,13 @@ export default {
     }
 
     function getLastTimeWeightAndReps() {
-      SetService.getSetDefaultWeight(props.setGroupId, props.setsSize).then(
-        (set) => {
-          if (set && set.id) {
-            state.set.reps = set.reps;
-            state.set.weight = set.weight;
-            state.set.rir = set.rir;
-          }
+      SetService.getSetDefaultWeight(props.setGroupId).then((set) => {
+        if (set && set.id) {
+          state.set.reps = set.reps;
+          state.set.weight = set.weight;
+          state.set.rir = set.rir;
         }
-      );
+      });
     }
 
     function changueSelectedIncrement(value) {

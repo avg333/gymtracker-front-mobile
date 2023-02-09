@@ -26,9 +26,9 @@ class SetService {
     }
   }
 
-  async getSetDefaultWeight(setGroupId, setNumber) {
+  async getSetDefaultWeight(setGroupId) {
     try {
-      const res = await api.get("setGroups/" + setGroupId + "/sets/newSet/" + setNumber)
+      const res = await api.get("setGroups/" + setGroupId + "/sets/newSet")
       return res.data
     } catch (error) {
       console.error("Error al obtener la set por defecto para el setGroup " + setGroupId + ". Error: " + error)
