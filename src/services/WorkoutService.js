@@ -22,38 +22,9 @@ class WorkoutService {
     }
   }
 
-  async getUserWorkoutsWithExercise(userId, exerciseId) {
+  async getById(workoutId, depth) {
     try {
-      const res = await api.get("/users/" + userId + "/exercises/" + exerciseId + "/workouts")
-      return res.data
-    } catch (error) {
-      console.error("Error al crear el programa con los datos: " + workoutDestinationId + ". Error: " + error)
-    }
-  }
-
-  async getWorkoutsByUserAndDate(userId, date) {
-    try {
-      const res = await api.get("/users/" + userId + "/workouts/date/" + date)
-      return res.data
-    } catch (error) {
-      console.error("Error al obtener los workouts del user: " + userId + " y fecha:" + date + ". Error: " + error)
-    }
-  }
-
-  //TODO DEPRECATED
-  async getAllFromUser(userId, filter) {
-    try {
-      const res = await api.get("users/" + userId + "/workouts")
-      return res.data
-    } catch (error) {
-      console.error("Error al obtener todos los programas con los filtros: " + filter + ". Error: " + error)
-      return []
-    }
-  }
-
-  async getById(workoutId) {
-    try {
-      const res = await api.get(API + "/" + workoutId)
+      const res = await api.get(API + "/" + workoutId, { params: { depth } })
       return res.data
     } catch (error) {
       console.error("Error al obtener el programa con ID: " + workoutId + ". Error: " + error)

@@ -145,7 +145,7 @@ export default defineComponent({
         return;
       }
 
-      WorkoutService.getById(idWorkout).then((workoutSource) => {
+      WorkoutService.getById(idWorkout, 1).then((workoutSource) => {
         state.workoutSource = workoutSource;
         if (props.setGroupId) {
           findSetGroupSourceInWorkout(workoutSource);

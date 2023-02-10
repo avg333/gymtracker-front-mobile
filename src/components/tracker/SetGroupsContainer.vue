@@ -82,7 +82,7 @@ export default {
 
     function getWorkout() {
       if (props.workoutId) {
-        WorkoutService.getById(props.workoutId).then((res) => {
+        WorkoutService.getById(props.workoutId, -1).then((res) => {
           state.workout = res;
         });
       } else {
