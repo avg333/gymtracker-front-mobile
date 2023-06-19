@@ -1,0 +1,166 @@
+{
+  "addButton": {
+    "calendar": "Desde calendario",
+    "exercise": "Desde ejercicios",
+    "programs": "Desde programa"
+  },
+  "calculator": {
+    "plate": "CALCULAR DISCOS",
+    "rm": "CALCULAR RM",
+    "title": "CALCULADORA"
+  },
+  "calendar": {
+    "daysShort": [
+      "Dom",
+      "Lun",
+      "Mar",
+      "Mie",
+      "Jue",
+      "Vie",
+      "Sab"
+    ]
+  },
+  "card": {
+    "set": {
+      "historic": "Histórico",
+      "kg": "KG",
+      "removeExercise": "Eliminar ejercicio",
+      "rep": "REP",
+      "replaceExercise": "Cambiar ejercicio",
+      "rir": "RIR"
+    }
+  },
+  "loadType": {
+    "bar": "Barra",
+    "bodyweight": "Sin carga",
+    "cable": "Cable",
+    "dumbbell": "Mancuernas",
+    "machine": "Máquina",
+    "multipower": "Multipower"
+  },
+  "login": {
+    "login": "LOGIN",
+    "password": "Contraseña",
+    "title": "INICIAR SESIÓN",
+    "username": "Usuario"
+  },
+  "menu": {
+    "calculator": "Calculadora",
+    "exercises": "Ejercicios",
+    "login": "Login",
+    "logout": "Logout",
+    "measurements": "Medidas",
+    "notes": "Notas",
+    "programs": "Programas",
+    "settings": "Ajustes",
+    "statistics": "Estadísticas"
+  },
+  "modal": {
+    "changeFromWorkoutModal": {
+      "copy": "Copiar",
+      "copySets": "Copiar series",
+      "copyWorkout": "Copiar entreno"
+    },
+    "changeWorkoutDate": {
+      "cancel": "CANCELAR",
+      "existsWorkout": "Ya existe un entrenamiento ese día",
+      "from": "De",
+      "move": "MOVER",
+      "moveWorkout": "Mover Entrenamiento",
+      "to": "a"
+    },
+    "exercise": {
+      "add": "AÑADIR",
+      "cancel": "CANCELAR",
+      "delete": "ELIMINAR",
+      "save": "GUARDAR"
+    },
+    "setModal": {
+      "add": "AÑADIR",
+      "cancel": "CANCELAR",
+      "delete": "ELIMINAR",
+      "kg": "KG",
+      "rep": "REP",
+      "rir": "RIR",
+      "save": "GUARDAR",
+      "titleEdit": "Serie Nº{setNumber} de {setsSize}",
+      "titleNew": "Serie Nº{setsSize}",
+      "warmup": "WARMUP"
+    }
+  },
+  "muscleGroup": {
+    "1": "Pectoral",
+    "2": "Dorsales",
+    "3": "Trapecios",
+    "4": "Hombro anterior",
+    "5": "Hombro lateral",
+    "6": "Hombro posterior",
+    "7": "Antebrazos",
+    "8": "Bíceps",
+    "9": "Tríceps",
+    "10": "Abdominales",
+    "11": "Espalda baja",
+    "12": "Cuádriceps",
+    "13": "Femorales",
+    "14": "Glúteos",
+    "15": "Gemelos"
+  },
+  "muscleGroupPages": {
+    "addExerciseToWorkout": "Añadir al entrenamiento del {date}",
+    "exercises": "Ejercicios",
+    "filter": {
+      "unilateral": "Unilateral"
+    },
+    "replaceExerciseInWorkout": "Sustituir {exerciseName}"
+  },
+  "muscleSubGroup": {
+    "1": "Superior",
+    "2": "Inferior",
+    "3": "Medio",
+    "4": "Superior",
+    "5": "Medio",
+    "6": "Inferior",
+    "7": "Cabeza lateral",
+    "8": "Cabeza larga",
+    "9": "Cabeza media",
+    "10": "Máximo",
+    "11": "Medio",
+    "12": "Mínimo",
+    "13": "Soleo",
+    "14": "Gastrocnemio"
+  },
+  "muscleSupGroup": {
+    "1": "Pectoral",
+    "2": "Espalda",
+    "3": "Hombros",
+    "4": "Brazos",
+    "5": "Core",
+    "6": "Piernas"
+  },
+  "plateCalculator": {
+    "bar": "BARRA",
+    "faltanDiscos1": "No se pueden añadir",
+    "faltanDiscos2": "kgs porque faltan discos",
+    "kg": "KG",
+    "pesoInferior": "El peso es inferior al peso de la barra",
+    "plates": "DISCOS",
+    "resumenDiscos": "Con las siguientes parejas de discos:"
+  },
+  "rmCalculator": {
+    "kg": "KG",
+    "rep": "REP"
+  },
+  "tracker": {
+    "create": "Crear entrenamiento",
+    "deleteWorkout": "Eliminar entrenamiento",
+    "empty": "Entrenamiento vacío",
+    "exs": "EXS",
+    "kg": "KG",
+    "mins": "MINS",
+    "moveWorkout": "Mover entrenamiento",
+    "notLogged": "Inicie sesión para usar la aplicación",
+    "null": "Ningún entrenamiento hoy",
+    "sets": "SETS",
+    "today": "Hoy"
+  }
+}

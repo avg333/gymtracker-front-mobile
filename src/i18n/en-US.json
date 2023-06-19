@@ -1,0 +1,166 @@
+{
+  "addButton": {
+    "calendar": "From calendar",
+    "exercise": "From exercises",
+    "programs": "From program"
+  },
+  "calculator": {
+    "plate": "PLATE CALCULATOR",
+    "rm": "WORKING WEIGHT",
+    "title": "CALCULATOR"
+  },
+  "calendar": {
+    "daysShort": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ]
+  },
+  "card": {
+    "set": {
+      "historic": "Historical",
+      "kg": "KG",
+      "removeExercise": "Remove exercise",
+      "rep": "REP",
+      "replaceExercise": "Replace exercise",
+      "rir": "RIR"
+    }
+  },
+  "loadType": {
+    "bar": "Bar",
+    "bodyweight": "Bodyweight",
+    "cable": "Cable",
+    "dumbbell": "Dumbbell",
+    "machine": "Machine",
+    "multipower": "Smith"
+  },
+  "login": {
+    "login": "LOGIN",
+    "password": "Password",
+    "title": "LOGIN",
+    "username": "Username"
+  },
+  "menu": {
+    "calculator": "Calculator",
+    "exercises": "Exercises",
+    "login": "Login",
+    "logout": "Logout",
+    "measurements": "Measurements",
+    "notes": "Notes",
+    "programs": "Programs",
+    "settings": "Settings",
+    "statistics": "Statistics"
+  },
+  "modal": {
+    "changeFromWorkoutModal": {
+      "copy": "Copy",
+      "copySets": "Copy sets",
+      "copyWorkout": "Copy workout"
+    },
+    "changeWorkoutDate": {
+      "cancel": "CANCEL",
+      "existsWorkout": "There is already a training that day",
+      "from": "From",
+      "move": "MOVE",
+      "moveWorkout": "Move Workout",
+      "to": "to"
+    },
+    "exercise": {
+      "add": "ADD",
+      "cancel": "CANCEL",
+      "delete": "DELETE",
+      "save": "SAVE"
+    },
+    "setModal": {
+      "add": "ADD",
+      "cancel": "CANCEL",
+      "delete": "DELETE",
+      "kg": "KG",
+      "rep": "REP",
+      "rir": "RIR",
+      "save": "SAVE",
+      "titleEdit": "Set Nº{setNumber} of {setsSize}",
+      "titleNew": "Set Nº{setsSize}",
+      "warmup": "WARMUP"
+    }
+  },
+  "muscleGroup": {
+    "1": "Chest",
+    "2": "Lats",
+    "3": "Traps",
+    "4": "Shoulder anterior",
+    "5": "Shoulder lateral",
+    "6": "Shoulder posterior",
+    "7": "Forearms",
+    "8": "Biceps",
+    "9": "Triceps",
+    "10": "Abs",
+    "11": "Lower back",
+    "12": "Quads",
+    "13": "Hamstrings",
+    "14": "Glute",
+    "15": "Calves"
+  },
+  "muscleGroupPages": {
+    "addExerciseToWorkout": "Add to {date} workout",
+    "exercises": "Exercises",
+    "filter": {
+      "unilateral": "Unilateral"
+    },
+    "replaceExerciseInWorkout": "Replace {exerciseName}"
+  },
+  "muscleSubGroup": {
+    "1": "Upper",
+    "2": "Lower",
+    "3": "Middle",
+    "4": "Upper",
+    "5": "Middle",
+    "6": "Lower",
+    "7": "Lateral head",
+    "8": "Long head",
+    "9": "Medial head",
+    "10": "Maximus",
+    "11": "Medius",
+    "12": "Minimus",
+    "13": "Soleus",
+    "14": "Gastrocnemius"
+  },
+  "muscleSupGroup": {
+    "1": "Chest",
+    "2": "Back",
+    "3": "Shoulders",
+    "4": "Arms",
+    "5": "Core",
+    "6": "Legs"
+  },
+  "plateCalculator": {
+    "bar": "BAR",
+    "faltanDiscos1": "Cannot be added",
+    "faltanDiscos2": "kgs because plates are missing",
+    "kg": "KG",
+    "pesoInferior": "The weight is less than the weight of the bar",
+    "plates": "PLATES",
+    "resumenDiscos": "With the following pairs of plates:"
+  },
+  "rmCalculator": {
+    "kg": "KG",
+    "rep": "REP"
+  },
+  "tracker": {
+    "create": "Crear workout",
+    "deleteWorkout": "Remove workout",
+    "empty": "Empty day",
+    "exs": "EXS",
+    "kg": "KG",
+    "mins": "MINS",
+    "moveWorkout": "Move workout",
+    "notLogged": "Please log in to use the app",
+    "null": "There is no training today",
+    "sets": "SETS",
+    "today": "Today"
+  }
+}
