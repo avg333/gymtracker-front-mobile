@@ -28,7 +28,7 @@
 
       <q-scroll-area style="height: 300px">
         <SetGroupsContainer :onlyRead="true" :workoutId="state.workoutSource?.id"
-          :exerciseId="state.setGroupDestination?.exercise?.id" />
+          :exerciseId="state.setGroupDestination?.exerciseId" />
       </q-scroll-area>
     </q-card-section>
 
@@ -44,32 +44,43 @@
   </q-card>
 </template>
 
-<script>
+<script lang="ts">
 //READY!
 import { defineComponent, reactive, onBeforeMount } from 'vue';
 import SetGroupsContainer from 'components/tracker/SetGroupsContainer.vue';
 import CalendarWorkouts from 'components/tracker/CalendarWorkouts.vue';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
 import SetGroupService from 'src/services/workouts-api/SetGroupService';
+import { GetSetGroupResponse } from 'src/types/workouts-api/SetGroupServiceTypes';
+import { GetWorkoutResponse } from 'src/types/workouts-api/WorkoutServiceTypes';
 export default defineComponent({
   name: 'ChangeFromWorkoutModal',
   emits: ['closeModal'],
   props: {
     defaultDate: String,
-    setGroupId: Number,
-    exerciseId: Number,
-    workoutId: Number,
+    setGroupId: String,
+    exerciseId: String,
+    workoutId: String,
   },
   components: { SetGroupsContainer, CalendarWorkouts },
   setup(props, { emit }) {
-    const state = reactive({
+    const state: State = reactive({
       showCalendar: true,
       date: null,
-      workoutDestination: {},
-      workoutSource: {},
-      setGroupDestination: {},
-      setGroupSource: {},
+      workoutDestination: null,
+      workoutSource: null,
+      setGroupDestination: null,
+      setGroupSource: null,
     });
+
+    interface State {
+      showCalendar: boolean,
+      date: string | null,
+      workoutDestination: GetWorkoutResponse | null,
+      workoutSource: GetWorkoutResponse | null,
+      setGroupDestination: GetSetGroupResponse | null,
+      setGroupSource: GetSetGroupResponse | null,
+    }
 
     onBeforeMount(() => {
       if (props.setGroupId) {
@@ -89,21 +100,26 @@ export default defineComponent({
     });
 
     async function copiar() {
-      props.setGroupId
-        ? await SetGroupService.replaceSetGroupSetsWithSetGroup(
-          state.setGroupDestination.id,
-          state.setGroupSource.id
-        )
-        : await WorkoutService.copySetGroupsFromWorkoutToWorkout(
-          state.workoutDestination.id,
-          state.workoutSource.id
-        );
+      if (props.setGroupId) {
+        if (state.setGroupDestination && state.setGroupSource) {
+          await SetGroupService.replaceSetGroupSetsWithSetGroup(
+            state.setGroupDestination.id,
+            state.setGroupSource.id)
+        }
+      } else {
+        if (state.workoutDestination && state.workoutSource) {
+          await WorkoutService.copySetGroupsFromWorkoutToWorkout(
+            state.workoutDestination.id,
+            state.workoutSource.id)
+        }
+
+      }
       emit('closeModal');
     }
 
-    function findSetGroupSourceInWorkout(workout) {
+    function findSetGroupSourceInWorkout(workout: GetWorkoutResponse) {
       if (!workout?.setGroups?.length) {
-        state.setGroupSource = {};
+        state.setGroupSource = null;
         return;
       }
 
@@ -112,26 +128,26 @@ export default defineComponent({
         .find(
           (setGroupSource) =>
             setGroupSource?.exercise?.id ===
-            state.setGroupDestination.exercise.id &&
+            state.setGroupDestination?.exerciseId &&
             setGroupSource?.id !== props.setGroupId
-        );
+        ) as unknown as GetSetGroupResponse; //FIXME
     }
 
-    function updateWorkoutId(idWorkout) {
+    function updateWorkoutId(idWorkout: string) {
       if (!idWorkout) {
-        state.workoutSource = {};
-        state.setGroupSource = {};
+        state.workoutSource = null;
+        state.setGroupSource = null;
         return;
       }
 
-      WorkoutService.getById(idWorkout, true).then((workoutSource) => {
+      WorkoutService.getById(idWorkout).then((workoutSource) => {
         state.workoutSource = workoutSource;
-        if (props.setGroupId) {
+        if (props.setGroupId && workoutSource) {
           findSetGroupSourceInWorkout(workoutSource);
         }
       });
     }
-    function updateDate(dateCalendar) {
+    function updateDate(dateCalendar: string) {
       state.date = dateCalendar;
     }
 

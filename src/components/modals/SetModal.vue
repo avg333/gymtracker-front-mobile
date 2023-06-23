@@ -24,7 +24,7 @@
 
         <div class="span">{{ state.exercise?.name }}</div>
         <div class="text-subtitle3 text-grey" v-if="state.set?.id">
-          {{ dateToTimeStamp(state.set.lastModifiedAt) }}
+          <!-- {{ dateToTimeStamp(state.set.lastModifiedAt) }} -->
         </div>
       </q-card-section>
 
@@ -93,20 +93,22 @@ import { reactive, onBeforeMount } from 'vue';
 import IncrementDecrementButtons from 'components/IncrementDecrementButtons.vue';
 import IncrementSelect from 'components/IncrementSelect.vue';
 import SetService from 'src/services/workouts-api/SetService';
+import { GetSetResponse } from 'src/types/workouts-api/SetServiceTypes';
 import ExerciseService from 'src/services/exercises-api/ExerciseService';
-import { dateToTimeStamp } from 'src/utils/dateFormater';
+//import { dateToTimeStamp } from 'src/utils/dateFormater';
 
 const props = defineProps({
-  setId: String,
+  setId: { type: String, default: 'noID' },
   setGroupId: { type: String, required: true },
-  setsSize: Number,
-  exerciseId: Number,
+  setsSize: { Number, required: true },
+  exerciseId: { String, required: true }
 });
 const emit = defineEmits(['closeModal']);
-const state = reactive({
+const state: State = reactive({
   selectedIncrement: 2.5,
   set: {
     id: props.setId,
+    listOrder: 0,
     description: '',
     reps: 1,
     rir: 2,
@@ -116,6 +118,12 @@ const state = reactive({
   exercise: {},
 });
 
+interface State {
+  selectedIncrement: number
+  set: GetSetResponse,
+  exercise: object
+}
+
 onBeforeMount(async () => {
   ExerciseService.getById(props.exerciseId).then((res) => {
     state.exercise = res;
@@ -124,24 +132,15 @@ onBeforeMount(async () => {
 });
 
 async function saveSet() {
-  if (props.setId) {
-    let updateSetDataRequest = {
-      description: state.set.description,
-      reps: state.set.reps,
-      rir: state.set.rir,
-      weight: state.set.weight,
-    };
-    await SetService.updateData(props.setId, updateSetDataRequest);
-  } else {
-    let createSetRequest = {
-      description: state.set.description,
-      reps: state.set.reps,
-      rir: state.set.rir,
-      weight: state.set.weight,
-    };
-    await SetService.create(props.setGroupId, createSetRequest);
-  }
-
+  const requets = {
+    description: state.set.description,
+    reps: state.set.reps,
+    rir: state.set.rir,
+    weight: state.set.weight,
+  };
+  props.setId
+    ? await SetService.updateData(props.setId, requets)
+    : await SetService.create(props.setGroupId, requets);
   emit('closeModal');
 }
 async function deleteSet() {
@@ -160,16 +159,16 @@ async function getSet() {
     return;
   }
 
-  const set = await SetService.getById(props.setId);
+  const set: GetSetResponse | null = await SetService.getById(props.setId);
   if (set) {
     state.set = set;
-    return;
   } //TODO Tratar casos de error
 }
 
 function getLastTimeWeightAndReps() {
   SetService.getSetDefaultWeight(props.setGroupId).then((set) => {
-    if (set && set.id) {
+    if (set) {
+      state.set.description = set.description;
       state.set.reps = set.reps;
       state.set.weight = set.weight;
       state.set.rir = set.rir;

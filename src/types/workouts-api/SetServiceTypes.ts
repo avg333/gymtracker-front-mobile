@@ -1,44 +1,66 @@
-export type CreateSetRequest = {
+// GET
+export interface GetNewSetDataResponse {
   description: string | null | undefined;
-  reps: number | null | undefined;
-  rir: number | null | undefined;
-  weight: number | null | undefined;
-};
+  reps: number;
+  rir: number;
+  weight: number;
+}
 
-export type CreateSetResponse = {
+export interface GetSetResponse {
   id: string;
   listOrder: number;
-  description: string;
-  reps: number;
-  rir: number;
-  weight: number;
-  setGroup: SetGroupGetSetResponse;
-};
-
-export type UpdateSetDataRequest = {
   description: string | null | undefined;
-  reps: number | null | undefined;
-  rir: number | null | undefined;
-  weight: number | null | undefined;
-};
-
-export type UpdateSetDataResponse = {
-  description: string;
   reps: number;
   rir: number;
   weight: number;
-};
+  setGroup: GetSetResponseSetGroup;
+}
 
-export type GetSetResponse = {
+export interface GetSetResponseSetGroup {
+  id: string;
+}
+
+// POST
+export interface PostSetRequest {
+  description: string | null | undefined;
+  reps: number;
+  rir: number;
+  weight: number;
+}
+
+export interface PostSetResponse {
   id: string;
   listOrder: number;
-  description: string;
+  description: string | null | undefined;
   reps: number;
   rir: number;
   weight: number;
-  setGroup: SetGroupGetSetResponse;
-};
+  setGroup: PostSetGroupGetSetResponse;
+}
 
-type SetGroupGetSetResponse = {
+export interface PostSetGroupGetSetResponse {
   id: string;
-};
+}
+
+// UPDATE
+export interface UpdateSetListOrderRequest {
+  listOrder: number;
+}
+
+export interface UpdateSetListOrderResponse {
+  sets: GetSetResponse[]; //TODO Separar tipo
+}
+
+export interface UpdateSetDataRequest {
+  description: string | null | undefined;
+  reps: number;
+  rir: number;
+  weight: number;
+}
+
+export interface UpdateSetDataResponse {
+  description: string | null | undefined;
+  reps: number;
+  rir: number;
+  weight: number;
+}

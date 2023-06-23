@@ -70,80 +70,82 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 const bars = [20, 15, 10, 5];
 const plates = [50, 25, 20, 15, 10, 5, 2.5, 1.25, 1, 0.5, 0.25, 0.125];
+
+const props = defineProps({ defaultWeight: Number })
 import { reactive, computed, watchEffect } from 'vue';
 import IncrementSelect from 'components/IncrementSelect.vue';
 import IncrementDecrementButtons from 'components/IncrementDecrementButtons.vue';
 import { useSettingsStore } from 'stores/settings-store';
-export default {
-  name: 'PlateCalculator',
-  components: { IncrementDecrementButtons, IncrementSelect },
-  props: { defaultWeight: Number },
-  setup(props) {
-    const useStore = useSettingsStore();
 
-    const state = reactive({
-      selectedIncrement: 2.5,
-      weight: props.defaultWeight || 0,
-      selectedBar: useStore.selectedBar,
-      selectedPlates: useStore.selectedPlates,
-      neededPlates: computed(() =>
-        getNeededPlates(state.weight, state.selectedBar, state.selectedPlates)
-      ),
-      estimatedWeight: computed(
-        () =>
-          state.neededPlates.reduce((partialSum, a) => partialSum + a * 2, 0) +
-          state.selectedBar
-      ),
-    });
 
-    watchEffect(() => {
-      useStore.setSelectedBar(state.selectedBar);
-    });
 
-    watchEffect(() => {
-      useStore.setSelectedPlates(state.selectedPlates);
-    });
+const useStore = useSettingsStore();
 
-    function getNeededPlates(peso, pesoBarra, platosDiponibles) {
-      if (!peso) {
-        return [];
-      }
+const state: State = reactive({
+  selectedIncrement: 2.5,
+  weight: props.defaultWeight || 0,
+  selectedBar: useStore.selectedBar,
+  selectedPlates: useStore.selectedPlates,
+  neededPlates: computed(() =>
+    getNeededPlates(state.weight, state.selectedBar, state.selectedPlates)
+  ),
+  estimatedWeight: computed(
+    () =>
+      state.neededPlates.reduce((partialSum: number, a: number) => partialSum + a * 2, 0) +
+      state.selectedBar
+  ),
+});
 
-      platosDiponibles.sort(function (a, b) {
-        return a - b;
-      });
-      platosDiponibles.reverse();
+interface State {
+  selectedIncrement: number,
+  weight: number,
+  selectedBar: number,
+  selectedPlates: number[],
+  neededPlates: number[],
+  estimatedWeight: number,
+}
 
-      const platosNecesarios = [];
-      let pesoCalc = peso - pesoBarra;
-      let i = 0;
-      while (i < platosDiponibles.length) {
-        if (platosDiponibles[i] * 2 > pesoCalc) {
-          i++;
-        } else {
-          platosNecesarios.push(platosDiponibles[i]);
-          pesoCalc -= platosDiponibles[i] * 2;
-        }
-      }
+watchEffect(() => {
+  useStore.setSelectedBar(state.selectedBar);
+});
 
-      return platosNecesarios;
+watchEffect(() => {
+  useStore.setSelectedPlates(state.selectedPlates);
+});
+
+function getNeededPlates(peso: number, pesoBarra: number, platosDiponibles: number[]) {
+  if (!peso) {
+    return [];
+  }
+
+  platosDiponibles.sort(function (a, b) {
+    return a - b;
+  });
+  platosDiponibles.reverse();
+
+  const platosNecesarios = [];
+  let pesoCalc = peso - pesoBarra;
+  let i = 0;
+  while (i < platosDiponibles.length) {
+    if (platosDiponibles[i] * 2 > pesoCalc) {
+      i++;
+    } else {
+      platosNecesarios.push(platosDiponibles[i]);
+      pesoCalc -= platosDiponibles[i] * 2;
     }
+  }
 
-    function changueSelectedIncrement(value) {
-      state.selectedIncrement = value;
-    }
+  return platosNecesarios;
+}
 
-    return {
-      state,
-      changueSelectedIncrement,
-      bars,
-      plates,
-    };
-  },
-};
+function changueSelectedIncrement(value: number) {
+  state.selectedIncrement = value;
+}
+
+
 </script>
 
 <style scoped>

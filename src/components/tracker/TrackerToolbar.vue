@@ -33,7 +33,7 @@
   </q-toolbar>
 </template>
 
-<script>
+<script lang="ts">
 //READY!
 import { dateToISO8601, dateToDayMonth } from 'src/utils/dateFormater';
 export default {
@@ -52,7 +52,7 @@ export default {
     workoutId: String,
   },
   setup() {
-    const today = dateToISO8601();
+    const today = dateToISO8601(null);
     return { today, dateToDayMonth };
   },
 };

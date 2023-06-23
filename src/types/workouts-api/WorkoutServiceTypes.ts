@@ -1,3 +1,53 @@
+// GET
+export interface GetWorkoutIdAndDateResponse {
+  [date: string]: string;
+}
+
+export interface GetWorkoutResponse {
+  id: string;
+  date: string;
+  description: string | undefined | null;
+  userId: string;
+  setGroups: GetWorkoutResponseSetGroups[];
+}
+
+export interface GetWorkoutResponseSetGroups {
+  id: string;
+  listOrder: number;
+  description: string | undefined | null;
+  exercise: Exercise;
+  sets: GetWorkoutResponseSets[];
+}
+
+export interface GetWorkoutResponseSets {
+  id: string;
+  listOrder: number;
+  description: string | undefined | null;
+  reps: number;
+  rir: number;
+  weight: number;
+}
+
+export interface Exercise {
+  id: string;
+  name: string;
+  description: string | undefined | null;
+  muscleGroupExercise: MuscleGroupExercise[];
+}
+
+export interface MuscleGroupExercise {
+  id: string;
+  weight: number;
+  muscleGroup: MuscleSubGroup;
+}
+
+export interface MuscleSubGroup {
+  id: string;
+  name: number;
+  description: string | undefined | null;
+}
+
+// POST
 export interface PostWorkoutRequest {
   date: string;
   description: string | undefined | null;
@@ -10,7 +60,7 @@ export interface PostWorkoutResponse {
   userId: string;
 }
 
-//-------------------------------------------
+// UPDATE
 
 export interface UpdateWorkoutSetGroupsRequest {
   id: string;
@@ -37,37 +87,4 @@ interface UpdateWorkoutSetGroupsResponseInfrastructureSet {
   reps: number;
   rir: number;
   weight: number;
-}
-
-//-------------------------------------------
-
-export interface GetWorkoutResponse {
-  id: string;
-  date: string;
-  description: string | undefined | null;
-  userId: string;
-  setGroups: GetWorkoutResponseSetGroups[];
-}
-
-interface GetWorkoutResponseSetGroups {
-  id: string;
-  listOrder: number;
-  description: string | undefined | null;
-  exerciseId: string;
-  sets: GetWorkoutResponseSets[];
-}
-
-interface GetWorkoutResponseSets {
-  id: string;
-  listOrder: number;
-  description: string | undefined | null;
-  reps: number;
-  rir: number;
-  weight: number;
-}
-
-//-------------------------------------------
-
-export interface GetWorkoutIdAndDateResponse {
-  [date: string]: string;
 }

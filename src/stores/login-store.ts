@@ -1,40 +1,47 @@
 import { defineStore } from 'pinia';
 //import LoginService from "src/services/auth-api/LoginService";
 
+interface UserInterface {
+  id: string;
+  username: string;
+  token: string;
+  logged: boolean;
+}
+
 export const useLoginStore = defineStore('login', {
   state: () => ({
-    userId: 0,
+    userId: '',
     userName: '',
     jwtType: 'Bearer',
     jwt: '',
-    logged: false
+    logged: false,
   }),
   getters: {
     getUserId: function (state) {
-      return state.userId
+      return state.userId;
     },
     getLogedUserName: function (state) {
-      return state.userName
+      return state.userName;
     },
     getAuthHeader: function (state) {
-      return state.jwt && state.jwtType ? `${state.jwtType} ${state.jwt}` : ''
+      return state.jwt && state.jwtType ? `${state.jwtType} ${state.jwt}` : '';
     },
     getIsLogged: function (state) {
-      return state.logged
-    }
+      return state.logged;
+    },
   },
   actions: {
-    async login(user) {
+    async login(user: UserInterface) {
       this.userId = user.id;
       this.userName = user.username;
       this.jwt = user.token;
       this.logged = true;
     },
     async logout() {
-      this.userId = 0;
+      this.userId = '';
       this.userName = '';
       this.jwt = '';
-      this.logged = false
-    }
+      this.logged = false;
+    },
   },
 });

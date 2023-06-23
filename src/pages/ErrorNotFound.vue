@@ -10,7 +10,7 @@
   </div>
 </template>
 
-<script>
+<script type="ts">
 import { defineComponent } from 'vue';
 
 export default defineComponent({

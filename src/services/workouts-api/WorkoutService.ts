@@ -1,10 +1,10 @@
 import { api } from 'src/boot/axios';
 import {
+  GetWorkoutIdAndDateResponse,
+  GetWorkoutResponse,
   PostWorkoutRequest,
   PostWorkoutResponse,
   UpdateWorkoutSetGroupsResponseInfrastructure,
-  GetWorkoutResponse,
-  GetWorkoutIdAndDateResponse,
 } from 'src/types/workouts-api/WorkoutServiceTypes';
 
 const WORKOUT_API_PREFIX = 'workout-api';
@@ -43,19 +43,15 @@ class WorkoutService {
     }
   }
 
-  async getById(
-    workoutId: string,
-    full: boolean
-  ): Promise<GetWorkoutResponse | null> {
+  async getById(workoutId: string): Promise<GetWorkoutResponse | null> {
     try {
-      full = true; //TODO Eliminar esto
       const res = await api.get(
         `${WORKOUT_API_PREFIX}${WORKOUTS_PREFIX}/${workoutId}`,
-        { params: { full } }
+        { params: { full: true } }
       );
       const workout: GetWorkoutResponse = res.data;
       console.debug(
-        'Obtenido el workout con ID: ' + workout.id + ' (full: ' + full + ')'
+        'Obtenido el workout con ID: ' + workout.id + ' (full: ' + true + ')'
       );
       return workout;
     } catch (error) {
@@ -63,7 +59,7 @@ class WorkoutService {
         'Error al obtener el workout con ID: ' +
           workoutId +
           ' (full: ' +
-          full +
+          true +
           '). Error: ' +
           error
       );
@@ -73,19 +69,19 @@ class WorkoutService {
 
   async create(
     userId: string,
-    createWorkoutRequest: PostWorkoutRequest
+    postWorkoutRequest: PostWorkoutRequest
   ): Promise<PostWorkoutResponse | null> {
     try {
       const res = await api.post(
         `${WORKOUT_API_PREFIX}/users/${userId}${WORKOUTS_PREFIX}`,
-        createWorkoutRequest
+        postWorkoutRequest
       );
       const newWorkout: PostWorkoutResponse = res.data;
       console.debug(`Creado nuevo workout con ID: ${newWorkout.id}`);
       return newWorkout;
     } catch (error) {
       console.error(
-        `Error al crear el workout con los datos: ${createWorkoutRequest}. Error: ${error}`
+        `Error al crear el workout con los datos: ${postWorkoutRequest}. Error: ${error}`
       );
       return null;
     }
@@ -112,14 +108,14 @@ class WorkoutService {
 
   async updateDescription(
     workoutId: string,
-    description: string
-  ): Promise<string | null> {
+    description: string | null | undefined
+  ): Promise<string | null | undefined | null> {
     try {
       const res = await api.patch(
         `${WORKOUT_API_PREFIX}${WORKOUTS_PREFIX}/${workoutId}/description`,
         { description }
       );
-      const newDescription: string = res.data.description;
+      const newDescription: string | null | undefined = res.data.description;
       console.debug(
         `Acualizada la descripción del workout con ID: ${workoutId} a: ${newDescription}`
       );
@@ -132,20 +128,6 @@ class WorkoutService {
     }
   }
 
-  async delete(workoutId: string): Promise<boolean> {
-    try {
-      await api.delete(`${WORKOUT_API_PREFIX}${WORKOUTS_PREFIX}/${workoutId}`);
-      console.debug(`Eliminado el workout con ID: ${workoutId}`);
-      return true;
-    } catch (error) {
-      console.error(
-        `Error al eliminar el workout con ID: ${workoutId}. Error:${error}`
-      );
-      return false;
-    }
-  }
-
-  //-----------------ESPECIALES
   async copySetGroupsFromWorkoutToWorkout(
     workoutDestinationId: string,
     workoutSourceId: string
@@ -155,7 +137,8 @@ class WorkoutService {
         `${WORKOUT_API_PREFIX}${WORKOUTS_PREFIX}/${workoutDestinationId}/setGroups`,
         { id: workoutSourceId, source: 'WORKOUT' }
       );
-      const newSets = res.data.setGroups;
+      const newSets: UpdateWorkoutSetGroupsResponseInfrastructure[] | null =
+        res.data.setGroups;
       console.debug(
         'Añadidas las sets del workout con ID: ' +
           workoutSourceId +
@@ -185,7 +168,8 @@ class WorkoutService {
         `${WORKOUT_API_PREFIX}${WORKOUTS_PREFIX}/${workoutDestinationId}/setGroups`,
         { id: sessionSourceId, source: 'SESSION' }
       );
-      const newSets = res.data.setGroups;
+      const newSets: UpdateWorkoutSetGroupsResponseInfrastructure[] | null =
+        res.data.setGroups;
       console.debug(
         'Añadidas las sets de la sesión con ID: ' +
           sessionSourceId +
@@ -203,6 +187,19 @@ class WorkoutService {
         error
       );
       return null;
+    }
+  }
+
+  async delete(workoutId: string): Promise<boolean> {
+    try {
+      await api.delete(`${WORKOUT_API_PREFIX}${WORKOUTS_PREFIX}/${workoutId}`);
+      console.debug(`Eliminado el workout con ID: ${workoutId}`);
+      return true;
+    } catch (error) {
+      console.error(
+        `Error al eliminar el workout con ID: ${workoutId}. Error:${error}`
+      );
+      return false;
     }
   }
 }

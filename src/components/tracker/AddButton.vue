@@ -33,11 +33,7 @@
   </q-btn>
 </template>
 
-<script>
-//READY!
-export default {
-  name: 'AddButon',
-  emits: ['createWorkout', 'showModalWorkouts'],
-  props: { workoutId: { type: String } },
-};
+<script setup lang="ts">
+defineEmits(['createWorkout', 'showModalWorkouts'])
+defineProps({ workoutId: String })
 </script>

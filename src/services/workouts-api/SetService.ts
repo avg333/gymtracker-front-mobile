@@ -1,16 +1,37 @@
 import { api } from 'src/boot/axios';
 import {
-  CreateSetRequest,
-  CreateSetResponse,
+  GetNewSetDataResponse,
+  GetSetResponse,
+  PostSetRequest,
+  PostSetResponse,
+  UpdateSetListOrderRequest,
+  UpdateSetListOrderResponse,
   UpdateSetDataRequest,
   UpdateSetDataResponse,
-  GetSetResponse,
 } from 'src/types/workouts-api/SetServiceTypes';
 
 const WORKOUT_API_PREFIX = 'workout-api';
 const SET_PREFIX = '/sets';
 
 class SetService {
+  async getSetDefaultWeight(
+    setGroupId: string
+  ): Promise<GetNewSetDataResponse | null> {
+    try {
+      const res = await api.get(
+        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}${SET_PREFIX}/newSet`
+      );
+      const setDefaultData: GetSetResponse = res.data;
+      console.debug(`Obtenida set con ID: ${setDefaultData.id}`);
+      return setDefaultData;
+    } catch (error) {
+      console.error(
+        `Error al obtener la set por defecto para el setGroup con ID: ${setGroupId}. Error: ${error}`
+      );
+      return null;
+    }
+  }
+
   async getById(setId: string): Promise<GetSetResponse | null> {
     try {
       const res = await api.get(`${WORKOUT_API_PREFIX}${SET_PREFIX}/${setId}`);
@@ -18,26 +39,26 @@ class SetService {
       console.debug(`Obtenida set con ID: ${set.id}`);
       return set;
     } catch (error) {
-      console.error(`Error al crear la set con ID: ${setId}. Error:${error}`);
+      console.error(`Error al obtener la set con ID: ${setId}. Error:${error}`);
       return null;
     }
   }
 
   async create(
     setGroupId: string,
-    createSetRequest: CreateSetRequest
-  ): Promise<CreateSetResponse | null> {
+    postSetRequest: PostSetRequest
+  ): Promise<PostSetResponse | null> {
     try {
       const res = await api.post(
         `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}${SET_PREFIX}`,
-        createSetRequest
+        postSetRequest
       );
-      const newSet: CreateSetResponse = res.data;
+      const newSet: PostSetResponse = res.data;
       console.debug(`Creada set con ID: ${newSet.id}`);
       return newSet;
     } catch (error) {
       console.error(
-        `Error al crear la set con los datos: ${createSetRequest}. Error:${error}`
+        `Error al crear la set con los datos: ${postSetRequest}. Error:${error}`
       );
       return null;
     }
@@ -67,21 +88,21 @@ class SetService {
 
   async updateListOrder(
     setId: string,
-    listOrder: number
-  ): Promise<GetSetResponse[] | null> {
+    updateSetListOrderRequest: UpdateSetListOrderRequest
+  ): Promise<UpdateSetListOrderResponse | null> {
     try {
       const res = await api.patch(
         `${WORKOUT_API_PREFIX}${SET_PREFIX}/${setId}`,
-        { listOrder }
+        updateSetListOrderRequest
       );
-      const newSets: GetSetResponse[] = res.data.sets;
+      const newSets: UpdateSetListOrderResponse = res.data.sets;
       console.debug(
-        `Actualizados la listOrder de la set con ID: ${setId} a ${listOrder}`
+        `Actualizados la listOrder de la set con ID: ${setId} a ${updateSetListOrderRequest.listOrder}`
       );
       return newSets;
     } catch (error) {
       console.error(
-        `Error al actualizar la listOrder de la set con ID: ${setId} a: ${listOrder}. Error: ${error}`
+        `Error al actualizar la listOrder de la set con ID: ${setId} a: ${updateSetListOrderRequest.listOrder}. Error: ${error}`
       );
       return null;
     }
@@ -97,26 +118,6 @@ class SetService {
         `Error al eliminar la set con ID: ${setId}. Error:${error}`
       );
       return false;
-    }
-  }
-
-  //Especiales
-
-  async getSetDefaultWeight(
-    setGroupId: string
-  ): Promise<GetSetResponse | null> {
-    try {
-      const res = await api.get(
-        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}${SET_PREFIX}/newSet`
-      );
-      const setDefaultData: GetSetResponse = res.data;
-      console.debug(`Obtenida set con ID: ${setDefaultData.id}`);
-      return setDefaultData;
-    } catch (error) {
-      console.error(
-        `Error al obtener la set por defecto para el setGroup con ID: ${setGroupId}. Error: ${error}`
-      );
-      return null;
     }
   }
 }

@@ -2,7 +2,7 @@
   <q-select style="font-size: 0.75em" v-model="selectedIncrement" :options="increments" borderless dropdown-icon=" " />
 </template>
 
-<script>
+<script setup lang="ts">
 //READY
 const increments = [
   {
@@ -32,27 +32,22 @@ const increments = [
 ];
 import { ref, watchEffect } from 'vue';
 import { useSettingsStore } from 'stores/settings-store';
-export default {
-  name: 'IncrementSelect',
-  emits: ['changueSelectedIncrement'],
-  setup(_, { emit }) {
-    const useStore = useSettingsStore();
 
-    const selectedIncrement = ref(
-      increments.find(
-        (element) => element.value === useStore.getSelectedIncrement
-      )
-    );
+const emit = defineEmits(['changueSelectedIncrement'])
+const useStore = useSettingsStore();
 
-    watchEffect(() => {
-      emit('changueSelectedIncrement', selectedIncrement.value.value);
-      useStore.setSelectedIncrement(selectedIncrement.value.value);
-    });
+const selectedIncrement = ref(
+  increments.find(
+    (element) => element.value === useStore.getSelectedIncrement
+  )
+);
 
-    return {
-      selectedIncrement,
-      increments,
-    };
-  },
-};
+watchEffect(() => {
+  if (!selectedIncrement.value)
+    return
+
+  emit('changueSelectedIncrement', selectedIncrement.value.value);
+  useStore.setSelectedIncrement(selectedIncrement.value.value);
+});
+
 </script>

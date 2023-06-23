@@ -35,7 +35,7 @@
   </q-page>
 </template>
 
-<script>
+<script lang="ts">
 const categories = {
   description: 'description',
   statistics: 'statistics',
@@ -48,6 +48,8 @@ import ExerciseService from 'src/services/exercises-api/ExerciseService';
 import SetGroupService from 'src/services/workouts-api/SetGroupService';
 import SetGroupCard from 'src/components/cards/SetGroupCard.vue';
 import ExerciseDescription from 'src/components/exercise/ExerciseDescription.vue';
+import { GetExerciseSetGroupsResponse } from 'src/types/workouts-api/SetGroupServiceTypes';
+import { Exercise } from 'src/types/workouts-api/WorkoutServiceTypes';
 export default defineComponent({
   name: 'ExercisePage',
   components: { SetGroupCard, ExerciseDescription },
@@ -55,11 +57,16 @@ export default defineComponent({
     const route = useRoute();
     const store = useLoginStore();
 
-    const state = reactive({
+    const state: State = reactive({
       slide: categories.description,
-      exercise: {},
-      setGroups: [],
+      exercise: null,
+      setGroups: null,
     });
+    interface State {
+      slide: string,
+      exercise: Exercise | null,
+      setGroups: GetExerciseSetGroupsResponse | null,
+    }
 
     onBeforeMount(async () => {
       ExerciseService.getById(route.params.exerciseId).then((res) => {
@@ -67,7 +74,7 @@ export default defineComponent({
       });
       SetGroupService.getExerciseHistory(
         store.getUserId,
-        route.params.exerciseId
+        route.params.exerciseId as string
       ).then((res) => {
         state.setGroups = res;
       });

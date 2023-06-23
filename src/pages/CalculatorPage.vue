@@ -25,7 +25,7 @@
   </q-page>
 </template>
 
-<script>
+<script lang="ts">
 import { ref } from 'vue';
 import RmCalculator from 'components/RmCalculator.vue';
 import PlateCalculator from 'components/PlateCalculator.vue';

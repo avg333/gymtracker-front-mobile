@@ -2,9 +2,9 @@
   <div class="row items-center ppal" :class="exerciseId && exerciseId === setGroup.exercise.id && 'text-primary'">
     <div class="col-auto">
       <q-btn flat dense round :to="'/exercises/' + setGroup.exercise.id">
-        <q-icon size="lg" v-if="setGroup?.exercise?.muscleGroupExercises?.length">
+        <q-icon size="lg" v-if="setGroup?.exercise?.muscleGroupExercise?.length">
           <img :src="getMuscleGroupIco(
-            setGroup.exercise.muscleGroupExercises[0].muscleGroup
+            setGroup.exercise.muscleGroupExercise[0].muscleGroup.name
           )
             " alt="?" />
         </q-icon>
@@ -102,22 +102,28 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 //READY
+import { PropType, defineComponent } from 'vue'
 import SetGroupService from 'src/services/workouts-api/SetGroupService';
 import { getMuscleGroupIco } from 'src/utils/icoUtils';
-export default {
+import { GetWorkoutResponseSetGroups } from 'src/types/workouts-api/WorkoutServiceTypes';
+export default defineComponent({
   name: 'SetGroupCard',
-  props: { setGroup: Object, onlyRead: Boolean, exerciseId: Number },
+  props: {
+    setGroup: { type: Object as PropType<GetWorkoutResponseSetGroups>, required: true },
+    Object, onlyRead: Boolean,
+    exerciseId: String
+  },
   emits: ['showSetModal', 'showHistoricoModal', 'updateSets'],
   setup(_, { emit }) {
-    async function removeSetGroup(setGroupId) {
+    async function removeSetGroup(setGroupId: string) {
       await SetGroupService.delete(setGroupId);
       emit('updateSets');
     }
     return { removeSetGroup, getMuscleGroupIco };
   },
-};
+});
 </script>
 
 <style scoped>

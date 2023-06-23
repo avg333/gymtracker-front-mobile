@@ -5,33 +5,25 @@
   </q-btn-group>
 </template>
 
-<script>
+<script setup lang="ts">
 //READY
-export default {
-  name: 'IncrementDecrementButtons',
-  emits: ['increment', 'decrement', 'setZero'],
-  props: {
-    numberValue: Number,
-  },
-  setup(props, { emit }) {
-    function increment() {
-      if (props.numberValue) {
-        emit('increment');
-      } else {
-        emit('setZero');
-        emit('increment');
-      }
-    }
+const props = defineProps({ numberValue: Number })
+const emit = defineEmits(['increment', 'decrement', 'setZero'])
 
-    function decrement() {
-      if (props.numberValue && props.numberValue > 0) {
-        emit('decrement');
-      } else {
-        emit('setZero');
-      }
-    }
+function increment() {
+  if (props.numberValue) {
+    emit('increment');
+  } else {
+    emit('setZero');
+    emit('increment');
+  }
+}
 
-    return { increment, decrement };
-  },
-};
+function decrement() {
+  if (props.numberValue && props.numberValue > 0) {
+    emit('decrement');
+  } else {
+    emit('setZero');
+  }
+}
 </script>

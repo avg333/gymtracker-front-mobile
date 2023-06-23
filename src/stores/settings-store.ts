@@ -8,24 +8,24 @@ export const useSettingsStore = defineStore('settings', {
   }),
   getters: {
     getSelectedIncrement: function (state) {
-      return state.selectedIncrement
+      return state.selectedIncrement;
     },
     getSelectedBar: function (state) {
-      return state.selectedBar
+      return state.selectedBar;
     },
     getSelectedPlates: function (state) {
-      return state.selectedPlates
-    }
+      return state.selectedPlates;
+    },
   },
   actions: {
-    setSelectedIncrement(increment) {
-      this.selectedIncrement = increment
+    setSelectedIncrement(increment: number) {
+      this.selectedIncrement = increment;
     },
-    setSelectedBar(bar) {
-      this.selectedBar = bar
+    setSelectedBar(bar: number) {
+      this.selectedBar = bar;
     },
-    setSelectedPlates(plates) {
-      this.selectedIselectedPlatesncrement = plates
+    setSelectedPlates(plates: number[]) {
+      this.selectedPlates = plates;
     },
   },
 });
