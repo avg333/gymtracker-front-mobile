@@ -8,7 +8,7 @@ export function dateToDayMonth(date: string) {
   return moment(date).format('DD MMM');
 }
 
-export function dateToISO8601(date: string | null) {
+export function dateToISO8601(date: string | null): string {
   return moment(date).format('YYYY-MM-DD');
 }
 

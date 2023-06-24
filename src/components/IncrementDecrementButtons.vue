@@ -6,7 +6,6 @@
 </template>
 
 <script setup lang="ts">
-//READY
 const props = defineProps({ numberValue: Number })
 const emit = defineEmits(['increment', 'decrement', 'setZero'])
 

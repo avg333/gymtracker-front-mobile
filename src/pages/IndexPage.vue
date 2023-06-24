@@ -48,10 +48,11 @@
   </q-page>
 </template>
 
-<script>
+<script setup lang="ts">
 //READY!
 import { useQuasar } from 'quasar';
-import { defineComponent, ref, reactive, computed } from 'vue';
+import { ref, reactive, computed } from 'vue';
+import type { Ref } from 'vue'
 import { useRoute } from 'vue-router';
 import { useLoginStore } from 'stores/login-store';
 import LeftDrawner from 'components/LeftDrawner.vue';
@@ -63,93 +64,93 @@ import SetGroupsContainer from 'components/tracker/SetGroupsContainer.vue';
 import AddButton from 'components/tracker/AddButton.vue';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
 import { dateToISO8601 } from 'src/utils/dateFormater';
-export default defineComponent({
-  name: 'IndexPage',
-  components: {
-    LeftDrawner,
-    ChangeWorkoutDateModal,
-    AddButton,
-    SetGroupsContainer,
-    CalendarWorkouts,
-    TrackerToolbar,
-    ChangeFromWorkoutModal,
-  },
-  setup() {
-    const route = useRoute();
-    const useStore = useLoginStore();
 
-    const state = reactive({
-      isLogged: computed(() => useStore.getIsLogged),
-      workoutId: null,
-      date: route.query.date ? route.query.date : dateToISO8601(),
-      leftDrawerOpen: false,
-      showCalendar: false,
-      modalChangeDate: false,
-      modalWorkouts: { visible: false, setGroupId: null, exerciseId: null },
-    });
+const route = useRoute();
+const useStore = useLoginStore();
 
-    async function createWorkout() {
-      const newWorkout = { date: state.date, description: null };
-      await WorkoutService.create(useStore.getUserId, newWorkout);
-      reloadWorkoutDates();
-    }
-
-    const $q = useQuasar();
-    async function removeWorkout() {
-      $q.dialog({
-        title: '¿Eliminar entrenamiento?',
-        message: 'Esta acción no se puede deshacer',
-        cancel: true,
-        ok: {
-          push: true,
-          label: 'Eliminar',
-          color: 'negative',
-        },
-      }).onOk(async () => {
-        await WorkoutService.delete(state.workoutId);
-        reloadWorkoutDates();
-      });
-    }
-
-    function showHistoricoModal(data) {
-      state.modalWorkouts.setGroupId = data.setGroupId;
-      state.modalWorkouts.exerciseId = data.exerciseId;
-      state.modalWorkouts.visible = true;
-    }
-
-    const setGroupsref = ref(null);
-    function reloadWorkout() {
-      setGroupsref.value.getWorkout();
-    }
-
-    const calendarRef = ref(null);
-    function reloadWorkoutDates() {
-      calendarRef.value.getWorkoutsDates();
-    }
-    function setToday() {
-      calendarRef.value.setToday();
-    }
-
-    function updateWorkoutId(idWorkout) {
-      state.workoutId = idWorkout;
-    }
-    function updateDate(dateCalendar) {
-      state.date = dateCalendar;
-    }
-
-    return {
-      state,
-      createWorkout,
-      removeWorkout,
-      showHistoricoModal,
-      setGroupsref,
-      reloadWorkout,
-      calendarRef,
-      updateWorkoutId,
-      updateDate,
-      setToday,
-      reloadWorkoutDates,
-    };
-  },
+const state: State = reactive({
+  isLogged: computed(() => useStore.getIsLogged),
+  workoutId: null,
+  date: typeof (route.query.date) == 'string' ? route.query.date : dateToISO8601(null),
+  leftDrawerOpen: false,
+  showCalendar: false,
+  modalChangeDate: false,
+  modalWorkouts: { visible: false, setGroupId: null, exerciseId: null },
 });
+
+interface State {
+  isLogged: boolean,
+  workoutId: string | null,
+  date: string,
+  leftDrawerOpen: boolean,
+  showCalendar: boolean,
+  modalChangeDate: boolean,
+  modalWorkouts: ModalWorkouts,
+};
+
+interface ModalWorkouts {
+  visible: boolean,
+  setGroupId: string | null,
+  exerciseId: string | null,
+}
+
+async function createWorkout() {
+  const tempDate: string = state.date
+  const newWorkout = { date: tempDate, description: null };
+  await WorkoutService.create(useStore.getUserId, newWorkout);
+  reloadWorkoutDates();
+}
+
+const $q = useQuasar();
+async function removeWorkout() {
+  $q.dialog({
+    title: '¿Eliminar entrenamiento?',
+    message: 'Esta acción no se puede deshacer',
+    cancel: true,
+    ok: {
+      push: true,
+      label: 'Eliminar',
+      color: 'negative',
+    },
+  }).onOk(async () => {
+    if (!state.workoutId) {
+      return
+    }
+
+    await WorkoutService.delete(state.workoutId);
+    reloadWorkoutDates();
+  });
+}
+
+interface ShowHistoricoModal {
+  setGroupId: string,
+  exerciseId: string,
+}
+
+function showHistoricoModal(data: ShowHistoricoModal) {
+  state.modalWorkouts.setGroupId = data.setGroupId;
+  state.modalWorkouts.exerciseId = data.exerciseId;
+  state.modalWorkouts.visible = true;
+}
+
+const setGroupsref = ref<InstanceType<typeof SetGroupsContainer>>();
+function reloadWorkout() {
+  setGroupsref.value?.getWorkout();
+}
+
+const calendarRef: Ref<InstanceType<typeof CalendarWorkouts> | null> = ref<InstanceType<typeof CalendarWorkouts> | null>(null);
+function reloadWorkoutDates() {
+  calendarRef.value?.getWorkoutsDates();
+}
+function setToday() {
+  calendarRef.value?.setToday();
+}
+
+function updateWorkoutId(idWorkout: string) {
+  state.workoutId = idWorkout;
+}
+function updateDate(dateCalendar: string) {
+  state.date = dateCalendar;
+}
+
 </script>

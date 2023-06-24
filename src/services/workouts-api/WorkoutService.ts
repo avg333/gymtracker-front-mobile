@@ -13,8 +13,8 @@ const WORKOUTS_PREFIX = '/workouts';
 class WorkoutService {
   async getAllWorkoutDatesByUser(
     userId: string,
-    exerciseId: string
-  ): Promise<GetWorkoutIdAndDateResponse | null> {
+    exerciseId: string | null
+  ): Promise<GetWorkoutIdAndDateResponse> {
     try {
       const res = await api.get(
         `${WORKOUT_API_PREFIX}/users/${userId}${WORKOUTS_PREFIX}/dates`,
@@ -39,7 +39,7 @@ class WorkoutService {
           '). Error: ' +
           error
       );
-      return null;
+      return {};
     }
   }
 

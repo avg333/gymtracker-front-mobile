@@ -38,10 +38,10 @@ export interface Exercise {
 export interface MuscleGroupExercise {
   id: string;
   weight: number;
-  muscleGroup: MuscleSubGroup;
+  muscleGroup: MuscleGroup;
 }
 
-export interface MuscleSubGroup {
+export interface MuscleGroup {
   id: string;
   name: number;
   description: string | undefined | null;

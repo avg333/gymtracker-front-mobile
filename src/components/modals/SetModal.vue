@@ -95,13 +95,13 @@ import IncrementSelect from 'components/IncrementSelect.vue';
 import SetService from 'src/services/workouts-api/SetService';
 import { GetSetResponse } from 'src/types/workouts-api/SetServiceTypes';
 import ExerciseService from 'src/services/exercises-api/ExerciseService';
-//import { dateToTimeStamp } from 'src/utils/dateFormater';
+import { Exercise } from 'src/types/workouts-api/WorkoutServiceTypes';
 
 const props = defineProps({
   setId: { type: String, default: 'noID' },
   setGroupId: { type: String, required: true },
-  setsSize: { Number, required: true },
-  exerciseId: { String, required: true }
+  setsSize: { type: Number, required: true },
+  exerciseId: { type: String, required: true }
 });
 const emit = defineEmits(['closeModal']);
 const state: State = reactive({
@@ -115,13 +115,13 @@ const state: State = reactive({
     weight: 1,
     setGroup: { id: props.setGroupId },
   },
-  exercise: {},
+  exercise: null,
 });
 
 interface State {
   selectedIncrement: number
   set: GetSetResponse,
-  exercise: object
+  exercise: Exercise | null
 }
 
 onBeforeMount(async () => {

@@ -33,27 +33,23 @@
   </q-toolbar>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 //READY!
 import { dateToISO8601, dateToDayMonth } from 'src/utils/dateFormater';
-export default {
-  name: 'TrackerToolbar',
-  emits: [
-    'showHideLeftDrawer',
-    'setToday',
-    'showHideCalendar',
-    'showRemoveWorkoutModal',
-    'showModalChangeDate',
-  ],
-  props: {
-    date: String,
-    isLogged: Boolean,
-    calendarActive: Boolean,
-    workoutId: String,
-  },
-  setup() {
-    const today = dateToISO8601(null);
-    return { today, dateToDayMonth };
-  },
-};
+defineProps({
+  date: { type: String, required: true },
+  isLogged: { type: Boolean, required: true },
+  calendarActive: { Boolean, required: true },
+  workoutId: { String, required: true }
+});
+defineEmits([
+  'showHideLeftDrawer',
+  'setToday',
+  'showHideCalendar',
+  'showRemoveWorkoutModal',
+  'showModalChangeDate'
+])
+
+
+const today = dateToISO8601(null);
 </script>

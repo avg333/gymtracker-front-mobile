@@ -73,20 +73,16 @@
 <script setup lang="ts">
 const bars = [20, 15, 10, 5];
 const plates = [50, 25, 20, 15, 10, 5, 2.5, 1.25, 1, 0.5, 0.25, 0.125];
-
-const props = defineProps({ defaultWeight: Number })
+const defaultSelectedIncrement = 2.5;
 import { reactive, computed, watchEffect } from 'vue';
 import IncrementSelect from 'components/IncrementSelect.vue';
 import IncrementDecrementButtons from 'components/IncrementDecrementButtons.vue';
 import { useSettingsStore } from 'stores/settings-store';
-
-
-
+const props = defineProps({ defaultWeight: Number })
 const useStore = useSettingsStore();
-
 const state: State = reactive({
-  selectedIncrement: 2.5,
-  weight: props.defaultWeight || 0,
+  selectedIncrement: defaultSelectedIncrement,
+  weight: props.defaultWeight ?? 0,
   selectedBar: useStore.selectedBar,
   selectedPlates: useStore.selectedPlates,
   neededPlates: computed(() =>
@@ -116,7 +112,7 @@ watchEffect(() => {
   useStore.setSelectedPlates(state.selectedPlates);
 });
 
-function getNeededPlates(peso: number, pesoBarra: number, platosDiponibles: number[]) {
+function getNeededPlates(peso: number, pesoBarra: number, platosDiponibles: number[]): number[] {
   if (!peso) {
     return [];
   }
@@ -126,7 +122,7 @@ function getNeededPlates(peso: number, pesoBarra: number, platosDiponibles: numb
   });
   platosDiponibles.reverse();
 
-  const platosNecesarios = [];
+  const platosNecesarios: number[] = [];
   let pesoCalc = peso - pesoBarra;
   let i = 0;
   while (i < platosDiponibles.length) {
@@ -144,8 +140,6 @@ function getNeededPlates(peso: number, pesoBarra: number, platosDiponibles: numb
 function changueSelectedIncrement(value: number) {
   state.selectedIncrement = value;
 }
-
-
 </script>
 
 <style scoped>

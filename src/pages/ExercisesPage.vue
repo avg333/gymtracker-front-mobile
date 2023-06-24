@@ -42,7 +42,7 @@
   </q-page>
 </template>
 
-<script>
+<script lang="ts">
 import {
   defineComponent,
   ref,
@@ -50,12 +50,14 @@ import {
   onBeforeMount,
   watchEffect,
 } from 'vue';
+import type { Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import ExerciseCard from 'components/cards/ExerciseCard.vue';
 import ExercisesFilterBar from 'components/ExercisesFilterBar.vue';
 import SetGroupService from 'src/services/workouts-api/SetGroupService';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
 import ExerciseService from 'src/services/exercises-api/ExerciseService';
+import { GetWorkoutResponse, GetWorkoutResponseSetGroups, Exercise } from 'src/types/workouts-api/WorkoutServiceTypes';
 export default defineComponent({
   name: 'ExercisesPage',
   components: { ExerciseCard, ExercisesFilterBar },
@@ -63,27 +65,43 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
 
-    const setGroupId = route.query.setGroupId;
-    const workoutId = route.query.workoutId;
+    const setGroupId: string | null = route.query.setGroupId;
+    const workoutId: string = route.query.workoutId;
 
-    const state = reactive({
+    const state: State = reactive({
       exercises: [],
       selectedExercisesId: [],
-      workout: {},
-      setGroup: {
-        id: null,
-        description: null,
-        listOrder: -1,
-        session: {},
-        workout: {},
-        exercise: {},
-      },
+      workout: null,
+      setGroup: null,
     });
 
-    const filter = ref({});
+    interface State {
+      exercises: Exercise[],
+      selectedExercisesId: string[],
+      workout: GetWorkoutResponse | null,
+      setGroup: GetWorkoutResponseSetGroups | null,
+    };
+
+    const filter: Ref<Filter> = ref({
+      selectedFav: false,
+      selectedUnilateral: false,
+      selectedLoadType: '',
+      selectedMuscleSupGroupId: '',
+      selectedMuscleGroupId: '',
+      selectedMuscleSubGroups: []
+    });
+
+    interface Filter {
+      selectedFav: boolean,
+      selectedUnilateral: boolean,
+      selectedLoadType: string | null,
+      selectedMuscleSupGroupId: string | null,
+      selectedMuscleGroupId: string | null,
+      selectedMuscleSubGroups: string[],
+    }
 
     onBeforeMount(() => {
-      loadExercises();
+      loadExercises(null);
       if (setGroupId) {
         SetGroupService.getById(setGroupId).then((setGroup) => {
           state.setGroup = setGroup;
@@ -103,7 +121,7 @@ export default defineComponent({
       loadExercises(filter.value);
     });
 
-    function loadExercises(filter) {
+    function loadExercises(filter: Filter | null) {
       if (filter)
         ExerciseService.getAll({
           unilateral: filter.selectedUnilateral,
@@ -120,16 +138,15 @@ export default defineComponent({
         });
     }
 
-    async function addExercise(exerciseId) {
-      state.setGroup.exercise.id = exerciseId;
+    async function addExercise(exerciseId: string) {
+
       const setGroupCreateRequest = {
-        description: state.setGroup.description,
+        description: null,
         exerciseId,
       };
       if (state.setGroup?.id) {
-        await SetGroupService.update(state.setGroup.id, setGroupCreateRequest);
+        await SetGroupService.updateExercise(state.setGroup.id, exerciseId);
       } else {
-        state.setGroup.workout.id = workoutId;
         await SetGroupService.create(workoutId, setGroupCreateRequest);
       }
       router.push({
@@ -139,7 +156,7 @@ export default defineComponent({
     }
 
     const exerciseFilterBarRef = ref(null);
-    function preSetFilter(exercise) {
+    function preSetFilter(exercise: Exercise) {
       if (!exercise) {
         return;
       }
@@ -158,7 +175,7 @@ export default defineComponent({
       );
     }
 
-    function setFilter(filterValue) {
+    function setFilter(filterValue: Filter) {
       filter.value = filterValue;
     }
 

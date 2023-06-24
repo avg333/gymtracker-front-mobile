@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-//READY
 const increments = [
   {
     label: '±0.25',
@@ -32,10 +31,8 @@ const increments = [
 ];
 import { ref, watchEffect } from 'vue';
 import { useSettingsStore } from 'stores/settings-store';
-
 const emit = defineEmits(['changueSelectedIncrement'])
 const useStore = useSettingsStore();
-
 const selectedIncrement = ref(
   increments.find(
     (element) => element.value === useStore.getSelectedIncrement
@@ -43,11 +40,12 @@ const selectedIncrement = ref(
 );
 
 watchEffect(() => {
-  if (!selectedIncrement.value)
+  if (!selectedIncrement.value) {
+    console.error('No se ha encontrador el selectedIncrement!')
     return
+  }
 
   emit('changueSelectedIncrement', selectedIncrement.value.value);
   useStore.setSelectedIncrement(selectedIncrement.value.value);
 });
-
 </script>

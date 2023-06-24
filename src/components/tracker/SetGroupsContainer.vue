@@ -1,7 +1,8 @@
 <template>
   <q-dialog v-model="state.modalSet.visible" v-if="!onlyRead">
-    <SetModal :setId="state.modalSet.setId" :setGroupId="state.modalSet.setGroupId" :setsSize="state.modalSet.setsSize"
-      :exerciseId="state.modalSet.exerciseId" @closeModal="
+    <SetModal :setId="typeof (state.modalSet.setId) === 'string' ? state.modalSet.setId : ''"
+      :setGroupId="typeof (state.modalSet.setGroupId) === 'string' ? state.modalSet.setGroupId : ''"
+      :setsSize="state.modalSet.setsSize" :exerciseId="state.modalSet.exerciseId" @closeModal="
         getWorkout();
       state.modalSet.visible = false;
       " />
@@ -24,73 +25,92 @@
   </div>
 </template>
 
-<script>
+<script setup lang="ts">
 //READY!
 import { reactive, onBeforeMount, watch } from 'vue';
 import SummaryWo from 'components/tracker/SummaryWo.vue';
 import SetModal from 'components/modals/SetModal.vue';
 import SetGroupCard from 'components/cards/SetGroupCard.vue';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
-export default {
-  name: 'SetGroupsContainer',
-  emits: ['showHistoricoModalUp'],
-  components: { SetModal, SummaryWo, SetGroupCard },
-  props: {
-    workoutId: String,
-    onlyRead: Boolean,
-    showSummary: Boolean,
-    exerciseId: Number, //Remarca los setGroups con este ejercicio
+import { GetWorkoutResponse } from 'src/types/workouts-api/WorkoutServiceTypes';
+
+const emit = defineEmits(['showHistoricoModalUp'])
+const props = defineProps({
+  workoutId: { type: String, required: false },
+  onlyRead: { type: Boolean, required: false },
+  showSummary: { type: Boolean, required: false },
+  exerciseId: { type: String, required: false }
+});
+
+const state: State = reactive({
+  workout: null,
+  modalSet: {
+    visible: false,
+    setId: null,
+    setGroupId: null,
+    setsSize: null,
+    exerciseId: null,
   },
-  setup(props, { expose, emit }) {
-    const state = reactive({
-      workout: {},
-      modalSet: {
-        visible: false,
-        setId: null,
-        setGroupId: null,
-        setsSize: null,
-        exerciseId: null,
-      },
+});
+
+interface State {
+  workout: GetWorkoutResponse | null,
+  modalSet: ModalSet,
+
+}
+
+interface ShowHistoricoModal {
+  setGroupId: string,
+  exerciseId: string,
+}
+
+interface ModalSet {
+  visible: boolean,
+  setId: string | null,
+  setGroupId: string | null,
+  setsSize: number | null,
+  exerciseId: string | null,
+}
+
+interface ShowSetModal {
+  setId: string,
+  setGroupId: string,
+  setsSize: number,
+  exerciseId: string,
+}
+
+onBeforeMount(() => {
+  getWorkout();
+});
+
+watch(
+  () => props.workoutId,
+  () => {
+    getWorkout();
+  }
+);
+
+function getWorkout() {
+  if (props.workoutId) {
+    WorkoutService.getById(props.workoutId).then((res) => {
+      state.workout = res;
     });
+  } else {
+    state.workout = null;
+  }
+}
 
-    onBeforeMount(() => {
-      getWorkout();
-    });
+function showSetModal(data: ShowSetModal) {
+  state.modalSet.setId = data.setId;
+  state.modalSet.setGroupId = data.setGroupId;
+  state.modalSet.setsSize = data.setsSize;
+  state.modalSet.exerciseId = data.exerciseId;
+  state.modalSet.visible = true;
+}
 
-    watch(
-      () => props.workoutId,
-      () => {
-        getWorkout();
-      }
-    );
+function showHistoricoModal(data: ShowHistoricoModal) {
+  emit('showHistoricoModalUp', data);
+}
 
-    function getWorkout() {
-      if (props.workoutId) {
-        WorkoutService.getById(props.workoutId, true).then((res) => {
-          state.workout = res;
-        });
-      } else {
-        state.workout = {};
-      }
-    }
-
-    function showSetModal(data) {
-      state.modalSet.setId = data.setId;
-      state.modalSet.setGroupId = data.setGroupId;
-      state.modalSet.setsSize = data.setsSize;
-      state.modalSet.exerciseId = data.exerciseId;
-      state.modalSet.visible = true;
-    }
-
-    function showHistoricoModal(data) {
-      emit('showHistoricoModalUp', data);
-    }
-
-    expose({
-      getWorkout,
-    });
-
-    return { state, getWorkout, showSetModal, showHistoricoModal };
-  },
-};
+defineExpose({ getWorkout })
 </script>

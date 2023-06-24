@@ -26,10 +26,10 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 import RmCalculator from 'components/RmCalculator.vue';
 import PlateCalculator from 'components/PlateCalculator.vue';
-export default {
+export default defineComponent({
   name: 'CalculatorPage',
   components: { RmCalculator, PlateCalculator },
   setup() {
@@ -38,7 +38,7 @@ export default {
       slide,
     };
   },
-};
+});
 </script>
 
 <style scoped>

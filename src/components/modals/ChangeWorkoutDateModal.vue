@@ -6,7 +6,7 @@
       </div>
       <div class="text-subtitle3 text-grey">
         {{ $t("modal.changeWorkoutDate.from") }}
-        <strong> {{ state.workout.date }}</strong>
+        <strong> {{ state.workout?.date }}</strong>
         {{ $t("modal.changeWorkoutDate.to") }}
         <strong> {{ state.date }}</strong>
       </div>
@@ -70,53 +70,54 @@
   </q-card>
 </template>
 
-<script>
-//READY!
+<script setup lang="ts">
 import { reactive, computed, onBeforeMount } from 'vue';
 import { useLoginStore } from 'stores/login-store';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
 import { dateToBars } from 'src/utils/dateFormater'; //TODO Descubrir como eliminar esta conversion
-export default {
-  name: 'ChangeWorkoutDateModal',
-  emits: ['closeModal'],
-  props: {
-    workoutId: {
-      type: Number,
-      required: true,
-    },
-    initialDate: {
-      type: String,
-    },
-  },
-  setup(props, { emit }) {
-    const useStore = useLoginStore();
+import { GetWorkoutIdAndDateResponse, GetWorkoutResponse } from 'src/types/workouts-api/WorkoutServiceTypes';
 
-    const state = reactive({
-      date: props.initialDate,
-      workoutDates: [],
-      workout: {},
-      isDateInWorkoutDates: computed(() => state.workoutDates[state.date]),
-    });
+const emit = defineEmits(['closeModal']);
+const props = defineProps({
+  workoutId: { type: String, required: true },
+  initialDate: { type: String, required: true }
+});
+const useStore = useLoginStore();
 
-    onBeforeMount(() => {
-      WorkoutService.getById(props.workoutId).then((res) => {
-        state.workout = res;
-      });
+const state: State = reactive({
+  date: props.initialDate,
+  workoutDates: {},
+  workout: null,
+  isDateInWorkoutDates: computed(() => state.workoutDates[state.date]) != null,
+});
 
-      WorkoutService.getAllWorkoutDatesByUser(useStore.getUserId).then(
-        (res) => {
-          state.workoutDates = res;
-        }
-      );
-    });
+interface State {
+  date: string,
+  workoutDates: GetWorkoutIdAndDateResponse,
+  workout: GetWorkoutResponse | null,
+  isDateInWorkoutDates: boolean,
+}
 
-    async function changeDate() {
-      state.workout.date = state.date;
-      await WorkoutService.updateDate(props.workoutId, state.date);
-      emit('closeModal');
+onBeforeMount(() => {
+  WorkoutService.getById(props.workoutId).then((res) => {
+    state.workout = res;
+  });
+
+  WorkoutService.getAllWorkoutDatesByUser(useStore.getUserId, null).then(
+    (res) => {
+      state.workoutDates = res;
     }
+  );
+});
 
-    return { state, changeDate, dateToBars };
-  },
-};
+async function changeDate() {
+  if (!state.workout) {
+    console.error('El workout es null!!')
+    return
+  }
+
+  state.workout.date = state.date;
+  await WorkoutService.updateDate(props.workoutId, state.date);
+  emit('closeModal');
+}
 </script>

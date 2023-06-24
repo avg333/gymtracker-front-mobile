@@ -62,12 +62,13 @@
   <div class="text-center">{{ exercise.description }}</div>
 </template>
 
-<script>
+<script lang="ts">
+import { PropType, defineComponent } from 'vue'
 import { getMuscleGroupColour } from 'src/utils/colourUtils';
-export default {
-  props: { exercise: Object },
+export default defineComponent({
+  props: { exercise: { type: Object as PropType<any>, required: true } },
   setup() {
     return { getMuscleGroupColour };
   },
-};
+});
 </script>

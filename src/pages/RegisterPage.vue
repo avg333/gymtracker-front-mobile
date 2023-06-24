@@ -30,13 +30,13 @@
   </q-page>
 </template>
 
-<script>
+<script lang="ts">
 import { useQuasar } from 'quasar';
-import { reactive } from 'vue';
+import { reactive, defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import LoginService from 'src/services/auth-api/LoginService';
 import { useLoginStore } from 'stores/login-store';
-export default {
+export default defineComponent({
   setup() {
     const store = useLoginStore();
     const router = useRouter();
@@ -53,7 +53,7 @@ export default {
 
     const $q = useQuasar();
     async function login() {
-      const res = await LoginService.login(state.username, state.password);
+      const res: any = await LoginService.login(state.username, state.password);
       if (res.ok) {
         store.login(res.data);
         router.back();
@@ -77,5 +77,5 @@ export default {
     }
     return { state, login };
   },
-};
+});
 </script>
