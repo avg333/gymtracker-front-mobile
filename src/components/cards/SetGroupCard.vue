@@ -2,11 +2,8 @@
   <div class="row items-center ppal" :class="exerciseId && exerciseId === setGroup.exercise.id && 'text-primary'">
     <div class="col-auto">
       <q-btn flat dense round :to="'/exercises/' + setGroup.exercise.id">
-        <q-icon size="lg" v-if="setGroup?.exercise?.muscleGroupExercise?.length">
-          <img :src="getMuscleGroupIco(
-            setGroup.exercise.muscleGroupExercise[0].muscleGroup.name
-          )
-            " alt="?" />
+        <q-icon size="lg">
+          <!-- TODO Añadir imagen ejericio-->
         </q-icon>
       </q-btn>
     </div>
@@ -14,7 +11,7 @@
     <div class="col">
       <div class="row items-center">
         <div class="col-10">
-          <strong>{{ setGroup?.exercise?.name?.toUpperCase() }}</strong>
+          <strong>{{ setGroup.exercise.name.toUpperCase() }}</strong>
         </div>
 
         <div class="col-2 text-right">
@@ -23,12 +20,7 @@
               <q-list>
                 <q-item v-close-popup clickable>
                   <q-item-section>
-                    <q-item-label @click="
-                      $emit('showHistoricoModal', {
-                        setGroupId: setGroup.id,
-                        exerciseId: setGroup.exercise.id,
-                      })
-                      ">
+                    <q-item-label @click="openHistoricoModal()">
                       {{ $t("card.set.historic") }}
                     </q-item-label>
                   </q-item-section>
@@ -47,7 +39,7 @@
                   </q-item-section>
                 </q-item>
 
-                <q-item v-close-popup clickable @click="removeSetGroup(setGroup.id)">
+                <q-item v-close-popup clickable @click="removeSetGroup()">
                   <q-item-section>
                     <q-item-label>
                       {{ $t("card.set.removeExercise") }}
@@ -65,15 +57,8 @@
       </div>
 
       <div class="row items-center text-center">
-        <div class="col-auto bg-grey-4 scndary" :class="Math.round(set.rir) > 3 && 'text-grey'"
-          v-for="set in setGroup.sets" :key="set.id" @click="
-            $emit('showSetModal', {
-              setId: set.id,
-              setGroupId: setGroup.id,
-              setsSize: setGroup.sets.length,
-              exerciseId: setGroup.exercise.id,
-            })
-            ">
+        <div class="col-auto bg-grey-4 scndary" :class="Math.round(set.rir) > efectiveRir && 'text-grey'"
+          v-for="set in setGroup.sets" :key="set.id" @click="openModalEditSet(set.id)">
           <div>
             {{ Math.round(set.weight) }}
             {{ $t("card.set.kg") }}
@@ -88,14 +73,7 @@
           </div>
         </div>
         <div class="col-auto">
-          <q-btn v-if="!onlyRead" class="text-grey" flat dense round icon="add" @click="
-            $emit('showSetModal', {
-              setId: null,
-              setGroupId: setGroup.id,
-              setsSize: setGroup.sets.length,
-              exerciseId: setGroup.exercise.id,
-            })
-            " />
+          <q-btn v-if="!onlyRead" class="text-grey" flat dense round icon="add" @click="openModalNewSet()" />
         </div>
       </div>
     </div>
@@ -103,20 +81,50 @@
 </template>
 
 <script setup lang="ts">
+const efectiveRir = 3;
 import { PropType } from 'vue'
 import SetGroupService from 'src/services/workouts-api/SetGroupService';
 import { GetWorkoutResponseSetGroups } from 'src/types/workouts-api/WorkoutServiceTypes';
-import { getMuscleGroupIco } from 'src/utils/icoUtils';
-defineProps({
+import { ShowSetModal } from '../tracker/SetGroupsContainer.vue';
+import { ShowHistoricoModal } from 'src/pages/IndexPage.vue';
+const props = defineProps({
   setGroup: { type: Object as PropType<GetWorkoutResponseSetGroups>, required: true },
-  onlyRead: { type: Boolean },
-  exerciseId: { type: String }
+  onlyRead: { type: Boolean, required: false },
+  exerciseId: { type: String, required: false }
 })
-const emit = defineEmits(['updateSets'])
-async function removeSetGroup(setGroupId: string) {
-  const deleteOk = await SetGroupService.delete(setGroupId);
+const emit = defineEmits<{
+  updateSets: []
+  showSetModal: [data: ShowSetModal]
+  showHistoricoModal: [data: ShowHistoricoModal]
+}>()
+function openHistoricoModal() {
+  emit('showHistoricoModal', {
+    setGroupId: props.setGroup.id,
+    exerciseId: props.setGroup.exercise.id,
+  })
+}
+function openModalNewSet() {
+  emit('showSetModal', {
+    setId: null,
+    setGroupId: props.setGroup.id,
+    setsSize: props.setGroup.sets.length,
+    exerciseId: props.setGroup.exercise.id,
+  })
+}
+function openModalEditSet(setId: string) {
+  emit('showSetModal', {
+    setId: setId,
+    setGroupId: props.setGroup.id,
+    setsSize: props.setGroup.sets.length,
+    exerciseId: props.setGroup.exercise.id,
+  })
+}
+async function removeSetGroup() {
+  const deleteOk = await SetGroupService.delete(props.setGroup.id);
   if (deleteOk) {
     emit('updateSets');
+  } else {
+    console.error(`No se puede eliminar el setGroup: ${props.setGroup.id}`)
   }
 }
 </script>

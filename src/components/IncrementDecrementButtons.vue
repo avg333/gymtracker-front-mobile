@@ -6,8 +6,14 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps({ numberValue: Number })
-const emit = defineEmits(['increment', 'decrement', 'setZero'])
+const props = defineProps({
+  numberValue: { type: Number, required: false }
+})
+const emit = defineEmits<{
+  increment: []
+  decrement: []
+  setZero: []
+}>()
 
 function increment() {
   if (props.numberValue) {

@@ -6,7 +6,7 @@
           {{
             setId
             ? $t("modal.setModal.titleEdit", {
-              setNumber: state.set?.listOrder + 1,
+              setNumber: state.set.listOrder + 1,
               setsSize,
             })
             : $t("modal.setModal.titleNew", {
@@ -23,7 +23,7 @@
         </div>
 
         <div class="span">{{ state.exercise?.name }}</div>
-        <div class="text-subtitle3 text-grey" v-if="state.set?.id">
+        <div class="text-subtitle3 text-grey" v-if="state.set.id">
           <!-- {{ dateToTimeStamp(state.set.lastModifiedAt) }} -->
         </div>
       </q-card-section>
@@ -89,6 +89,7 @@
 <script setup lang="ts">
 const rirOptions = [0, 0.5, 1, 2, 3, 4, 5];
 const efectiveRir = 4;
+const defaultSelectedIncrement = 2.5
 import { reactive, onBeforeMount } from 'vue';
 import IncrementDecrementButtons from 'components/IncrementDecrementButtons.vue';
 import IncrementSelect from 'components/IncrementSelect.vue';
@@ -98,14 +99,16 @@ import ExerciseService from 'src/services/exercises-api/ExerciseService';
 import { Exercise } from 'src/types/exercises-api/ExerciseServiceTypes';
 
 const props = defineProps({
-  setId: { type: String, default: '' },
+  setId: { type: String, required: false, default: '' }, //TODO Evitar este default ''
   setGroupId: { type: String, required: true },
   setsSize: { type: Number, required: true },
   exerciseId: { type: String, required: true }
 });
-const emit = defineEmits(['closeModal']);
+const emit = defineEmits<{
+  closeModal: []
+}>()
 const state: State = reactive({
-  selectedIncrement: 2.5,
+  selectedIncrement: defaultSelectedIncrement,
   set: {
     id: props.setId,
     listOrder: 0,
@@ -162,7 +165,9 @@ async function getSet() {
   const set: GetSetResponse | null = await SetService.getById(props.setId);
   if (set) {
     state.set = set;
-  } //TODO Tratar casos de error
+  } else {
+    console.warn(`No se ha podido obtener la set ${props.setId}`)
+  }
 }
 
 function getLastTimeWeightAndReps() {

@@ -31,7 +31,9 @@ const increments = [
 ];
 import { ref, watchEffect } from 'vue';
 import { useSettingsStore } from 'stores/settings-store';
-const emit = defineEmits(['changueSelectedIncrement'])
+const emit = defineEmits<{
+  changueSelectedIncrement: [value: number]
+}>()
 const useStore = useSettingsStore();
 const selectedIncrement = ref(
   increments.find(

@@ -9,7 +9,9 @@ export function dateToDayMonth(date: string) {
 }
 
 export function dateToISO8601(date: string | null): string {
-  return moment(date).format('YYYY-MM-DD');
+  return date
+    ? moment(date).format('YYYY-MM-DD')
+    : moment().format('YYYY-MM-DD');
 }
 
 export function dateToTimeStamp(date: string) {

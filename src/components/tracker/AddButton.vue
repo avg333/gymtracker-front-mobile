@@ -34,6 +34,11 @@
 </template>
 
 <script setup lang="ts">
-defineEmits(['createWorkout', 'showModalWorkouts'])
-defineProps({ workoutId: String })
+defineEmits<{
+  createWorkout: []
+  showModalWorkouts: []
+}>()
+defineProps({
+  workoutId: { type: String, required: false }
+})
 </script>

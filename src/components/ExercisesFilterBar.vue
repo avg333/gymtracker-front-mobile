@@ -1,16 +1,15 @@
 <template>
   <q-toolbar>
     <q-tabs class="maxAncho">
-      <q-chip color="orange" square clickable icon="star" :outline="!filter.selectedFav"
-        @click="filter.selectedFav = !filter.selectedFav" />
-      <q-chip color="purple" square clickable :outline="!filter.selectedUnilateral"
-        @click="filter.selectedUnilateral = !filter.selectedUnilateral">
+      <q-chip color="orange" square clickable icon="star" />
+      <q-chip color="purple" square clickable :outline="!filter.unilateral"
+        @click="filter.unilateral = !filter.unilateral">
         {{ $t("muscleGroupPages.filter.unilateral") }}
       </q-chip>
       <q-chip v-for="loadType in state.loadTypes" :key="loadType.id" color="primary" square clickable
-        :outline="filter.selectedLoadType !== loadType.id" @click="
-          filter.selectedLoadType =
-          filter.selectedLoadType === loadType.id ? null : loadType.id
+        :outline="filter.loadType !== loadType.id" @click="
+          filter.loadType =
+          filter.loadType === loadType.id ? null : loadType.id
           ">
         {{ loadType.name }}
       </q-chip>
@@ -18,12 +17,12 @@
   </q-toolbar>
   <q-toolbar>
     <q-tabs class="maxAncho">
-      <q-chip v-if="filter.selectedMuscleSupGroupId" color="secondary" square clickable removable @remove="
-        filter.selectedMuscleSupGroupId = null;
-      filter.selectedMuscleGroupId = null;
-      filter.selectedMuscleSubGroups = [];
+      <q-chip v-if="filter.muscleSupGroupIds" color="secondary" square clickable removable @remove="
+        filter.muscleSupGroupIds = null;
+      filter.muscleGroupIds = null;
+      filter.muscleSubGroupIds = [];
       ">
-        {{ state.muscleSupGroups.find((msg) => msg.id === filter.selectedMuscleSupGroupId)?.name }}
+        {{ state.muscleSupGroups.find((msg) => msg.id === filter.muscleSupGroupIds)?.name }}
       </q-chip>
       <q-chip v-else v-for="muscleSupGroup in state.muscleSupGroups" :key="muscleSupGroup.id" color="secondary" square
         clickable :outline="muscleSupGroup.id !== filter.selectedMuscleSupGroupId"
@@ -31,11 +30,11 @@
         {{ muscleSupGroup.name }}
       </q-chip>
 
-      <q-chip v-if="filter.selectedMuscleGroupId" color="warning" square clickable removable @remove="
-        filter.selectedMuscleGroupId = null;
-      filter.selectedMuscleSubGroups = [];
+      <q-chip v-if="filter.muscleGroupIds" color="warning" square clickable removable @remove="
+        filter.muscleGroupIds = null;
+      filter.muscleSubGroupIds = [];
       ">
-        {{ state.muscleGroups.find((msg) => msg.id === filter.selectedMuscleGroupId)?.name }}
+        {{ state.muscleGroups.find((msg) => msg.id === filter.muscleGroupIds)?.name }}
       </q-chip>
       <q-chip v-else v-for="muscleGroup in state.muscleGroups" :key="muscleGroup.id" color="warning" square clickable
         :outline="muscleGroup.id !== filter.selectedMuscleGroupId" @click="filter.selectedMuscleGroupId = muscleGroup.id">
@@ -62,8 +61,11 @@ import { ref, reactive, watch, onBeforeMount } from 'vue';
 import { GetLoadTypeResponse, GetMuscleSupGroupResponse, GetMuscleSubGroupResponse, GetMuscleGroupResponse } from 'src/types/exercises-api/MuscleGroupServiceTypes'
 import type { Ref } from 'vue'
 import MuscleGroupService from 'src/services/exercises-api/MuscleGroupService';
+import { ExerciseFilterRequest } from 'src/types/exercises-api/ExerciseServiceTypes';
 
-const emit = defineEmits(['setFilter']);
+const emit = defineEmits<{
+  setFilter: [filter: ExerciseFilterRequest]
+}>()
 
 const state: State = reactive({
   loadTypes: [],
@@ -79,23 +81,16 @@ interface State {
   muscleSubGroups: GetMuscleSubGroupResponse[],
 }
 
-const filter: Ref<Filter> = ref({
+const filter: Ref<ExerciseFilterRequest> = ref({
+  name: null,
+  description: null,
   selectedFav: false,
-  selectedUnilateral: false,
-  selectedLoadType: null,
-  selectedMuscleSupGroupId: null,
-  selectedMuscleGroupId: null,
-  selectedMuscleSubGroups: [],
+  unilateral: false,
+  loadType: '',
+  muscleSupGroupIds: '',
+  muscleGroupIds: '',
+  muscleSubGroupIds: [],
 });
-
-interface Filter {
-  selectedFav: boolean,
-  selectedUnilateral: boolean,
-  selectedLoadType: string | null,
-  selectedMuscleSupGroupId: string | null,
-  selectedMuscleGroupId: string | null,
-  selectedMuscleSubGroups: string[],
-}
 
 onBeforeMount(() => {
   MuscleGroupService.getAllLoadTypes().then((res) => {
@@ -108,11 +103,11 @@ onBeforeMount(() => {
 });
 
 watch(
-  () => filter.value.selectedMuscleSupGroupId,
+  () => filter.value.muscleSupGroupIds,
   () => {
-    if (filter.value.selectedMuscleSupGroupId) {
+    if (filter.value.muscleSupGroupIds) {
       const mgAux = state.muscleSupGroups.find(
-        (msg) => msg.id === filter.value.selectedMuscleSupGroupId
+        (msg) => msg.id === filter.value.muscleSupGroupIds
       )?.muscleGroups
 
       if (mgAux) {
@@ -125,11 +120,11 @@ watch(
 );
 
 watch(
-  () => filter.value.selectedMuscleGroupId,
+  () => filter.value.muscleGroupIds,
   () => {
-    if (filter.value.selectedMuscleGroupId) {
+    if (filter.value.muscleGroupIds) {
       const msubgAux = state.muscleGroups.find(
-        (mg) => mg.id === filter.value.selectedMuscleGroupId
+        (mg) => mg.id === filter.value.muscleGroupIds
       )?.muscleSubGroups
 
       if (msubgAux) {
@@ -150,9 +145,9 @@ function preSetFilter(
   selectedMuscleGroupId: string,
   selectedMuscleSubGroups: string[],
 ) {
-  filter.value.selectedMuscleSupGroupId = selectedMuscleSupGroupId;
-  filter.value.selectedMuscleGroupId = selectedMuscleGroupId;
-  filter.value.selectedMuscleSubGroups = selectedMuscleSubGroups;
+  filter.value.muscleSupGroupIds = selectedMuscleSupGroupId;
+  filter.value.muscleGroupIds = selectedMuscleGroupId;
+  filter.value.muscleSubGroupIds = selectedMuscleSubGroups;
 }
 
 defineExpose({ preSetFilter })

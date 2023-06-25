@@ -1,14 +1,14 @@
 <template>
-  <q-dialog v-model="state.modalSet.visible" v-if="!onlyRead && state.modalSet.exerciseId && state.modalSet.setsSize">
-    <SetModal :setId="typeof (state.modalSet.setId) === 'string' ? state.modalSet.setId : ''"
-      :setGroupId="typeof (state.modalSet.setGroupId) === 'string' ? state.modalSet.setGroupId : ''"
+  <q-dialog v-model="state.modalSet.visible"
+    v-if="!onlyRead && state.modalSet.exerciseId && state.modalSet.setsSize != null && state.modalSet.setGroupId">
+    <SetModal :setId="state.modalSet.setId ?? ''" :setGroupId="state.modalSet.setGroupId"
       :setsSize="state.modalSet.setsSize" :exerciseId="state.modalSet.exerciseId" @closeModal="
         getWorkout();
       state.modalSet.visible = false;
       " />
   </q-dialog>
 
-  <div v-if="workoutId">
+  <div v-if="state.workout">
     <SummaryWo :workout="state.workout" v-if="showSummary" />
 
     <SetGroupCard v-for="setGroup in state.workout?.setGroups" class="bg-grey-1 items-center" :key="setGroup.id"
@@ -33,14 +33,17 @@ import SetModal from 'components/modals/SetModal.vue';
 import SetGroupCard from 'components/cards/SetGroupCard.vue';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
 import { GetWorkoutResponse } from 'src/types/workouts-api/WorkoutServiceTypes';
+import { ShowHistoricoModal } from 'src/pages/IndexPage.vue'
 
-const emit = defineEmits(['showHistoricoModalUp'])
 const props = defineProps({
   workoutId: { type: String, required: false },
   onlyRead: { type: Boolean, required: false },
   showSummary: { type: Boolean, required: false },
   exerciseId: { type: String, required: false }
 });
+const emit = defineEmits<{
+  showHistoricoModalUp: [data: ShowHistoricoModal]
+}>()
 
 const state: State = reactive({
   workout: null,
@@ -52,31 +55,16 @@ const state: State = reactive({
     exerciseId: null,
   },
 });
-
 interface State {
   workout: GetWorkoutResponse | null,
   modalSet: ModalSet,
-
 }
-
-interface ShowHistoricoModal {
-  setGroupId: string,
-  exerciseId: string,
-}
-
 interface ModalSet {
   visible: boolean,
   setId: string | null,
   setGroupId: string | null,
   setsSize: number | null,
   exerciseId: string | null,
-}
-
-interface ShowSetModal {
-  setId: string,
-  setGroupId: string,
-  setsSize: number,
-  exerciseId: string,
 }
 
 onBeforeMount(() => {
@@ -100,6 +88,13 @@ function getWorkout() {
   }
 }
 
+
+export interface ShowSetModal {
+  setId: string | null,
+  setGroupId: string,
+  setsSize: number,
+  exerciseId: string,
+}
 function showSetModal(data: ShowSetModal) {
   state.modalSet.setId = data.setId;
   state.modalSet.setGroupId = data.setGroupId;

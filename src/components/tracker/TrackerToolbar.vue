@@ -42,14 +42,13 @@ defineProps({
   calendarActive: { Boolean, required: true },
   workoutId: { String, required: true }
 });
-defineEmits([
-  'showHideLeftDrawer',
-  'setToday',
-  'showHideCalendar',
-  'showRemoveWorkoutModal',
-  'showModalChangeDate'
-])
-
+defineEmits<{
+  showHideLeftDrawer: []
+  setToday: []
+  showHideCalendar: []
+  showRemoveWorkoutModal: []
+  showModalChangeDate: []
+}>()
 
 const today = dateToISO8601(null);
 </script>

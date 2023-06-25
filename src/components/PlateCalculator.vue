@@ -78,7 +78,9 @@ import { reactive, computed, watchEffect } from 'vue';
 import IncrementSelect from 'components/IncrementSelect.vue';
 import IncrementDecrementButtons from 'components/IncrementDecrementButtons.vue';
 import { useSettingsStore } from 'stores/settings-store';
-const props = defineProps({ defaultWeight: Number })
+const props = defineProps({
+  defaultWeight: { type: Number, required: false }
+})
 const useStore = useSettingsStore();
 const state: State = reactive({
   selectedIncrement: defaultSelectedIncrement,

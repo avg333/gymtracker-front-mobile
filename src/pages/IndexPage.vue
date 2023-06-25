@@ -3,7 +3,7 @@
     <LeftDrawner />
   </q-drawer>
 
-  <q-dialog v-model="state.modalWorkouts.visible">
+  <q-dialog v-model="state.modalWorkouts.visible" v-if="state.workoutId">
     <ChangeFromWorkoutModal :workoutId="state.workoutId" :defaultDate="state.date"
       :setGroupId="state.modalWorkouts.setGroupId" :exerciseId="state.modalWorkouts.exerciseId" @closeModal="
         reloadWorkout();
@@ -13,7 +13,7 @@
       " />
   </q-dialog>
 
-  <q-dialog v-model="state.modalChangeDate">
+  <q-dialog v-model="state.modalChangeDate" v-if="state.workoutId">
     <ChangeWorkoutDateModal :workoutId="state.workoutId" :initialDate="state.date" @closeModal="
       reloadWorkoutDates();
     state.modalChangeDate = false;
@@ -27,7 +27,7 @@
       @showRemoveWorkoutModal="removeWorkout" />
 
     <CalendarWorkouts v-if="state.isLogged" ref="calendarRef" :updateDateQuery="true" :showCalendar="state.showCalendar"
-      :defaultDate="$route.query.date" @updateDate="updateDate" @updateWorkoutId="updateWorkoutId" />
+      :defaultDate="state.date" @updateDate="updateDate" @updateWorkoutId="updateWorkoutId" />
 
     <SetGroupsContainer v-if="state.isLogged" ref="setGroupsref" :workoutId="state.workoutId" :showSummary="true"
       @showHistoricoModalUp="showHistoricoModal" />
@@ -71,12 +71,18 @@ const useStore = useLoginStore();
 const state: State = reactive({
   isLogged: computed(() => useStore.getIsLogged),
   workoutId: null,
-  date: typeof (route.query.date) == 'string' ? route.query.date : dateToISO8601(null),
+  date: getStartDate(),
   leftDrawerOpen: false,
   showCalendar: false,
   modalChangeDate: false,
   modalWorkouts: { visible: false, setGroupId: null, exerciseId: null },
 });
+
+function getStartDate() {
+  const startDate: string = route.query.date as string
+  const dateOk = startDate ? startDate : dateToISO8601(null)
+  return dateOk
+}
 
 interface State {
   isLogged: boolean,
@@ -122,7 +128,7 @@ async function removeWorkout() {
   });
 }
 
-interface ShowHistoricoModal {
+export interface ShowHistoricoModal {
   setGroupId: string,
   exerciseId: string,
 }

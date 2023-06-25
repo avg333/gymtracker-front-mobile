@@ -45,7 +45,6 @@
 </template>
 
 <script setup lang="ts">
-//READY!
 import { ref, onBeforeMount, watch } from 'vue';
 import type { Ref } from 'vue'
 import { useRouter } from 'vue-router';
@@ -60,8 +59,10 @@ const props = defineProps({
   exerciseId: { type: String, required: false },
   updateDateQuery: { type: Boolean, required: false }
 });
-const emit = defineEmits(['updateDate', 'updateWorkoutId'])
-
+const emit = defineEmits<{
+  updateDate: [date: string]
+  updateWorkoutId: [workoutId: string]
+}>()
 
 const useStore = useLoginStore();
 const router = useRouter();
@@ -83,27 +84,18 @@ watch(workoutId, () => {
 });
 
 onBeforeMount(() => {
+  date.value = date.value ?? dateToISO8601(null)
   emit('updateDate', date.value);
   getWorkoutsDates();
 });
 
 function getWorkoutsDates() {
-  if (props.exerciseId) {
-    WorkoutService.getAllWorkoutDatesByUser(
-      useStore.getUserId,
-      props.exerciseId
-    ).then((dates) => {
+  WorkoutService.getAllWorkoutDatesByUser(useStore.getUserId, props.exerciseId ?? null).then(
+    (dates) => {
       workoutDates.value = dates;
       setWorkoutId();
-    });
-  } else {
-    WorkoutService.getAllWorkoutDatesByUser(useStore.getUserId, null).then(
-      (dates) => {
-        workoutDates.value = dates;
-        setWorkoutId();
-      }
-    );
-  }
+    }
+  );
 }
 
 function setWorkoutId() {

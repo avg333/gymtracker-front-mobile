@@ -25,20 +25,11 @@
   </q-page>
 </template>
 
-<script lang="ts">
-import { ref, defineComponent } from 'vue';
+<script setup lang="ts">
+import { ref } from 'vue';
 import RmCalculator from 'components/RmCalculator.vue';
 import PlateCalculator from 'components/PlateCalculator.vue';
-export default defineComponent({
-  name: 'CalculatorPage',
-  components: { RmCalculator, PlateCalculator },
-  setup() {
-    const slide = ref('rm');
-    return {
-      slide,
-    };
-  },
-});
+const slide = ref('rm');
 </script>
 
 <style scoped>
