@@ -111,11 +111,13 @@ watch(
   () => filter.value.selectedMuscleSupGroupId,
   () => {
     if (filter.value.selectedMuscleSupGroupId) {
-      MuscleGroupService.getAllMuscleSupGroupMuscleGroups(
-        filter.value.selectedMuscleSupGroupId
-      ).then((res) => {
-        state.muscleGroups = res;
-      });
+      const mgAux = state.muscleSupGroups.find(
+        (msg) => msg.id === filter.value.selectedMuscleSupGroupId
+      )?.muscleGroups
+
+      if (mgAux) {
+        state.muscleGroups = mgAux
+      }
     } else {
       state.muscleGroups = [];
     }
@@ -126,11 +128,13 @@ watch(
   () => filter.value.selectedMuscleGroupId,
   () => {
     if (filter.value.selectedMuscleGroupId) {
-      MuscleGroupService.getAllMuscleGroupMuscleSubGroups(
-        filter.value.selectedMuscleGroupId
-      ).then((res) => {
-        state.muscleSubGroups = res;
-      });
+      const msubgAux = state.muscleGroups.find(
+        (mg) => mg.id === filter.value.selectedMuscleGroupId
+      )?.muscleSubGroups
+
+      if (msubgAux) {
+        state.muscleSubGroups = msubgAux
+      }
     } else {
       state.muscleSubGroups = [];
     }

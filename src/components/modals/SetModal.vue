@@ -95,10 +95,10 @@ import IncrementSelect from 'components/IncrementSelect.vue';
 import SetService from 'src/services/workouts-api/SetService';
 import { GetSetResponse } from 'src/types/workouts-api/SetServiceTypes';
 import ExerciseService from 'src/services/exercises-api/ExerciseService';
-import { Exercise } from 'src/types/workouts-api/WorkoutServiceTypes';
+import { Exercise } from 'src/types/exercises-api/ExerciseServiceTypes';
 
 const props = defineProps({
-  setId: { type: String, default: 'noID' },
+  setId: { type: String, default: '' },
   setGroupId: { type: String, required: true },
   setsSize: { type: Number, required: true },
   exerciseId: { type: String, required: true }

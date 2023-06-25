@@ -2,9 +2,9 @@ export interface ExerciseFilterRequest {
   name: string | null;
   description: string | null;
   unilateral: boolean | null;
-  loadType: boolean | null;
-  muscleSupGroupIds: string[] | null;
-  muscleGroupIds: string[] | null;
+  loadType: string | null;
+  muscleSupGroupIds: string | null;
+  muscleGroupIds: string | null;
   muscleSubGroupIds: string[] | null;
 }
 
@@ -12,6 +12,9 @@ export interface Exercise {
   id: string;
   name: string;
   description: string | undefined | null;
+  favourite: boolean;
+  unilateral: boolean;
+  loadType: LoadType;
   muscleGroupExercise: MuscleGroupExercise[];
 }
 
@@ -23,6 +26,12 @@ export interface MuscleGroupExercise {
 
 export interface MuscleGroup {
   id: string;
-  name: number;
+  name: string;
   description: string | undefined | null;
+}
+
+export interface LoadType {
+  id: string;
+  name: string;
+  description: string | null | undefined;
 }

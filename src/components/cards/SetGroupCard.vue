@@ -102,28 +102,23 @@
   </div>
 </template>
 
-<script lang="ts">
-//READY
-import { PropType, defineComponent } from 'vue'
+<script setup lang="ts">
+import { PropType } from 'vue'
 import SetGroupService from 'src/services/workouts-api/SetGroupService';
-import { getMuscleGroupIco } from 'src/utils/icoUtils';
 import { GetWorkoutResponseSetGroups } from 'src/types/workouts-api/WorkoutServiceTypes';
-export default defineComponent({
-  name: 'SetGroupCard',
-  props: {
-    setGroup: { type: Object as PropType<GetWorkoutResponseSetGroups>, required: true },
-    Object, onlyRead: Boolean,
-    exerciseId: String
-  },
-  emits: ['showSetModal', 'showHistoricoModal', 'updateSets'],
-  setup(_, { emit }) {
-    async function removeSetGroup(setGroupId: string) {
-      await SetGroupService.delete(setGroupId);
-      emit('updateSets');
-    }
-    return { removeSetGroup, getMuscleGroupIco };
-  },
-});
+import { getMuscleGroupIco } from 'src/utils/icoUtils';
+defineProps({
+  setGroup: { type: Object as PropType<GetWorkoutResponseSetGroups>, required: true },
+  onlyRead: { type: Boolean },
+  exerciseId: { type: String }
+})
+const emit = defineEmits(['updateSets'])
+async function removeSetGroup(setGroupId: string) {
+  const deleteOk = await SetGroupService.delete(setGroupId);
+  if (deleteOk) {
+    emit('updateSets');
+  }
+}
 </script>
 
 <style scoped>

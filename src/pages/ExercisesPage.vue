@@ -16,7 +16,7 @@
         <span>
           {{
             $t("muscleGroupPages.replaceExerciseInWorkout", {
-              exerciseName: state.setGroup?.exercise?.name,
+              exerciseName: state.setGroup?.exerciseId,
             })
           }}
         </span>
@@ -57,7 +57,10 @@ import ExercisesFilterBar from 'components/ExercisesFilterBar.vue';
 import SetGroupService from 'src/services/workouts-api/SetGroupService';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
 import ExerciseService from 'src/services/exercises-api/ExerciseService';
-import { GetWorkoutResponse, GetWorkoutResponseSetGroups, Exercise } from 'src/types/workouts-api/WorkoutServiceTypes';
+import { GetWorkoutResponse } from 'src/types/workouts-api/WorkoutServiceTypes';
+
+import { Exercise, ExerciseFilterRequest } from 'src/types/exercises-api/ExerciseServiceTypes';
+import { GetSetGroupResponse } from 'src/types/workouts-api/SetGroupServiceTypes';
 export default defineComponent({
   name: 'ExercisesPage',
   components: { ExerciseCard, ExercisesFilterBar },
@@ -65,8 +68,8 @@ export default defineComponent({
     const route = useRoute();
     const router = useRouter();
 
-    const setGroupId: string | null = route.query.setGroupId;
-    const workoutId: string = route.query.workoutId;
+    const setGroupId: string | null = route.query.setGroupId as string;
+    const workoutId: string = route.query.workoutId as string;
 
     const state: State = reactive({
       exercises: [],
@@ -74,41 +77,36 @@ export default defineComponent({
       workout: null,
       setGroup: null,
     });
-
     interface State {
       exercises: Exercise[],
       selectedExercisesId: string[],
       workout: GetWorkoutResponse | null,
-      setGroup: GetWorkoutResponseSetGroups | null,
+      setGroup: GetSetGroupResponse | null,
     };
 
-    const filter: Ref<Filter> = ref({
+    const filter: Ref<ExerciseFilterRequest> = ref({
+      name: null,
+      description: null,
       selectedFav: false,
-      selectedUnilateral: false,
-      selectedLoadType: '',
-      selectedMuscleSupGroupId: '',
-      selectedMuscleGroupId: '',
-      selectedMuscleSubGroups: []
+      unilateral: false,
+      loadType: '',
+      muscleSupGroupIds: '',
+      muscleGroupIds: '',
+      muscleSubGroupIds: []
     });
 
-    interface Filter {
-      selectedFav: boolean,
-      selectedUnilateral: boolean,
-      selectedLoadType: string | null,
-      selectedMuscleSupGroupId: string | null,
-      selectedMuscleGroupId: string | null,
-      selectedMuscleSubGroups: string[],
-    }
-
     onBeforeMount(() => {
-      loadExercises(null);
+      loadExercises({});
       if (setGroupId) {
         SetGroupService.getById(setGroupId).then((setGroup) => {
-          state.setGroup = setGroup;
-          WorkoutService.getById(setGroup.workout.id).then((wo) => {
-            state.workout = wo;
-          });
-          preSetFilter(setGroup?.exercise);
+          if (setGroup) {
+
+            state.setGroup = setGroup;
+            WorkoutService.getById(setGroup.workout.id).then((wo) => {
+              state.workout = wo;
+            });
+            preSetFilter(setGroup.exerciseId);
+          }
         });
       } else if (workoutId) {
         WorkoutService.getById(workoutId).then((res) => {
@@ -121,24 +119,17 @@ export default defineComponent({
       loadExercises(filter.value);
     });
 
-    function loadExercises(filter: Filter | null) {
-      if (filter)
-        ExerciseService.getAll({
-          unilateral: filter.selectedUnilateral,
-          loadType: filter.selectedLoadType,
-          muscleSupGroupIds: filter.selectedMuscleSupGroupId,
-          muscleGroupIds: filter.selectedMuscleGroupId,
-          selectedMuscleSubGroups: filter.selectedMuscleSubGroups,
-        }).then((res) => {
-          state.exercises = res;
-        });
-      else
-        ExerciseService.getAll().then((res) => {
-          state.exercises = res;
-        });
+    function loadExercises(filter: ExerciseFilterRequest | object) {
+      ExerciseService.getAll(filter).then((res) => {
+        state.exercises = res;
+      });
     }
 
     async function addExercise(exerciseId: string) {
+      if (!state.workout?.date) {
+        console.error('El workout es null!')
+        return
+      }
 
       const setGroupCreateRequest = {
         description: null,
@@ -156,26 +147,13 @@ export default defineComponent({
     }
 
     const exerciseFilterBarRef = ref(null);
-    function preSetFilter(exercise: Exercise) {
-      if (!exercise) {
+    async function preSetFilter(exerciseId: string) {
+      if (!exerciseId) {
         return;
-      }
-      //TODO Mejorar esto
-      const muscleGroupExercises = exercise.muscleGroupExercises;
-      const muscleSubGroups = exercise.muscleSubGroups;
-      const selectedMuscleGroupId = muscleGroupExercises[0].muscleGroup.id;
-      const selectedMuscleSupGroupId =
-        muscleGroupExercises[0].muscleGroup.muscleSupGroups[0].id;
-      const selectedMuscleSubGroups = muscleSubGroups?.map((a) => a?.id);
-
-      exerciseFilterBarRef.value.preSetFilter(
-        selectedMuscleSupGroupId,
-        selectedMuscleGroupId,
-        selectedMuscleSubGroups
-      );
+      }//TODO
     }
 
-    function setFilter(filterValue: Filter) {
+    function setFilter(filterValue: ExerciseFilterRequest) {
       filter.value = filterValue;
     }
 

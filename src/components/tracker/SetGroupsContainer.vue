@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="state.modalSet.visible" v-if="!onlyRead">
+  <q-dialog v-model="state.modalSet.visible" v-if="!onlyRead && state.modalSet.exerciseId && state.modalSet.setsSize">
     <SetModal :setId="typeof (state.modalSet.setId) === 'string' ? state.modalSet.setId : ''"
       :setGroupId="typeof (state.modalSet.setGroupId) === 'string' ? state.modalSet.setGroupId : ''"
       :setsSize="state.modalSet.setsSize" :exerciseId="state.modalSet.exerciseId" @closeModal="

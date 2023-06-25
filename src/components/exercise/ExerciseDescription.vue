@@ -28,23 +28,13 @@
     </div>
   </div>
 
-  <div class="text-center" v-if="exercise?.muscleGroupExercises">
-    <strong v-for="(muscleGroupExercises, index) in exercise.muscleGroupExercises"
-      :key="muscleGroupExercises.muscleGroup.id"
-      :class="'text-' + getMuscleGroupColour(muscleGroupExercises.muscleGroup)">
-      {{
-        $t("muscleGroup." + muscleGroupExercises.muscleGroup.id).toUpperCase()
-      }}
-      -
-      {{ muscleGroupExercises.weight }}
-      {{ index + 1 !== exercise.muscleGroupExercises.length ? " - " : "" }}
-    </strong>
+  <div class="text-center" v-if="exercise.muscleGroupExercise">
   </div>
 
-  <div class="text-center" v-if="exercise?.muscleSubGroups">
-    <strong v-for="(muscleSubGroup, index) in exercise.muscleSubGroups" :key="muscleSubGroup.id">
-      {{ $t("muscleSubGroup." + muscleSubGroup.id).toUpperCase() }}
-      {{ index + 1 !== exercise.muscleSubGroups.length ? " - " : "" }}
+  <div class="text-center" v-if="exercise?.muscleGroupExercise">
+    <strong v-for="(muscleSubGroup, index) in exercise.muscleGroupExercise" :key="muscleSubGroup.id">
+      {{ muscleSubGroup.muscleGroup.name.toUpperCase() }}
+      {{ index + 1 !== exercise.muscleGroupExercise.length ? " - " : "" }}
     </strong>
   </div>
 
@@ -54,7 +44,7 @@
       Uni/Bi: {{ exercise.unilateral ? "Unilateral" : "Bilateral" }}
     </div>
     <div class="col-4">
-      {{ $t("loadType." + exercise?.loadType?.toLowerCase()) }}
+      {{ $t("loadType." + exercise.loadType.name.toLowerCase()) }}
     </div>
   </div>
 
@@ -62,13 +52,10 @@
   <div class="text-center">{{ exercise.description }}</div>
 </template>
 
-<script lang="ts">
-import { PropType, defineComponent } from 'vue'
-import { getMuscleGroupColour } from 'src/utils/colourUtils';
-export default defineComponent({
-  props: { exercise: { type: Object as PropType<any>, required: true } },
-  setup() {
-    return { getMuscleGroupColour };
-  },
-});
+<script setup lang="ts">
+import { PropType } from 'vue'
+import { Exercise } from 'src/types/exercises-api/ExerciseServiceTypes';
+defineProps({
+  exercise: { type: Object as PropType<Exercise>, required: true }
+})
 </script>

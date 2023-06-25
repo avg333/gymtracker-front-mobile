@@ -13,14 +13,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { PropType, defineComponent } from 'vue'
-import { getMuscleGroupIco } from 'src/utils/icoUtils';
-import { Exercise } from 'src/types/workouts-api/WorkoutServiceTypes';
-export default defineComponent({
-  props: { exercise: { type: Object as PropType<Exercise>, required: true } },
-  setup() {
-    return { getMuscleGroupIco };
-  },
-});
+<script setup lang="ts">
+import { Exercise } from 'src/types/exercises-api/ExerciseServiceTypes';
+import { PropType } from 'vue'
+defineProps({ exercise: { type: Object as PropType<Exercise>, required: true } })
 </script>

@@ -21,7 +21,7 @@
 
     <q-carousel v-model="state.slide" transition-prev="slide-right" transition-next="slide-left" animated
       control-color="primary" height="100%">
-      <q-carousel-slide :name="categories.description">
+      <q-carousel-slide :name="categories.description" v-if="state.exercise">
         <ExerciseDescription :exercise="state.exercise" />
       </q-carousel-slide>
       <q-carousel-slide :name="categories.statistics">
@@ -36,10 +36,10 @@
 </template>
 
 <script lang="ts">
-const categories = {
-  description: 'description',
-  statistics: 'statistics',
-  history: 'history',
+enum categories {
+  description = 'description',
+  statistics = 'statistics',
+  history = 'history',
 };
 import { defineComponent, reactive, onBeforeMount } from 'vue';
 import { useRoute } from 'vue-router';
@@ -49,7 +49,7 @@ import SetGroupService from 'src/services/workouts-api/SetGroupService';
 import SetGroupCard from 'src/components/cards/SetGroupCard.vue';
 import ExerciseDescription from 'src/components/exercise/ExerciseDescription.vue';
 import { GetExerciseSetGroupsResponse } from 'src/types/workouts-api/SetGroupServiceTypes';
-import { Exercise } from 'src/types/workouts-api/WorkoutServiceTypes';
+import { Exercise } from 'src/types/exercises-api/ExerciseServiceTypes';
 export default defineComponent({
   name: 'ExercisePage',
   components: { SetGroupCard, ExerciseDescription },
@@ -63,18 +63,20 @@ export default defineComponent({
       setGroups: null,
     });
     interface State {
-      slide: string,
+      slide: categories,
       exercise: Exercise | null,
       setGroups: GetExerciseSetGroupsResponse | null,
     }
 
     onBeforeMount(async () => {
-      ExerciseService.getById(route.params.exerciseId).then((res) => {
+      const exerciseId = route.params.exerciseId as string
+
+      ExerciseService.getById(exerciseId).then((res) => {
         state.exercise = res;
       });
       SetGroupService.getExerciseHistory(
         store.getUserId,
-        route.params.exerciseId as string
+        exerciseId
       ).then((res) => {
         state.setGroups = res;
       });

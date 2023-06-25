@@ -58,7 +58,7 @@ const props = defineProps({
   showCalendar: { type: Boolean, required: true },
   defaultDate: { type: String, required: false },
   exerciseId: { type: String, required: false },
-  updateDateQuery: { type: Boolean, required: true }
+  updateDateQuery: { type: Boolean, required: false }
 });
 const emit = defineEmits(['updateDate', 'updateWorkoutId'])
 

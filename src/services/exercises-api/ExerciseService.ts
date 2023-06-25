@@ -1,12 +1,14 @@
 import { api } from 'src/boot/axios';
-import { ExerciseFilterRequest } from 'src/types/exercises-api/ExerciseServiceTypes';
-import { Exercise } from 'src/types/exercises-api/ExerciseServiceTypes';
+import {
+  ExerciseFilterRequest,
+  Exercise,
+} from 'src/types/exercises-api/ExerciseServiceTypes';
 
 const EXERCISES_API_PREFIX = 'exercises-api';
 const API = 'exercises';
 
 class ExerciseService {
-  async getAll(filter: ExerciseFilterRequest): Promise<Exercise[]> {
+  async getAll(filter: ExerciseFilterRequest | any): Promise<Exercise[]> {
     try {
       const res = await api.get(`${EXERCISES_API_PREFIX}/${API}`, {
         params: {
