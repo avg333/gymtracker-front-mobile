@@ -118,7 +118,7 @@ class WorkoutService {
   ) {
     try {
       await api.patch(
-        `${WORKOUT_API_PREFIX}/workouts/${workoutDestinationId}/setGroups`,
+        `${WORKOUT_API_PREFIX}/workouts/${workoutDestinationId}/copySetGroups`,
         {
           id: workoutSourceId,
           source: UpdateWorkoutSetGroupsRequestSourceEnum.WORKOUT,
