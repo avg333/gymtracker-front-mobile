@@ -1,66 +1,40 @@
-// GET
-export interface GetNewSetDataResponse {
-  description: string | null | undefined;
+type NullTypeString = string | null | undefined;
+type NullTypeNumber = number | null | undefined;
+
+// REQUEST
+export interface PostSetRequest {
+  description: NullTypeString;
+  reps: NullTypeNumber;
+  rir: NullTypeNumber;
+  weight: NullTypeNumber;
+}
+
+export interface UpdateSetDataRequest {
+  description: NullTypeString;
   reps: number;
   rir: number;
   weight: number;
+}
+
+// RESPONSE
+export interface GetNewSetDataResponse {
+  description: NullTypeString;
+  reps: NullTypeNumber;
+  rir: NullTypeNumber;
+  weight: NullTypeNumber;
 }
 
 export interface GetSetResponse {
   id: string;
   listOrder: number;
-  description: string | null | undefined;
-  reps: number;
-  rir: number;
-  weight: number;
+  description: NullTypeString;
+  reps: NullTypeNumber;
+  rir: NullTypeNumber;
+  weight: NullTypeNumber;
+  completedAt: NullTypeString;
   setGroup: GetSetResponseSetGroup;
 }
 
 export interface GetSetResponseSetGroup {
   id: string;
-}
-
-// POST
-export interface PostSetRequest {
-  description: string | null | undefined;
-  reps: number;
-  rir: number;
-  weight: number;
-}
-
-export interface PostSetResponse {
-  id: string;
-  listOrder: number;
-  description: string | null | undefined;
-  reps: number;
-  rir: number;
-  weight: number;
-  setGroup: PostSetGroupGetSetResponse;
-}
-
-export interface PostSetGroupGetSetResponse {
-  id: string;
-}
-
-// UPDATE
-export interface UpdateSetListOrderRequest {
-  listOrder: number;
-}
-
-export interface UpdateSetListOrderResponse {
-  sets: GetSetResponse[]; //TODO Separar tipo
-}
-
-export interface UpdateSetDataRequest {
-  description: string | null | undefined;
-  reps: number;
-  rir: number;
-  weight: number;
-}
-
-export interface UpdateSetDataResponse {
-  description: string | null | undefined;
-  reps: number;
-  rir: number;
-  weight: number;
 }

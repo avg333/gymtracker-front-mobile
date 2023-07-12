@@ -51,7 +51,7 @@ import CalendarWorkouts from 'components/tracker/CalendarWorkouts.vue';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
 import SetGroupService from 'src/services/workouts-api/SetGroupService';
 import { GetSetGroupResponse } from 'src/types/workouts-api/SetGroupServiceTypes';
-import { GetWorkoutResponse } from 'src/types/workouts-api/WorkoutServiceTypes';
+import { GetWorkoutResponseWithDetails } from 'src/types/workouts-api/WorkoutServiceTypes';
 const emit = defineEmits(['closeModal']);
 const props = defineProps({
   workoutId: { type: String, required: true },
@@ -71,8 +71,8 @@ const state: State = reactive({
 interface State {
   showCalendar: boolean,
   date: string,
-  workoutDestination: GetWorkoutResponse | null,
-  workoutSource: GetWorkoutResponse | null,
+  workoutDestination: GetWorkoutResponseWithDetails | null,
+  workoutSource: GetWorkoutResponseWithDetails | null,
   setGroupDestination: GetSetGroupResponse | null,
   setGroupSource: GetSetGroupResponse | null,
 }
@@ -114,7 +114,7 @@ async function copiar() {
   emit('closeModal');
 }
 
-function findSetGroupSourceInWorkout(workout: GetWorkoutResponse) {
+function findSetGroupSourceInWorkout(workout: GetWorkoutResponseWithDetails) {
   if (!workout?.setGroups?.length) {
     state.setGroupSource = null;
     return;

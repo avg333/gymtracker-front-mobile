@@ -1,3 +1,5 @@
+type NullTypeString = string | null | undefined;
+
 export interface ExerciseFilterRequest {
   name: string | null;
   description: string | null;
@@ -8,14 +10,33 @@ export interface ExerciseFilterRequest {
   muscleSubGroupIds: string[] | null;
 }
 
+export interface ExerciseSimple {
+  id: string;
+  name: string;
+  description: NullTypeString;
+  unilateral: boolean;
+}
+
 export interface Exercise {
   id: string;
   name: string;
-  description: string | undefined | null;
-  favourite: boolean;
+  description: NullTypeString;
   unilateral: boolean;
   loadType: LoadType;
+  muscleSubGroups: MuscleSubGroup[];
   muscleGroupExercise: MuscleGroupExercise[];
+}
+
+export interface LoadType {
+  id: string;
+  name: string;
+  description: NullTypeString;
+}
+
+export interface MuscleSubGroup {
+  id: string;
+  name: string;
+  description: NullTypeString;
 }
 
 export interface MuscleGroupExercise {
@@ -27,11 +48,5 @@ export interface MuscleGroupExercise {
 export interface MuscleGroup {
   id: string;
   name: string;
-  description: string | undefined | null;
-}
-
-export interface LoadType {
-  id: string;
-  name: string;
-  description: string | null | undefined;
+  description: NullTypeString;
 }

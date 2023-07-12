@@ -32,7 +32,7 @@ import SummaryWo from 'components/tracker/SummaryWo.vue';
 import SetModal from 'components/modals/SetModal.vue';
 import SetGroupCard from 'components/cards/SetGroupCard.vue';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
-import { GetWorkoutResponse } from 'src/types/workouts-api/WorkoutServiceTypes';
+import { GetWorkoutResponseWithDetails } from 'src/types/workouts-api/WorkoutServiceTypes';
 import { ShowHistoricoModal } from 'src/pages/IndexPage.vue'
 
 const props = defineProps({
@@ -56,7 +56,7 @@ const state: State = reactive({
   },
 });
 interface State {
-  workout: GetWorkoutResponse | null,
+  workout: GetWorkoutResponseWithDetails | null,
   modalSet: ModalSet,
 }
 interface ModalSet {
@@ -80,7 +80,8 @@ watch(
 
 function getWorkout() {
   if (props.workoutId) {
-    WorkoutService.getById(props.workoutId).then((res) => {
+    WorkoutService.getByIdWithDetails(props.workoutId).then((res) => {
+      console.log(res)
       state.workout = res;
     });
   } else {

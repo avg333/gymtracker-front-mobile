@@ -1,12 +1,53 @@
-// GET
+type NullTypeString = string | null | undefined;
+type NullTypeNumber = number | null | undefined;
+
+//REQUEST
+export interface UpdateWorkoutSetGroupsRequest {
+  id: string;
+  source: UpdateWorkoutSetGroupsRequestSourceEnum;
+}
+
+export enum UpdateWorkoutSetGroupsRequestSourceEnum {
+  WORKOUT,
+  SESSION,
+}
+
+export interface PostWorkoutRequest {
+  date: string;
+  description: NullTypeString;
+}
+
+// RESPONSE
 export interface GetWorkoutIdAndDateResponse {
-  [date: string]: string;
+  workoutsDateAndId: { [date: string]: string };
 }
 
 export interface GetWorkoutResponse {
   id: string;
   date: string;
-  description: string | undefined | null;
+  description: NullTypeString;
+  userId: string;
+}
+
+export interface GetWorkoutResponseWithSetGroups {
+  id: string;
+  date: string;
+  description: NullTypeString;
+  userId: string;
+  setGroups: GetWorkoutResponseWithSetGroupSetGroups[];
+}
+
+export interface GetWorkoutResponseWithSetGroupSetGroups {
+  id: string;
+  listOrder: number;
+  description: NullTypeString;
+  exerciseId: string;
+}
+
+export interface GetWorkoutResponseWithDetails {
+  id: string;
+  date: string;
+  description: NullTypeString;
   userId: string;
   setGroups: GetWorkoutResponseSetGroups[];
 }
@@ -14,25 +55,41 @@ export interface GetWorkoutResponse {
 export interface GetWorkoutResponseSetGroups {
   id: string;
   listOrder: number;
-  description: string | undefined | null;
-  exercise: Exercise;
+  description: NullTypeString;
+  exerciseId: string;
   sets: GetWorkoutResponseSets[];
+  exercise: Exercise; //TODO Verificar casos null
 }
 
 export interface GetWorkoutResponseSets {
   id: string;
   listOrder: number;
-  description: string | undefined | null;
-  reps: number;
-  rir: number;
-  weight: number;
+  description: NullTypeString;
+  reps: NullTypeNumber;
+  rir: NullTypeNumber;
+  weight: NullTypeNumber;
 }
 
 export interface Exercise {
   id: string;
   name: string;
-  description: string | undefined | null;
+  description: NullTypeString;
+  unilateral: boolean;
+  loadType: LoadType;
+  muscleSubGroups: MuscleSubGroup[];
   muscleGroupExercise: MuscleGroupExercise[];
+}
+
+export interface LoadType {
+  id: string;
+  name: string;
+  description: NullTypeString;
+}
+
+export interface MuscleSubGroup {
+  id: string;
+  name: string;
+  description: NullTypeString;
 }
 
 export interface MuscleGroupExercise {
@@ -43,48 +100,6 @@ export interface MuscleGroupExercise {
 
 export interface MuscleGroup {
   id: string;
-  name: number;
-  description: string | undefined | null;
-}
-
-// POST
-export interface PostWorkoutRequest {
-  date: string;
-  description: string | undefined | null;
-}
-
-export interface PostWorkoutResponse {
-  id: string;
-  date: string;
-  description: string | undefined | null;
-  userId: string;
-}
-
-// UPDATE
-
-export interface UpdateWorkoutSetGroupsRequest {
-  id: string;
-  source: UpdateWorkoutSetGroupsRequestSourceEnum;
-}
-
-enum UpdateWorkoutSetGroupsRequestSourceEnum {
-  WORKOUT,
-  SESSION,
-}
-
-export interface UpdateWorkoutSetGroupsResponseInfrastructure {
-  id: string;
-  listOrder: number;
-  description: string | undefined | null;
-  exerciseId: string;
-  sets: UpdateWorkoutSetGroupsResponseInfrastructureSet[];
-}
-
-interface UpdateWorkoutSetGroupsResponseInfrastructureSet {
-  id: string;
-  listOrder: number;
-  description: string | undefined | null;
-  reps: number;
-  rir: number;
-  weight: number;
+  name: string;
+  description: NullTypeString;
 }

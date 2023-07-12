@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-//import LoginService from "src/services/auth-api/LoginService";
 
 interface UserInterface {
   id: string;

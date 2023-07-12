@@ -120,12 +120,8 @@ function openModalEditSet(setId: string) {
   })
 }
 async function removeSetGroup() {
-  const deleteOk = await SetGroupService.delete(props.setGroup.id);
-  if (deleteOk) {
-    emit('updateSets');
-  } else {
-    console.error(`No se puede eliminar el setGroup: ${props.setGroup.id}`)
-  }
+  await SetGroupService.delete(props.setGroup.id);
+  emit('updateSets');
 }
 </script>
 

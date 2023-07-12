@@ -23,15 +23,7 @@ class LoginService {
   }
 
   async logout() {
-    try {
-      await api.post(API + 'signout');
-      localStorage.removeItem(AUTH_KEY);
-      return true;
-    } catch (error) {
-      console.error(
-        'Error al deslogear y borrar el token del usuario. Error: ' + error
-      );
-    }
+    localStorage.removeItem(AUTH_KEY);
   }
 
   async singup(userdata: object) {

@@ -75,7 +75,7 @@ import { reactive, computed, onBeforeMount } from 'vue';
 import { useLoginStore } from 'stores/login-store';
 import WorkoutService from 'src/services/workouts-api/WorkoutService';
 import { dateToBars } from 'src/utils/dateFormater'; //TODO Descubrir como eliminar esta conversion
-import { GetWorkoutIdAndDateResponse, GetWorkoutResponse } from 'src/types/workouts-api/WorkoutServiceTypes';
+import { GetWorkoutIdAndDateResponse, GetWorkoutResponseWithDetails } from 'src/types/workouts-api/WorkoutServiceTypes';
 
 const emit = defineEmits(['closeModal']);
 const props = defineProps({
@@ -86,20 +86,20 @@ const useStore = useLoginStore();
 
 const state: State = reactive({
   date: props.initialDate,
-  workoutDates: {},
+  workoutDates: { workoutsDateAndId: {} },
   workout: null,
-  isDateInWorkoutDates: computed(() => state.workoutDates[state.date]) != null,
+  isDateInWorkoutDates: computed(() => state.workoutDates.workoutsDateAndId[state.date]) != null,
 });
 
 interface State {
   date: string,
   workoutDates: GetWorkoutIdAndDateResponse,
-  workout: GetWorkoutResponse | null,
+  workout: GetWorkoutResponseWithDetails | null,
   isDateInWorkoutDates: boolean,
 }
 
 onBeforeMount(() => {
-  WorkoutService.getById(props.workoutId).then((res) => {
+  WorkoutService.getByIdWithDetails(props.workoutId).then((res) => {
     state.workout = res;
   });
 

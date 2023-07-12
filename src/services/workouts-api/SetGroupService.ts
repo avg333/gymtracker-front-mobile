@@ -3,19 +3,15 @@ import {
   GetSetGroupResponse,
   GetExerciseSetGroupsResponse,
   PostSetGroupRequest,
-  PostSetGroupResponse,
-  UpdateSetGroupListOrderResponse,
-  UpdateSetGroupSetsResponse,
 } from 'src/types/workouts-api/SetGroupServiceTypes';
 
 const WORKOUT_API_PREFIX = 'workout-api';
-const SETGRUP_PREFIX = '/setGroups';
 
 class SetGroupService {
   async getById(setGroupId: string): Promise<GetSetGroupResponse | null> {
     try {
       const res = await api.get(
-        `${WORKOUT_API_PREFIX}${SETGRUP_PREFIX}/${setGroupId}`
+        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}`
       );
       const setGroup: GetSetGroupResponse = res.data;
       console.debug(`Obtenido setGroup con ID: ${setGroup.id}`);
@@ -31,12 +27,12 @@ class SetGroupService {
   async getExerciseHistory(
     userId: string,
     exerciseId: string
-  ): Promise<GetExerciseSetGroupsResponse | null> {
+  ): Promise<GetExerciseSetGroupsResponse[]> {
     try {
       const res = await api.get(
-        `${WORKOUT_API_PREFIX}/users/${userId}/exercises/${exerciseId}${SETGRUP_PREFIX}`
+        `${WORKOUT_API_PREFIX}/users/${userId}/exercises/${exerciseId}/setGroups`
       );
-      const setGroups: GetExerciseSetGroupsResponse = res.data;
+      const setGroups: GetExerciseSetGroupsResponse[] = res.data;
       console.debug(
         `Obtenido setGroups del user con ID: ${userId} y del ejercicio con ID: ${exerciseId}`
       );
@@ -45,128 +41,83 @@ class SetGroupService {
       console.error(
         `Error al obtener el ultimo setGroup del usuario: ${userId} y el ejercicio: ${exerciseId}. Error: ${error}`
       );
-      return null;
+      return [];
     }
   }
 
-  async create(
-    workoutId: string,
-    postSetGroupRequest: PostSetGroupRequest
-  ): Promise<PostSetGroupResponse | null> {
+  async create(workoutId: string, postSetGroupRequest: PostSetGroupRequest) {
     try {
-      const res = await api.post(
-        `${WORKOUT_API_PREFIX}/workouts/${workoutId}${SETGRUP_PREFIX}`,
+      await api.post(
+        `${WORKOUT_API_PREFIX}/workouts/${workoutId}/setGroups`,
         postSetGroupRequest
       );
-      const newSetGroup: PostSetGroupResponse = res.data;
-      console.debug(`Creado el setGroup con ID: ${newSetGroup.id}`);
-      return newSetGroup;
     } catch (error) {
-      console.error(
-        `Error al crear el setGroup con los datos: ${postSetGroupRequest}. Error: ${error}`
-      );
-      return null;
+      console.error(`Error al crear el setGroup. Error: ${error}`);
     }
   }
 
-  async updateDescription(
-    setGroupId: string,
-    description: string
-  ): Promise<string | null> {
+  async updateDescription(setGroupId: string, description: string) {
     try {
-      const res = await api.patch(
-        `${WORKOUT_API_PREFIX}${SETGRUP_PREFIX}/${setGroupId}/description`,
+      await api.patch(
+        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}/description`,
         { description }
       );
-      const newDescription: string = res.data.description;
-      console.debug(
-        `Acualizada la descripción del setGroup con ID: ${setGroupId} a: ${newDescription}`
-      );
-      return newDescription;
     } catch (error) {
       console.error(
         `Error al actualizar la descripción del setGroup con ID: ${setGroupId} a: ${description}. Error: ${error}`
       );
-      return null;
     }
   }
 
-  async updateExercise(
-    setGroupId: string,
-    exerciseId: string
-  ): Promise<string | null> {
+  async updateExercise(setGroupId: string, exerciseId: string) {
     try {
-      const res = await api.patch(
-        `${WORKOUT_API_PREFIX}${SETGRUP_PREFIX}/${setGroupId}/exercise`,
+      await api.patch(
+        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}/exercise`,
         { exerciseId }
       );
-      const newExerciseId = res.data.exerciseId;
-      console.debug(
-        `Acualizada el exerciseId del setGroup con ID: ${setGroupId} a: ${newExerciseId}`
-      );
-      return newExerciseId;
     } catch (error) {
       console.error(
         `Acualizada al actualizar el exerciseId del setGroup con ID: ${setGroupId} a: ${exerciseId}. Error: ${error}`
       );
-      return null;
     }
   }
 
-  async updateListOrder(
-    setGroupId: string,
-    listOrder: number
-  ): Promise<UpdateSetGroupListOrderResponse | null> {
+  async updateListOrder(setGroupId: string, listOrder: number) {
     try {
-      const res = await api.patch(
-        `${WORKOUT_API_PREFIX}${SETGRUP_PREFIX}/${setGroupId}/listOrder`,
+      await api.patch(
+        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}/listOrder`,
         { listOrder }
       );
-      const newSetGroups: UpdateSetGroupListOrderResponse = res.data.setGroups;
-      console.debug(
-        `Acualizado el listOrder del setGroup con ID: ${setGroupId} a: ${listOrder}`
-      );
-      return newSetGroups;
     } catch (error) {
       console.error(
         `Error al actualizar el listOrder del setGroup con ID: ${setGroupId} a: ${listOrder}. Error: ${error}`
       );
-      return null;
     }
   }
 
   async replaceSetGroupSetsWithSetGroup(
     setGroupDestinationId: string,
     setGroupSourceId: string
-  ): Promise<UpdateSetGroupSetsResponse[] | null> {
+  ) {
     try {
-      const res = await api.patch(
-        `${WORKOUT_API_PREFIX}${SETGRUP_PREFIX}/${setGroupDestinationId}/sets`,
+      await api.patch(
+        `${WORKOUT_API_PREFIX}/setGroups/${setGroupDestinationId}/sets`,
         { setGroupId: setGroupSourceId }
       );
-      const newSets: UpdateSetGroupSetsResponse[] = res.data.sets;
-      console.debug(
-        `Insertadas las sets del setGroup con ID: ${setGroupSourceId} en el setGroup con ID: ${setGroupDestinationId}`
-      );
-      return newSets;
     } catch (error) {
       console.error(
         `Error al insertar las sets del setGroup con ID: ${setGroupSourceId} en el setGroup con ID: ${setGroupDestinationId}. Error: ${error}`
       );
-      return null;
     }
   }
 
-  async delete(setGroupId: string): Promise<boolean> {
+  async delete(setGroupId: string) {
     try {
-      await api.delete(`${WORKOUT_API_PREFIX}${SETGRUP_PREFIX}/${setGroupId}`);
-      console.debug(`Eliminado el setGroup con ID: ${setGroupId}`);
-      return true;
+      await api.delete(`${WORKOUT_API_PREFIX}/setGroups/${setGroupId}`);
     } catch (error) {
       console.error(
         `Error al eliminar el setGroup con ID: ${setGroupId}. Error:${error}`
       );
-      return false;
     }
   }
 }

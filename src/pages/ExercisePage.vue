@@ -65,7 +65,7 @@ export default defineComponent({
     interface State {
       slide: categories,
       exercise: Exercise | null,
-      setGroups: GetExerciseSetGroupsResponse | null,
+      setGroups: GetExerciseSetGroupsResponse[] | null,
     }
 
     onBeforeMount(async () => {

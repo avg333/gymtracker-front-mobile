@@ -1,26 +1,28 @@
+type NullTypeString = string | null | undefined;
+
 // GET
 export interface GetLoadTypeResponse {
   id: string;
   name: string;
-  description: string | null | undefined;
+  description: NullTypeString;
 }
 
 export interface GetMuscleSupGroupResponse {
   id: string;
   name: string;
-  description: string | null | undefined;
+  description: NullTypeString;
   muscleGroups: GetMuscleGroupResponse[];
 }
 
 export interface GetMuscleGroupResponse {
   id: string;
   name: string;
-  description: string | null | undefined;
+  description: NullTypeString;
   muscleSubGroups: GetMuscleSubGroupResponse[];
 }
 
 export interface GetMuscleSubGroupResponse {
   id: string;
   name: string;
-  description: string | null | undefined;
+  description: NullTypeString;
 }

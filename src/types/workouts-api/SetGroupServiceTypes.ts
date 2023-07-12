@@ -1,8 +1,17 @@
-// GET
+type NullTypeString = string | null | undefined;
+type NullTypeNumber = number | null | undefined;
+
+// REQUEST
+export interface PostSetGroupRequest {
+  description: NullTypeString;
+  exerciseId: string;
+}
+
+// RESPONSE
 export interface GetSetGroupResponse {
   id: string;
   listOrder: number;
-  description: string | null | undefined;
+  description: NullTypeString;
   exerciseId: string;
   workout: GetSetGroupResponseWorkout;
 }
@@ -10,42 +19,26 @@ export interface GetSetGroupResponse {
 export interface GetSetGroupResponseWorkout {
   id: string;
 }
-
+//-----
 export interface GetExerciseSetGroupsResponse {
-  setGroups: GetSetGroupResponse[];
-}
-
-// POST
-export interface PostSetGroupRequest {
-  description: string | null | undefined;
-  exerciseId: string;
-}
-
-export interface PostSetGroupResponse {
   id: string;
   listOrder: number;
-  description: string | null | undefined;
+  description: NullTypeString;
   exerciseId: string;
-  workout: PostSetGroupResponseWorkout;
+  workout: GetExerciseSetGroupsResponseWorkout;
+  sets: GetExerciseSetGroupsResponseSets[];
 }
 
-export interface PostSetGroupResponseWorkout {
+export interface GetExerciseSetGroupsResponseWorkout {
   id: string;
 }
 
-// UPDATE
-export interface UpdateSetGroupListOrderResponse {
+export interface GetExerciseSetGroupsResponseSets {
   id: string;
   listOrder: number;
-  description: string | null | undefined;
-  exerciseId: string;
-}
-
-export interface UpdateSetGroupSetsResponse {
-  id: string;
-  listOrder: number;
-  description: string;
-  reps: number;
-  rir: number;
-  weight: number;
+  description: NullTypeString;
+  reps: NullTypeNumber;
+  rir: NullTypeNumber;
+  weight: NullTypeNumber;
+  completedAt: NullTypeString;
 }

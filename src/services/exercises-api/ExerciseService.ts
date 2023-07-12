@@ -2,15 +2,15 @@ import { api } from 'src/boot/axios';
 import {
   ExerciseFilterRequest,
   Exercise,
+  ExerciseSimple,
 } from 'src/types/exercises-api/ExerciseServiceTypes';
 
 const EXERCISES_API_PREFIX = 'exercises-api';
-const API = 'exercises';
 
 class ExerciseService {
-  async getAll(filter: ExerciseFilterRequest | any): Promise<Exercise[]> {
+  async getAll(filter: ExerciseFilterRequest | any): Promise<ExerciseSimple[]> {
     try {
-      const res = await api.get(`${EXERCISES_API_PREFIX}/${API}`, {
+      const res = await api.get(`${EXERCISES_API_PREFIX}/exercises`, {
         params: {
           name: filter.name,
           description: filter.description,
@@ -21,8 +21,7 @@ class ExerciseService {
           muscleSubGroupIds: filter.muscleSubGroupIds,
         },
       });
-      const exercises = res.data;
-      return exercises;
+      return res.data;
     } catch (error) {
       console.error(
         'Error al obtener los ejercicios con los filtros. Error:',
@@ -34,10 +33,10 @@ class ExerciseService {
 
   async getById(exerciseId: string): Promise<Exercise | null> {
     try {
-      const res = await api.get(`${EXERCISES_API_PREFIX}/${API}/${exerciseId}`);
-      const exercise = res.data;
-      console.debug('Obtenido el ejercicio con ID:' + exercise.id);
-      return exercise;
+      const res = await api.get(
+        `${EXERCISES_API_PREFIX}/exercises/${exerciseId}`
+      );
+      return res.data;
     } catch (error) {
       console.error(
         'Error al obtener el ejercicio con ID: ' + exerciseId + '. Error: ',

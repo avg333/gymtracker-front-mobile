@@ -59,7 +59,7 @@ import WorkoutService from 'src/services/workouts-api/WorkoutService';
 import ExerciseService from 'src/services/exercises-api/ExerciseService';
 import { GetWorkoutResponse } from 'src/types/workouts-api/WorkoutServiceTypes';
 
-import { Exercise, ExerciseFilterRequest } from 'src/types/exercises-api/ExerciseServiceTypes';
+import { ExerciseSimple, ExerciseFilterRequest } from 'src/types/exercises-api/ExerciseServiceTypes';
 import { GetSetGroupResponse } from 'src/types/workouts-api/SetGroupServiceTypes';
 export default defineComponent({
   name: 'ExercisesPage',
@@ -78,7 +78,7 @@ export default defineComponent({
       setGroup: null,
     });
     interface State {
-      exercises: Exercise[],
+      exercises: ExerciseSimple[],
       selectedExercisesId: string[],
       workout: GetWorkoutResponse | null,
       setGroup: GetSetGroupResponse | null,

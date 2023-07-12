@@ -3,15 +3,10 @@ import {
   GetNewSetDataResponse,
   GetSetResponse,
   PostSetRequest,
-  PostSetResponse,
-  UpdateSetListOrderRequest,
-  UpdateSetListOrderResponse,
   UpdateSetDataRequest,
-  UpdateSetDataResponse,
 } from 'src/types/workouts-api/SetServiceTypes';
 
 const WORKOUT_API_PREFIX = 'workout-api';
-const SET_PREFIX = '/sets';
 
 class SetService {
   async getSetDefaultWeight(
@@ -19,11 +14,9 @@ class SetService {
   ): Promise<GetNewSetDataResponse | null> {
     try {
       const res = await api.get(
-        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}${SET_PREFIX}/newSet`
+        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}/sets/newSet`
       );
-      const setDefaultData: GetSetResponse = res.data;
-      console.debug(`Obtenida set con ID: ${setDefaultData.id}`);
-      return setDefaultData;
+      return res.data;
     } catch (error) {
       console.error(
         `Error al obtener la set por defecto para el setGroup con ID: ${setGroupId}. Error: ${error}`
@@ -34,90 +27,57 @@ class SetService {
 
   async getById(setId: string): Promise<GetSetResponse | null> {
     try {
-      const res = await api.get(`${WORKOUT_API_PREFIX}${SET_PREFIX}/${setId}`);
-      const set: GetSetResponse = res.data;
-      console.debug(`Obtenida set con ID: ${set.id}`);
-      return set;
+      const res = await api.get(`${WORKOUT_API_PREFIX}/sets/${setId}`);
+      return res.data;
     } catch (error) {
       console.error(`Error al obtener la set con ID: ${setId}. Error:${error}`);
       return null;
     }
   }
 
-  async create(
-    setGroupId: string,
-    postSetRequest: PostSetRequest
-  ): Promise<PostSetResponse | null> {
+  async create(setGroupId: string, postSetRequest: PostSetRequest) {
     try {
-      const res = await api.post(
-        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}${SET_PREFIX}`,
+      await api.post(
+        `${WORKOUT_API_PREFIX}/setGroups/${setGroupId}/sets`,
         postSetRequest
       );
-      const newSet: PostSetResponse = res.data;
-      console.debug(`Creada set con ID: ${newSet.id}`);
-      return newSet;
     } catch (error) {
-      console.error(
-        `Error al crear la set con los datos: ${postSetRequest}. Error:${error}`
-      );
-      return null;
+      console.error(`Error al crear la set. Error:${error}`);
     }
   }
 
-  async updateData(
-    setId: string,
-    updateSetDataRequest: UpdateSetDataRequest
-  ): Promise<UpdateSetDataResponse | null> {
+  async updateData(setId: string, updateSetDataRequest: UpdateSetDataRequest) {
     try {
-      const res = await api.patch(
-        `${WORKOUT_API_PREFIX}${SET_PREFIX}/${setId}`,
+      await api.patch(
+        `${WORKOUT_API_PREFIX}/sets/${setId}`,
         updateSetDataRequest
       );
-      const newSetData: UpdateSetDataResponse = res.data;
-      console.debug(
-        `Actualizados los datos de la set con ID: ${setId} a ${newSetData}`
-      );
-      return newSetData;
     } catch (error) {
       console.error(
-        `Error al actualizar los datos de la set con ID: ${setId} con los datos: ${updateSetDataRequest}. Error: ${error}`
+        `Error al actualizar los datos de la set con ID: ${setId}. Error: ${error}`
       );
-      return null;
     }
   }
 
-  async updateListOrder(
-    setId: string,
-    updateSetListOrderRequest: UpdateSetListOrderRequest
-  ): Promise<UpdateSetListOrderResponse | null> {
+  async updateListOrder(setId: string, listOrder: number) {
     try {
-      const res = await api.patch(
-        `${WORKOUT_API_PREFIX}${SET_PREFIX}/${setId}`,
-        updateSetListOrderRequest
-      );
-      const newSets: UpdateSetListOrderResponse = res.data.sets;
-      console.debug(
-        `Actualizados la listOrder de la set con ID: ${setId} a ${updateSetListOrderRequest.listOrder}`
-      );
-      return newSets;
+      await api.patch(`${WORKOUT_API_PREFIX}/sets/${setId}`, {
+        listOrder,
+      });
     } catch (error) {
       console.error(
-        `Error al actualizar la listOrder de la set con ID: ${setId} a: ${updateSetListOrderRequest.listOrder}. Error: ${error}`
+        `Error al actualizar la listOrder de la set con ID: ${setId} a: ${listOrder}. Error: ${error}`
       );
-      return null;
     }
   }
 
-  async delete(setId: string): Promise<boolean> {
+  async delete(setId: string) {
     try {
-      await api.delete(`${WORKOUT_API_PREFIX}${SET_PREFIX}/${setId}`);
-      console.debug(`Eliminada la set con ID: ${setId}`);
-      return true;
+      await api.delete(`${WORKOUT_API_PREFIX}/sets/${setId}`);
     } catch (error) {
       console.error(
         `Error al eliminar la set con ID: ${setId}. Error:${error}`
       );
-      return false;
     }
   }
 }

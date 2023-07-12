@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { Exercise } from 'src/types/exercises-api/ExerciseServiceTypes';
+import { ExerciseSimple } from 'src/types/exercises-api/ExerciseServiceTypes';
 import { PropType } from 'vue'
-defineProps({ exercise: { type: Object as PropType<Exercise>, required: true } })
+defineProps({ exercise: { type: Object as PropType<ExerciseSimple>, required: true } })
 </script>

@@ -39,8 +39,8 @@
         'Nov',
         'Dic',
       ],
-    }" first-day-of-week="1" no-unset :events="Object.keys(workoutDates).map((el) => dateToBars(el))" v-model="date"
-      :years-in-month-view="true" minimal flat />
+    }" first-day-of-week="1" no-unset :events="Object.keys(workoutDates.workoutsDateAndId).map((el) => dateToBars(el))"
+      v-model="date" :years-in-month-view="true" minimal flat />
   </q-slide-transition>
 </template>
 
@@ -68,7 +68,7 @@ const useStore = useLoginStore();
 const router = useRouter();
 
 const date = ref(props.defaultDate ? props.defaultDate : dateToISO8601(null));
-const workoutDates: Ref<GetWorkoutIdAndDateResponse> = ref({});
+const workoutDates: Ref<GetWorkoutIdAndDateResponse> = ref({ workoutsDateAndId: {} });
 const workoutId = ref('');
 
 watch(date, () => {
@@ -99,7 +99,7 @@ function getWorkoutsDates() {
 }
 
 function setWorkoutId() {
-  workoutId.value = workoutDates.value[date.value];
+  workoutId.value = workoutDates.value.workoutsDateAndId[date.value];
 }
 
 function setToday() {

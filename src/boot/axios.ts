@@ -16,7 +16,7 @@ declare module '@vue/runtime-core' {
 // "export default () => {}" function below (which runs individually
 // for each client)
 //const localUrl = 'http://localhost:8082/';
-const localUrl = 'https://gymtracker-backend-production.up.railway.app/';
+const localUrl = 'https://gymtracker-backend.onrender.com';
 const preProdUrl = 'https://gymtracker-backend-production.up.railway.app/';
 
 const api = axios.create({ baseURL: process.env.DEV ? localUrl : preProdUrl });
