@@ -4,7 +4,6 @@ interface UserInterface {
   id: string;
   username: string;
   token: string;
-  logged: boolean;
 }
 
 export const useLoginStore = defineStore('login', {

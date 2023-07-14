@@ -1,24 +1,27 @@
 import { api } from 'src/boot/axios';
 import {
-  processAxiosResponse,
-  processAxiosError,
-} from 'src/utils/responseUtils';
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from 'src/types/auth-api/AuthServiceTypes';
 
 const AUTH_KEY = 'gymtracker_token';
 
 const API = 'auth-api/';
 
 class LoginService {
-  async login(username: string, password: string) {
+  async login(request: LoginRequest): Promise<LoginResponse | null> {
     try {
-      const res = await api.post(API + 'signin', { username, password });
+      const res = await api.post(API + 'signin', request);
       localStorage.setItem(AUTH_KEY, res.data.token);
-      return processAxiosResponse(res);
+      return res.data;
     } catch (error) {
       console.error(
-        'Error al intentar logear al usuario: ' + username + '. Error: ' + error
+        `Error al intentar logear al usuario: ${request.username}. Error: `,
+        error
       );
-      return processAxiosError(error);
+      return null;
     }
   }
 
@@ -26,19 +29,17 @@ class LoginService {
     localStorage.removeItem(AUTH_KEY);
   }
 
-  async singup(userdata: object) {
+  async singup(request: RegisterRequest): Promise<RegisterResponse | null> {
     try {
-      return await api.post(
-        process.env.VUE_APP_BASE_URL_API + 'users',
-        userdata
-      );
+      const res = await api.post(API + 'register', request);
+      localStorage.setItem(AUTH_KEY, res.data.token);
+      return res.data;
     } catch (error) {
       console.error(
-        'Error al crear el usuario con los datos: ' +
-          userdata +
-          '. Error: ' +
-          error
+        `Error al crear al usuario: ${request.username}. Error: `,
+        error
       );
+      return null;
     }
   }
 }

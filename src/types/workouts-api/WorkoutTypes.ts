@@ -10,7 +10,7 @@ export interface SetGroup {
   id: string;
   listOrder: number;
   description: string | undefined | null;
-  exercise: Exercise;
+  exercise: Exercise | null;
   sets: Set[];
 }
 

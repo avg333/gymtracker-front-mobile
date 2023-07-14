@@ -31,6 +31,7 @@ import { reactive, defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import LoginService from 'src/services/auth-api/LoginService';
 import { useLoginStore } from 'stores/login-store';
+import { LoginResponse } from 'src/types/auth-api/AuthServiceTypes';
 export default defineComponent({
   setup() {
     const store = useLoginStore();
@@ -43,24 +44,18 @@ export default defineComponent({
 
     const $q = useQuasar();
     async function login() {
-      const res: any = await LoginService.login(state.username, state.password);
-      if (res.ok) {
-        store.login(res.data);
+      const request = {
+        username: state.username,
+        password: state.password
+      }
+      const res: LoginResponse | null = await LoginService.login(request);
+      if (res) {
+        store.login(res);
         router.back();
-      } else if (res.code === 404) {
-        $q.notify({
-          message: 'El usuario introducido no existe',
-          color: 'negative',
-        });
-      } else if (res.code === 401) {
+      } else {
         $q.notify({
           message:
             'La combinación de usuario y contraseña introducidas no existe',
-          color: 'negative',
-        });
-      } else {
-        $q.notify({
-          message: 'Error al conectar con el servidor',
           color: 'negative',
         });
       }

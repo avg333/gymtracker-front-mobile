@@ -7,6 +7,7 @@ export interface PostSetRequest {
   reps: NullTypeNumber;
   rir: NullTypeNumber;
   weight: NullTypeNumber;
+  completed: boolean | null;
 }
 
 export interface UpdateSetDataRequest {
@@ -14,6 +15,7 @@ export interface UpdateSetDataRequest {
   reps: number;
   rir: number;
   weight: number;
+  completed: boolean | null;
 }
 
 // RESPONSE

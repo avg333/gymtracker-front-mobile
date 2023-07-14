@@ -24,7 +24,9 @@
 
         <div class="span">{{ state.exercise?.name }}</div>
         <div class="text-subtitle3 text-grey" v-if="state.set.id">
-          <!-- {{ dateToTimeStamp(state.set.lastModifiedAt) }} -->
+          <div class="text-subtitle3 text-grey" v-if="state.set?.completedAt">
+            {{ dateToTimeStamp(state.set.completedAt) }}
+          </div>
         </div>
       </q-card-section>
 
@@ -97,6 +99,7 @@ import SetService from 'src/services/workouts-api/SetService';
 import { GetSetResponse } from 'src/types/workouts-api/SetServiceTypes';
 import ExerciseService from 'src/services/exercises-api/ExerciseService';
 import { Exercise } from 'src/types/exercises-api/ExerciseServiceTypes';
+import { dateToTimeStamp } from 'src/utils/dateFormater';
 
 const props = defineProps({
   setId: { type: String, required: false, default: '' }, //TODO Evitar este default ''
@@ -116,6 +119,7 @@ const state: State = reactive({
     reps: 1,
     rir: 2,
     weight: 1,
+    completedAt: null,
     setGroup: { id: props.setGroupId },
   },
   exercise: null,
@@ -140,6 +144,7 @@ async function saveSet() {
     reps: state.set.reps,
     rir: state.set.rir,
     weight: state.set.weight,
+    completed: true,
   };
   props.setId
     ? await SetService.updateData(props.setId, requets)
