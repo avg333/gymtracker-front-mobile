@@ -81,7 +81,6 @@ watch(
 function getWorkout() {
   if (props.workoutId) {
     WorkoutService.getByIdWithDetails(props.workoutId).then((res) => {
-      console.log(res)
       state.workout = res;
     });
   } else {

@@ -8,7 +8,7 @@ import {
 const EXERCISES_API_PREFIX = 'exercises-api';
 
 class ExerciseService {
-  async getAll(filter: ExerciseFilterRequest | any): Promise<ExerciseSimple[]> {
+  async getAll(filter: ExerciseFilterRequest): Promise<ExerciseSimple[]> {
     try {
       const res = await api.get(`${EXERCISES_API_PREFIX}/exercises/filter`, {
         params: {

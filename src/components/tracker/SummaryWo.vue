@@ -11,11 +11,11 @@
 
 <script lang="ts">
 //READY
-import { PropType, defineComponent } from 'vue'
+import { defineComponent } from 'vue'
 import { getMuscleGroupColour } from 'src/utils/colourUtils';
 export default defineComponent({
   name: 'SummaryWo',
-  props: { workout: { type: Object as PropType<any>, required: true } },
+  props: { workout: { required: true } },
   setup() {
     return { getMuscleGroupColour };
   },

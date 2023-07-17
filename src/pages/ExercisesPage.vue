@@ -96,7 +96,16 @@ export default defineComponent({
     });
 
     onBeforeMount(() => {
-      loadExercises({});
+      const emptyFilter: ExerciseFilterRequest = {
+        name: null,
+        description: null,
+        unilateral: false,
+        loadType: '',
+        muscleSupGroupIds: '',
+        muscleGroupIds: '',
+        muscleSubGroupIds: []
+      }
+      loadExercises(emptyFilter);
       if (setGroupId) {
         SetGroupService.getById(setGroupId).then((setGroup) => {
           if (setGroup) {
@@ -119,7 +128,7 @@ export default defineComponent({
       loadExercises(filter.value);
     });
 
-    function loadExercises(filter: ExerciseFilterRequest | object) {
+    function loadExercises(filter: ExerciseFilterRequest) {
       ExerciseService.getAll(filter).then((res) => {
         state.exercises = res;
       });
